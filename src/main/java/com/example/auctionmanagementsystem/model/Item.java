@@ -11,7 +11,7 @@ public abstract class Item {
     public Item() {}
 
     //Constructor with full parameters
-    public Item(String id, String name, String description, double startingPrice, double currentPrice, LocalDateTime startTime, LocalDateTime endTime) {
+    public Item(String id, String name, String description, double startingPrice, LocalDateTime startTime, LocalDateTime endTime) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,6 +37,6 @@ public abstract class Item {
     public void setName(String newName) {this.name = newName;}
     public void setDescription(String description) {this.description = description;}
     
-
-    
+    //Abstract method
+    public abstract String getCategoryDetails();          
 }
