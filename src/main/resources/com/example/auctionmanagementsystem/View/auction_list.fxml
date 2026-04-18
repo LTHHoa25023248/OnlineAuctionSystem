@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="972.0" prefWidth="1369.0" styleClass="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+    <top>
+        <AnchorPane prefHeight="122.0" styleClass="titlePane">
+            <children>
+                <ImageView fitHeight="63.0" fitWidth="63.0" layoutX="1244.0" layoutY="30.0" />
+
+                <Label layoutX="27.0" layoutY="26.0" text="Auction System">
+                    <font>
+                        <Font size="54.0" />
+                    </font>
+                </Label>
+
+                <Label layoutX="969.0" layoutY="41.0" text="Logged In as ">
+                    <font>
+                        <Font size="20.0" />
+                    </font>
+                </Label>
+
+                <Label fx:id="usernameLabel" layoutX="1096.0" layoutY="41.0" text="Team5">
+                    <font>
+                        <Font size="20.0" />
+                    </font>
+                </Label>
+
+                <Button fx:id="logoutButton" layoutX="1268.0" layoutY="35.0" styleClass="goldButton" text="Log Out" />
+            </children>
+        </AnchorPane>
+    </top>
+
+    <center>
+        <AnchorPane fx:id="mainSection">
+
+            <children>
+
+                <HBox fx:id="secondaryBar" spacing="15" style="-fx-padding: 20;">
+                    <children>
+
+                        <Label fx:id="allCat" text="All">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="jewelryCat" text="Jewelry">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="watchesCat" text="Watches">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="bagsCat" text="Bags">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="fineArtCat" text="Fine Art">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="carsCat" text="Cars">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                        <Label fx:id="othersCat" text="Others">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass>
+                        </Label>
+
+                    </children>
+                </HBox>
+
+                <ScrollPane fx:id="scrollPane" layoutX="-58.0" layoutY="118.0" prefHeight="700" prefWidth="1000" styleClass="backPane" />
+
+                <Button fx:id="sortButton" layoutX="900" layoutY="20" styleClass="goldButton" text="Sort By" />
+
+            </children>
+        </AnchorPane>
+    </center>
+   <right>
+        <AnchorPane prefWidth="278.0" styleClass="menuPane" BorderPane.alignment="CENTER">
+            <children>
+                <VBox styleClass="buttonsBox">
+
+                    <HBox fx:id="homeButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Home">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="activeListingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Active Listings">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="trendingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Trendings">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="yourListingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Your Listings">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="watchListButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Watchlist">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <HBox fx:id="profileButton" alignment="CENTER" spacing="20" styleClass="menuItems">
+                        <children>
+                            <ImageView fitHeight="30" fitWidth="30" />
+                            <Label text="Profile">
+                                <font><Font size="21" /></font>
+                            </Label>
+                        </children>
+                    </HBox>
+
+                    <Separator />
+
+                    <Button fx:id="sellButton" styleClass="goldButton" text="Sell" />
+
+                </VBox>
+            </children>
+        </AnchorPane>
+   </right>
+
+</BorderPane>
