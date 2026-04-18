@@ -1,29 +1,34 @@
 package com.example.auctionmanagementsystem.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Seller extends User {
-    private List<Item> listedItems;
-    public Seller(String username, String password) {
-        super(username, password);
-        this.listedItems = new ArrayList<>();
+    private String storeName;
+    private double rating;
+
+    public Seller(String username, String password, String email, String storeName) {
+        super(username, password, email);
+        this.storeName = storeName;
+        this.rating = 0.0; // Điểm đánh giá ban đầu
     }
 
-    public List<Item> getListedItems() {
-        return listedItems;
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 
     @Override
-    public String getRoleName() {
-        return "Seller: " + username;
+    public void printInfo() {
+        System.out.printf("[Seller] ID: %d | Username: %s | Store: %s | Rating: %.1f/5.0%n", 
+                getId(), username, storeName, rating);
     }
-
-    //Specific method: Uploading a new item
-    public void addListing(Item newItem) {
-        if (newItem != null) {
-            this.listedItems.add(newItem);
-        }
-    }
-
 }
