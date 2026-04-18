@@ -14,6 +14,6 @@ public class Art extends Item {
 
     @Override
     public String getCategoryDetails() {
-        return String.format("Artist: %d | Theme: %s | Material: %n", artist, theme, material);
+        return String.format("Artist: %s | Theme: %s | Material: %s", artist, theme, material);
     }
 }
