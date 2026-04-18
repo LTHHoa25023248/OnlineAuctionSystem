@@ -15,10 +15,17 @@ public abstract class Item {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.startingPrice = startingPrice;
-        this.currentPrice = currentPrice;
         this.startTime = startTime;
         this.endTime = endTime;
+
+        if (startingPrice < 0) {
+            //Throwing exception for negative value of starting price
+            throw new IllegalArgumentException("Starting price must greater than 0!");
+        }
+        //Valiadation when initialize a item. Current price is 
+        //equal to starting price
+        this.startingPrice = startingPrice;
+        this.currentPrice = startingPrice;
     }
 
     //Setters and Getters
@@ -29,13 +36,7 @@ public abstract class Item {
 
     public void setName(String newName) {this.name = newName;}
     public void setDescription(String description) {this.description = description;}
-    public void setStartingPrice(double startingPrice) {
-        //Throwing exception for negative value of starting price
-        if (startingPrice < 0) {
-            throw new IllegalArgumentException("Starting price must greater than 0!");
-        }
-        this.startingPrice = startingPrice;
-    }
+    
 
     
 }
