@@ -14,17 +14,17 @@ public class ItemFactory {
             return switch(type.toUpperCase()) {
             case "ELECTRONICS" -> {
                 if (extra.length < 2) throw new IllegalArgumentException("Lack of Electronics' parameters!");
-                yield new Electronics(id, name, description, startingPrice, startTime, endTime, extra[0], Integer.parseInt(extra[1]));
+                yield new Electronics(id, name, description, startingPrice, extra[0], Integer.parseInt(extra[1]));
             }
 
             case "ART" -> {
                 if (extra.length < 3) throw new IllegalArgumentException("Lack of Art's parameters!");
-                yield new Art(id, name, description, startingPrice, startTime, endTime, extra[0], extra[1], extra[2]);
+                yield new Art(id, name, description, startingPrice, extra[0], extra[1], extra[2]);
             }
 
             case "VEHICLE" -> {
                 if (extra.length < 2) throw new IllegalArgumentException("Lack of Vehicle's parameters!");
-                yield new Vehicle(id, name, description, startingPrice, startTime, endTime, Integer.parseInt(extra[0]), Double.parseDouble(extra[1]));
+                yield new Vehicle(id, name, description, startingPrice, Integer.parseInt(extra[0]), Double.parseDouble(extra[1]));
             }
 
             default -> throw new IllegalArgumentException("Product is not supported by our system!");

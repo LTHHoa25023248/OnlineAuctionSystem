@@ -1,22 +1,17 @@
 package com.example.auctionmanagementsystem.model;
 
-import java.time.LocalDateTime;
-
 public abstract class Item {
     private String id, name, description;
-    private double startingPrice, currentPrice;
-    private LocalDateTime startTime, endTime;
+    private double startingPrice;
 
     //Default Constructor
     public Item() {}
 
     //Constructor with full parameters
-    public Item(String id, String name, String description, double startingPrice, LocalDateTime startTime, LocalDateTime endTime) {
+    public Item(String id, String name, String description, double startingPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.startTime = startTime;
-        this.endTime = endTime;
 
         if (startingPrice < 0) {
             //Throwing exception for negative value of starting price
@@ -25,14 +20,11 @@ public abstract class Item {
         //Valiadation when initialize a item. Current price is 
         //equal to starting price
         this.startingPrice = startingPrice;
-        this.currentPrice = startingPrice;
     }
 
     //Setters and Getters
-    public double getCurrentPrice() {return currentPrice;}
     public String getName() {return name;}
     public String getId() {return id;}
-    public LocalDateTime getEndTime() {return endTime;}
 
     public void setName(String newName) {this.name = newName;}
     public void setDescription(String description) {this.description = description;}

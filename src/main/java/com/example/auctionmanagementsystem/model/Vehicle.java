@@ -6,8 +6,8 @@ public class Vehicle extends Item {
     private int year;
     private double mileage;
 
-    public Vehicle(String id, String name, String description, double startingPrice, LocalDateTime startTime, LocalDateTime endTime, int year, double mileage) {
-        super(id, name, description, startingPrice, startTime, endTime);
+    public Vehicle(String id, String name, String description, double startingPrice, int year, double mileage) {
+        super(id, name, description, startingPrice);
         this.year = year;
         this.mileage = mileage;
     }
