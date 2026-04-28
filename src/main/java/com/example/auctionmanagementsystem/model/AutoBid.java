@@ -7,8 +7,10 @@ public class AutoBid {
     private User user;
     //Gia cao nhat ma user chiu chi
     private double maxBid;
-    //
+    //Gia tien tu dong tang len sau moi lan dat
     private double increment;
+    //Thoi gian autobid
+    //Cho biet thoi gian de uu tien thu tu nguoi dat gia
     private LocalDateTime createdAt;
     public AutoBid(User user, double maxBid, double increment){
         this.user=user;
