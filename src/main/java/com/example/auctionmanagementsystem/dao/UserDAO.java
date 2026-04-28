@@ -1,5 +1,6 @@
 package com.example.auctionmanagementsystem.dao;
 
+import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ public class UserDAO {
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getInstance().getConnection();
-             // Chú ý: Statement.RETURN_GENERATED_KEYS rất quan trọng để lấy ID tự tăng
+             // Statement.RETURN_GENERATED_KEYS rất quan trọng: để lấy ID tự tăng
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, user.getUsername());
