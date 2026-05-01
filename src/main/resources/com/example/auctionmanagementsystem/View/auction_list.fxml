@@ -1,174 +1,208 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="972.0" prefWidth="1369.0" styleClass="root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="972.0" prefWidth="1369.0" styleClass="root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.MainLayoutController">
     <top>
-        <AnchorPane prefHeight="122.0" styleClass="titlePane">
+        <AnchorPane prefHeight="122.0" prefWidth="1354.0" styleClass="titlePane" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="63.0" fitWidth="63.0" layoutX="1244.0" layoutY="30.0" />
-
+                <ImageView fitHeight="63.0" fitWidth="63.0" layoutX="1244.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
                 <Label layoutX="27.0" layoutY="26.0" text="Auction System">
                     <font>
-                        <Font size="54.0" />
+                        <Font name="Berlin Sans FB" size="54.0" />
                     </font>
                 </Label>
-
                 <Label layoutX="969.0" layoutY="41.0" text="Logged In as ">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-
-                <Label fx:id="usernameLabel" layoutX="1096.0" layoutY="41.0" text="Team5">
+                <Label fx:id="usernameLabel" layoutX="1096.0" layoutY="41.0" prefHeight="30.0" prefWidth="171.0" text="Team5">
                     <font>
-                        <Font size="20.0" />
+                        <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
-
-                <Button fx:id="logoutButton" layoutX="1268.0" layoutY="35.0" styleClass="goldButton" text="Log Out" />
+                <MFXButton fx:id="logoutButton" layoutX="1268.0" layoutY="35.0" styleClass="goldButton" text="Log Out" />
             </children>
         </AnchorPane>
     </top>
-
-    <center>
-        <AnchorPane fx:id="mainSection">
-
+    <left>
+        <AnchorPane prefHeight="850.0" prefWidth="278.0" styleClass="menuPane" BorderPane.alignment="CENTER">
             <children>
-
-                <HBox fx:id="secondaryBar" spacing="15" style="-fx-padding: 20;">
+                <VBox layoutX="-2.0" layoutY="-1.0" prefHeight="854.0" prefWidth="295.0" styleClass="buttonsBox">
                     <children>
-
-                        <Label fx:id="allCat" text="All">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="jewelryCat" text="Jewelry">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="watchesCat" text="Watches">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="bagsCat" text="Bags">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="fineArtCat" text="Fine Art">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="carsCat" text="Cars">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
-                        <Label fx:id="othersCat" text="Others">
-                            <styleClass>
-                                <String fx:value="categories" />
-                                <String fx:value="active" />
-                            </styleClass>
-                        </Label>
-
+                        <AnchorPane prefHeight="834.0" prefWidth="275.0">
+                            <children>
+                                <HBox fx:id="homeButton" alignment="CENTER" layoutX="19.0" layoutY="87.0" prefHeight="38.0" prefWidth="238.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/home.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Home" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="activeListingButton" alignment="CENTER" layoutX="15.0" layoutY="154.0" prefHeight="38.0" prefWidth="245.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/checked.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Active Listings" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="trendingButton" alignment="CENTER" layoutX="15.0" layoutY="220.0" prefHeight="38.0" prefWidth="248.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/trending.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Trendings" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="yourListingButton" alignment="CENTER" layoutX="15.0" layoutY="319.0" prefHeight="38.0" prefWidth="247.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/dollar-symbol.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Your Listings" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="watchListButton" alignment="CENTER" layoutX="14.0" layoutY="388.0" prefHeight="38.0" prefWidth="249.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/bookmark.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Watchlist" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="profileButton" alignment="CENTER" layoutX="14.0" layoutY="457.0" prefHeight="38.0" prefWidth="249.0" spacing="20.0" styleClass="menuItems">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/Icons/avatar.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label prefHeight="26.0" prefWidth="166.0" text="Profile" textFill="WHITE">
+                                            <font>
+                                                <Font name="Berlin Sans FB" size="21.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                                <Separator layoutX="23.0" layoutY="525.0" prefHeight="0.0" prefWidth="227.0" />
+                                <MFXButton fx:id="sellButton" layoutX="81.0" layoutY="565.0" prefHeight="47.0" prefWidth="111.0" styleClass="goldButton" text="Sell">
+                                    <textFill>
+                                        <LinearGradient endX="1.0" endY="1.0">
+                                            <stops>
+                                                <Stop>
+                                                    <color>
+                                                        <Color />
+                                                    </color>
+                                                </Stop>
+                                                <Stop offset="1.0">
+                                                    <color>
+                                                        <Color red="1.0" green="1.0" blue="1.0" />
+                                                    </color>
+                                                </Stop>
+                                            </stops>
+                                        </LinearGradient>
+                                    </textFill>
+                                </MFXButton>
+                                <Separator layoutX="23.0" layoutY="288.0" prefHeight="0.0" prefWidth="227.0" />
+                            </children>
+                        </AnchorPane>
                     </children>
-                </HBox>
-
-                <ScrollPane fx:id="scrollPane" layoutX="-58.0" layoutY="118.0" prefHeight="700" prefWidth="1000" styleClass="backPane" />
-
-                <Button fx:id="sortButton" layoutX="900" layoutY="20" styleClass="goldButton" text="Sort By" />
-
-            </children>
-        </AnchorPane>
-    </center>
-   <right>
-        <AnchorPane prefWidth="278.0" styleClass="menuPane" BorderPane.alignment="CENTER">
-            <children>
-                <VBox styleClass="buttonsBox">
-
-                    <HBox fx:id="homeButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Home">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <HBox fx:id="activeListingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Active Listings">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <HBox fx:id="trendingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Trendings">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <HBox fx:id="yourListingButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Your Listings">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <HBox fx:id="watchListButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Watchlist">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <HBox fx:id="profileButton" alignment="CENTER" spacing="20" styleClass="menuItems">
-                        <children>
-                            <ImageView fitHeight="30" fitWidth="30" />
-                            <Label text="Profile">
-                                <font><Font size="21" /></font>
-                            </Label>
-                        </children>
-                    </HBox>
-
-                    <Separator />
-
-                    <Button fx:id="sellButton" styleClass="goldButton" text="Sell" />
-
                 </VBox>
             </children>
         </AnchorPane>
-   </right>
-
+    </left>
+    <center>
+        <AnchorPane fx:id="mainSection" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox fx:id="secondaryBar" layoutX="7.0" prefHeight="86.0" prefWidth="864.0" spacing="15.0" style="-fx-padding: 20px;">
+                    <children>
+                        <Label fx:id="allCat" alignment="CENTER" prefHeight="42.0" prefWidth="114.0" text="All">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="jewelryCat" alignment="CENTER" layoutX="30.0" layoutY="30.0" prefHeight="42.0" prefWidth="129.0" text="Jewelry">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="watchesCat" alignment="CENTER" layoutX="120.0" layoutY="30.0" prefHeight="42.0" prefWidth="142.0" text="Watches">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="bagsCat" alignment="CENTER" layoutX="211.0" layoutY="30.0" prefHeight="42.0" prefWidth="119.0" text="Bags">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="fineArtCat" alignment="CENTER" layoutX="301.0" layoutY="30.0" prefHeight="42.0" prefWidth="138.0" text="Fine Art">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="carsCat" alignment="CENTER" layoutX="392.0" layoutY="30.0" prefHeight="36.0" prefWidth="90.0" text="Cars">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                        <Label fx:id="othersCat" alignment="CENTER" layoutX="482.0" layoutY="30.0" prefHeight="42.0" prefWidth="98.0" text="Others">
+                            <styleClass>
+                                <String fx:value="categories" />
+                                <String fx:value="active" />
+                            </styleClass></Label>
+                    </children>
+                </HBox>
+                <MFXScrollPane fx:id="scrollPane" layoutX="1.0" layoutY="78.0" prefHeight="772.0" prefWidth="1075.0" styleClass="backPane" />
+                <MFXButton fx:id="sortButton" layoutX="970.0" layoutY="22.0" styleClass="goldButton" text="Sort By" />
+            </children>
+        </AnchorPane>
+    </center>
 </BorderPane>

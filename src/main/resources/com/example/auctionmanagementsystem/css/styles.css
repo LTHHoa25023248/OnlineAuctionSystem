@@ -1,0 +1,103 @@
+.root {
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.menuPane {
+}
+
+.buttonsBox {
+    -fx-background-color: black;
+    -fx-background-radius: 0 60 0 0;
+    -fx-padding: 10;
+}
+
+.menuItems{
+    -fx-border-radius: 10;
+    -fx-background-radius: 7;
+}
+
+.menuItems:hover {
+    -fx-background-color: grey;
+    -fx-border-radius: 10;
+}
+
+:selected {
+    -fx-background-color: #ffb600;
+    -fx-text-fill: black;
+}
+
+
+.goldButton {
+    -fx-background-color: #ecc667;
+    -fx-background-radius: 10;
+    -fx-text-fill: black;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+}
+
+.categories {
+    -fx-background-color: #d8d8d8;
+    -fx-background-radius: 10;
+    -fx-text-fill: black;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+}
+
+.categories:hover {
+    -fx-background-color: #bfbfbf;
+}
+
+.categories:selectedCategory {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.backPane {
+    -fx-background-color: #d8d8d8;
+}
+
+.cardPane {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+.cardPane:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-background-color: silver;
+}
+
+.image {
+    -fx-background-color: rgba(208, 208, 208, 0.97);
+    -fx-background-radius: 40;
+    -fx-padding: 10;
+    -fx-border-radius: 40;
+}
+
+.categoryLabel {
+    -fx-background-color: #ffc42e;
+    -fx-background-radius: 10;
+    -fx-text-alignment: center;
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.popularLabel {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-text-alignment: center;
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.labels {
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+}
+
+.titleCard {
+    -fx-font-weight: bold;
+    -fx-font-size: 30;
+    -fx-font-family: "Varela Round", sans-serif;
+}
