@@ -1,19 +1,16 @@
 package com.example.auctionmanagementsystem.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public abstract class Entity {
+    private static final AtomicInteger AUTO_ID = new AtomicInteger(1);
     protected int id;
 
-    // Constructor mặc định, id = 0 hiểu là chưa được lưu vào Database
     public Entity() {
-        this.id = 0; 
+        this.id = AUTO_ID.getAndIncrement();
     }
 
     public int getId() {
         return id;
-    }
-
-    // Thêm setter để DAO có thể cập nhật ID sau khi Database sinh ra
-    public void setId(int id) {
-        this.id = id;
     }
 }
