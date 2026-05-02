@@ -34,4 +34,4 @@ public class Auction {
     public Item getItem(){
         return item;
     }
-
+}
