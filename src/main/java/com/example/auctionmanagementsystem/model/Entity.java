@@ -14,4 +14,3 @@ public abstract class Entity {
         return id;
     }
 }
-
