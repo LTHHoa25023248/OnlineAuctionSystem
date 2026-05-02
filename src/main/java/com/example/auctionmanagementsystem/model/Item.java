@@ -25,6 +25,8 @@ public abstract class Item {
     //Setters and Getters
     public String getName() {return name;}
     public String getId() {return id;}
+    public String getDescription() {return description;}
+    public double getStartingPrice() {return startingPrice;}
 
     public void setName(String newName) {this.name = newName;}
     public void setDescription(String description) {this.description = description;}
