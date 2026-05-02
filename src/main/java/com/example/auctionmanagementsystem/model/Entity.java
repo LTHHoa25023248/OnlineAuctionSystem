@@ -13,4 +13,9 @@ public abstract class Entity {
     public int getId() {
         return id;
     }
+
+    // Thêm setter để DAO có thể cập nhật ID sau khi Database sinh ra
+    public void setId(int id) {
+        this.id = id;
+    }
 }
