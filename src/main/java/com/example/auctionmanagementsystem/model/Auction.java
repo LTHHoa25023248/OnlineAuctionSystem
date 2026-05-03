@@ -35,7 +35,14 @@ public class Auction {
     public Item getItem(){
         return item;
     }
-    public List<AutoBid> getHisAutoBid9(){
+    public LocalDateTime getStartTime(){
+        return startTime;
+    }
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public List<AutoBid> getHisAutoBid(){
         return hisAutoBid;
     }
     public ReentrantLock getLock() {
