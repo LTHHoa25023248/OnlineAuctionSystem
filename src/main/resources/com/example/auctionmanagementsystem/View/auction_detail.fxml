@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.text.Font?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="887.0" styleClass="rootPane" stylesheets="@../css/listingpagestyles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="830.0" prefWidth="887.0" styleClass="rootPane" stylesheets="@../css/listingpagestyles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
     <children>
         <StackPane layoutX="48.0" layoutY="42.0" prefHeight="390.0" prefWidth="378.0" styleClass="imagePane">
             <children>
@@ -101,7 +97,7 @@
                 <Font name="Microsoft Sans Serif" size="17.0" />
             </font>
         </Label>
-        <Label fx:id="userLabel" layoutX="144.0" layoutY="466.0" prefHeight="23.0" prefWidth="278.0" text="Ahmed Abdullah">
+        <Label fx:id="userLabel" layoutX="144.0" layoutY="466.0" prefHeight="23.0" prefWidth="278.0" text="Team 5">
             <font>
                 <Font name="MS Reference Sans Serif" size="17.0" />
             </font>

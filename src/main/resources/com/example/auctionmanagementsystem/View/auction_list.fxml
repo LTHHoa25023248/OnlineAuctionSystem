@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXButton?>
-<?import io.github.palexdev.materialfx.controls.MFXScrollPane?>
-<?import java.lang.String?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
-<?import javafx.scene.text.Font?>
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="972.0" prefWidth="1369.0" styleClass="root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.MainLayoutController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="972.0" prefWidth="1369.0" styleClass="root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.MainLayoutController">
     <top>
         <AnchorPane prefHeight="122.0" prefWidth="1354.0" styleClass="titlePane" BorderPane.alignment="CENTER">
             <children>
@@ -36,7 +28,7 @@
                         <Font name="System Bold" size="20.0" />
                     </font>
                 </Label>
-                <MFXButton fx:id="logoutButton" layoutX="1268.0" layoutY="35.0" styleClass="goldButton" text="Log Out" />
+                <MFXButton fx:id="logoutButton" layoutX="1268.0" layoutY="35.0" styleClass="goldButton" text="Log Out" textFill="#320c0c" />
             </children>
         </AnchorPane>
     </top>
