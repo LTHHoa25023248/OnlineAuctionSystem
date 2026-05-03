@@ -36,7 +36,6 @@ public class BiddingService {
             }
             //cap nhat gia hien tai, nguoi dang dan dau
             auction.setHighestBidder(user);
-            auction.setHighestBidder(user);
             //luu ls dau gia
             auction.addBid(new BidTransaction(user, amount));
             //Neu co nguoi dung dat autobid->he thong tu dau gia thay
