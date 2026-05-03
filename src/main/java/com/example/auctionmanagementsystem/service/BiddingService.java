@@ -35,6 +35,7 @@ public class BiddingService {
                 throw new InvalidBidException(amount, auction.getCurrentPrice());
             }
             //cap nhat gia hien tai, nguoi dang dan dau
+            auction.setCurrentPrice(amount);
             auction.setHighestBidder(user);
             //luu ls dau gia
             auction.addBid(new BidTransaction(user, amount));
