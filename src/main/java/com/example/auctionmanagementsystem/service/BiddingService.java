@@ -10,6 +10,7 @@ import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.User;
 
 import java.time.LocalDateTime;
+//Luu tam thoi, chua ket noi database
 
 public class BiddingService {
     private final AutoBidService autoBidService =new AutoBidService();
