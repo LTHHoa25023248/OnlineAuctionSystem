@@ -2,7 +2,7 @@ package com.example.auctionmanagementsystem.model;
 import java.time.LocalDateTime;
 
 public class ItemFactory {
-    public static Item createItem(String type, String id, String name, String description, double startingPrice, LocalDateTime startTime, LocalDateTime endTime, String... extra) {
+    public static Item createItem(String type, String id, String name, String description, double startingPrice, String... extra) {
         //Using 'type' to determine the category of Item 
         //Must not be null
         if (type == null || type.trim().isEmpty()) {
