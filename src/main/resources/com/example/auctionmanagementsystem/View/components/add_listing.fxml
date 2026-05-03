@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
+<?import io.github.palexdev.materialfx.controls.MFXDatePicker?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="788.0" prefWidth="510.0" stylesheets="@../../css/addlistingstyles.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.AddListingController">
+    <children>
+        <Label alignment="CENTER" layoutX="22.0" layoutY="37.0" prefHeight="35.0" prefWidth="535.0" text="Add Listing">
+            <font>
+                <Font name="Berlin Sans FB" size="31.0" />
+            </font>
+        </Label>
+        <MFXTextField fx:id="name" floatMode="BORDER" floatingText="  Title  " layoutX="101.0" layoutY="143.0" prefHeight="52.0" prefWidth="354.0" styleClass="fields" />
+        <MFXComboBox fx:id="category" floatMode="BORDER" floatingText="  Category  " layoutX="101.0" layoutY="221.0" prefHeight="52.0" prefWidth="354.0" styleClass="fields" />
+        <MFXTextField fx:id="startingprice" floatMode="BORDER" floatingText="  Starting Price  " layoutX="101.0" layoutY="305.0" prefHeight="52.0" prefWidth="354.0" styleClass="fields" />
+        <MFXDatePicker fx:id="enddate" floatMode="BORDER" floatingText="  End Date  " layoutX="101.0" layoutY="381.0" prefHeight="54.0" prefWidth="354.0" styleClass="fields" />
+        <MFXTextField fx:id="description" alignment="TOP_LEFT" floatMode="BORDER" floatingText="  Description  " layoutX="101.0" layoutY="466.0" prefHeight="87.0" prefWidth="354.0" styleClass="fields" />
+        <MFXButton fx:id="chooseImageButton" layoutX="357.0" layoutY="610.0" styleClass="myButtons" text="Choose Image" />
+        <Label fx:id="imageLabel" layoutX="101.0" layoutY="609.0" prefHeight="26.0" prefWidth="196.0" text="File Upload Label" />
+        <MFXButton fx:id="addButton" layoutX="220.0" layoutY="691.0" prefHeight="35.0" prefWidth="102.0" styleClass="myButtons" text="Add" />
+        <Label fx:id="validationLabel" layoutX="101.0" layoutY="572.0" prefHeight="18.0" prefWidth="348.0" text="This is a validation label" textFill="RED" />
+        <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="512.0" layoutY="14.0" pickOnBounds="true">
+            <image>
+                <Image url="@../../images/Icons/cross-circle.png" />
+            </image>
+        </ImageView>
+    </children>
+</AnchorPane>
