@@ -13,7 +13,7 @@ public abstract class Item extends Entity{
         this.description = description;
 
         if (startingPrice < 0) {
-            //Throwing exception for negative value of starting price
+            //Throwing com.example.auctionmanagementsystem.exception for negative value of starting price
             throw new IllegalArgumentException("Starting price must greater than 0!");
         }
         //Valiadation when initialize a item. Current price is 
