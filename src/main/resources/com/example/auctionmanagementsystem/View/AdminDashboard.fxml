@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
+            styleClass="rootPane"
+            stylesheets="@../css/adminstyles.css">
+
+    <left>
+        <VBox styleClass="sidebar" prefWidth="220">
+            <Label text="Auction System" styleClass="sidebarTitle"/>
+            <VBox styleClass="sidebarNav" VBox.vgrow="ALWAYS">
+                <HBox styleClass="navItem" onMouseClicked="#handleHome">
+                    <Label text="🏠" styleClass="navIcon"/>
+                    <Label text="Home" styleClass="navLabel"/>
+                </HBox>
+                <HBox styleClass="navItem navActive" onMouseClicked="#handleListings">
+                    <Label text="📋" styleClass="navIcon"/>
+                    <Label text="All Listings" styleClass="navLabel"/>
+                </HBox>
+                <HBox styleClass="navItem" onMouseClicked="#handleUsers">
+                    <Label text="👥" styleClass="navIcon"/>
+                    <Label text="Users" styleClass="navLabel"/>
+                </HBox>
+                <HBox styleClass="navItem" onMouseClicked="#handleAnalytics">
+                    <Label text="📊" styleClass="navIcon"/>
+                    <Label text="Analytics" styleClass="navLabel"/>
+                </HBox>
+                <Separator styleClass="sidebarDivider"/>
+                <HBox styleClass="navItem" onMouseClicked="#handleReports">
+                    <Label text="🚩" styleClass="navIcon"/>
+                    <Label text="Reports" styleClass="navLabel"/>
+                </HBox>
+                <HBox styleClass="navItem" onMouseClicked="#handleSettings">
+                    <Label text="⚙️" styleClass="navIcon"/>
+                    <Label text="Settings" styleClass="navLabel"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <Label text="Admin Dashboard" styleClass="topbarTitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Logged in as  " styleClass="topbarUser"/>
+            <Label fx:id="usernameLabel" text="Admin" styleClass="topbarUserBold"/>
+            <Button text="Log Out" styleClass="btnLogout" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane styleClass="contentScroll" fitToWidth="true">
+            <VBox styleClass="contentArea" spacing="16">
+                <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+                <HBox spacing="14" styleClass="statsRow">
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="Total Listings" styleClass="statLabel"/>
+                        <Label fx:id="totalListingsLabel" text="" styleClass="statValue"/>
+                        <Label text="+12 this week" styleClass="statSub"/>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="Active Auctions" styleClass="statLabel"/>
+                        <Label fx:id="activeAuctionsLabel" text="" styleClass="statValue statValueGold"/>
+                        <Label text="Ends within 7 days" styleClass="statSub"/>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="Total Users" styleClass="statLabel"/>
+                        <Label fx:id="totalUsersLabel" text="" styleClass="statValue"/>
+                        <Label text="+48 this month" styleClass="statSub"/>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="Revenue" styleClass="statLabel"/>
+                        <Label fx:id="revenueLabel" text="" styleClass="statValue"/>
+                        <Label text="Lifetime total" styleClass="statSub"/>
+                    </VBox>
+                </HBox>
+
+                <VBox styleClass="tableCard">
+                    <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
+                        <Label text="Auction Listings" styleClass="tableHeaderTitle"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="filterTabs" spacing="6">
+                            <Button text="All"     styleClass="ftab ftabActive" onAction="#filterAll"/>
+                            <Button text="Jewelry" styleClass="ftab" onAction="#filterJewelry"/>
+                            <Button text="Watches" styleClass="ftab" onAction="#filterWatches"/>
+                            <Button text="Cars"    styleClass="ftab" onAction="#filterCars"/>
+                            <Button text="Others"  styleClass="ftab" onAction="#filterOthers"/>
+                        </HBox>
+                    </HBox>
+                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="400">
+                        <columns>
+                            <TableColumn fx:id="colItem"     text="Item"        prefWidth="220"/>
+                            <TableColumn fx:id="colCategory" text="Category"    prefWidth="100"/>
+                            <TableColumn fx:id="colSeller"   text="Seller"      prefWidth="100"/>
+                            <TableColumn fx:id="colBid"      text="Current Bid" prefWidth="110"/>
+                            <TableColumn fx:id="colStatus"   text="Status"      prefWidth="120"/>
+                            <TableColumn fx:id="colActions"  text="Actions"     prefWidth="130"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

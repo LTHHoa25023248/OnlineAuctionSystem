@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
+/* ══════════════════════════════════════════
+   CÁC CLASS CŨ — GIỮ NGUYÊN
+══════════════════════════════════════════ */
 .backgroudPane {
     -fx-background-color: transparent;
     -fx-font-family: 'Varela Round', sans-serif;
@@ -48,7 +51,7 @@
     -fx-font-family: 'Varela Round', sans-serif;
 }
 
-.stepper .buttons-box .mfx-button{
+.stepper .buttons-box .mfx-button {
     -fx-background-color: #ffffff;
     -fx-border-color: #000000;
     -fx-border-radius: 10px;
@@ -102,7 +105,6 @@
     -fx-font-family: 'Varela Round', sans-serif;
 }
 
-/* Đã sửa lại nút Login: Nền trong suốt, viền đen, chữ đen (hợp với nền trắng) */
 .signupRootPane .loginButton {
     -fx-background-color: transparent;
     -fx-text-fill: #000000;
@@ -110,13 +112,11 @@
     -fx-border-radius: 3;
 }
 
-/* Khi di chuột vào nút Login sẽ đảo ngược thành nền đen chữ trắng */
 .signupRootPane .loginButton:hover {
     -fx-background-color: #000000;
     -fx-text-fill: #ffffff;
 }
 
-/* Đã sửa phông nền đen thành trắng tinh (#ffffff) */
 .title {
     -fx-background-color: #ffffff;
     -fx-font-family: 'Varela Round', sans-serif;
@@ -135,3 +135,46 @@
 .header {
     -fx-font-family: 'Varela Round', sans-serif;
 }
+
+/* ══════════════════════════════════════════
+   ROOT & TOP BAR
+══════════════════════════════════════════ */
+.root {
+    -fx-background-color: #f0f0f0;
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.titlePane {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: transparent transparent #ecc667 transparent;
+    -fx-border-width: 0 0 3px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.45), 10, 0, 0, 4);
+}
+
+.titleLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Berlin Sans FB';
+}
+
+.loggedInText {
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.usernameLabel {
+    -fx-text-fill: #ecc667;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-weight: bold;
+}
+
+/* ══════════════════════════════════════════
+   GOLD BUTTON
+══════════════════════════════════════════ */
+.goldButton {
+    -fx-background-color: #ecc667;
+    -fx-text-fill: #1a1a1a;
+    -fx-font-family: 'Berlin Sans FB';
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-cursor
