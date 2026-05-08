@@ -1,7 +1,5 @@
 package com.example.auctionmanagementsystem.model;
 
-import java.time.LocalDateTime;
-
 public class Electronics extends Item {
     private String brand;
     private int warrantyMonths;

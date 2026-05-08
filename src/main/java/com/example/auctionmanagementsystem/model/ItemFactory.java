@@ -1,33 +1,44 @@
 package com.example.auctionmanagementsystem.model;
-import java.time.LocalDateTime;
+
+import java.util.Map;
 
 public class ItemFactory {
-    public static Item createItem(String type, String id, String name, String description, double startingPrice, String... extra) {
-        //Using 'type' to determine the category of Item 
-        //Must not be null
+    public static Item createItem(String type, String id, String name, String description, double startingPrice, Map<String, String> attributes ) {
+        //Dùng 'type' để xác định danh mục sản phẩm
+        //Không được để trống mục 'type' khi tạo sản phẩm
         if (type == null || type.trim().isEmpty()) {
             throw new IllegalArgumentException("You must enter product category!");
         }
 
-        //Initialize item based on type 
+        //Tránh NullPointerException cho attributes khi tạo sản phẩm
+        if (attributes == null) {
+            throw new IllegalArgumentException("Please add more information!");
+        }
+
+        //Khởi tạo sản phẩm cho từng loại 
         try {
             return switch(type.toUpperCase()) {
             case "ELECTRONICS" -> {
-                if (extra.length < 2) throw new IllegalArgumentException("Lack of Electronics' parameters!");
-                yield new Electronics(id, name, description, startingPrice, extra[0], Integer.parseInt(extra[1]));
+                String brand = attributes.getOrDefault("brand", "Unknown");
+                String warrantyStr = attributes.getOrDefault("warranty", "0");
+                yield new Electronics(id, name, description, startingPrice, brand, Integer.parseInt(warrantyStr.trim()));
             }
 
             case "ART" -> {
-                if (extra.length < 3) throw new IllegalArgumentException("Lack of Art's parameters!");
-                yield new Art(id, name, description, startingPrice, extra[0], extra[1], extra[2]);
+                String author = attributes.getOrDefault("author", "Unknown");
+                String material = attributes.getOrDefault("material", "Unknown");
+                String year = attributes.getOrDefault("year", "Unknown");
+                yield new Art(id, name, description, startingPrice, author, material, year);
             }
 
             case "VEHICLE" -> {
-                if (extra.length < 2) throw new IllegalArgumentException("Lack of Vehicle's parameters!");
-                yield new Vehicle(id, name, description, startingPrice, Integer.parseInt(extra[0]), Double.parseDouble(extra[1]));
+                String yearStr = attributes.getOrDefault("year", "0");
+                String mileageStr = attributes.getOrDefault("mileage", "0.0");
+                yield new Vehicle(id, name, description, startingPrice, Integer.parseInt(yearStr.trim()), Double.parseDouble(mileageStr.trim()));
             }
 
-            default -> throw new IllegalArgumentException("Product is not supported by our system!");
+            //Thông báo không tìm thấy loại sản phẩm phù hợp khi tạo sản phẩm (chưa có trong danh sách loại sản phẩm)
+            default -> throw new IllegalArgumentException("Your product has not supported by our system yet!");
             };
         } catch (Exception e) {
             System.err.println("ERROR: Found error in ItemFactory.java!" + e.getMessage());
