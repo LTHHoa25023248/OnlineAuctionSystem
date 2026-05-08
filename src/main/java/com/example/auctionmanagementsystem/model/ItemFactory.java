@@ -3,7 +3,7 @@ package com.example.auctionmanagementsystem.model;
 import java.util.Map;
 
 public class ItemFactory {
-    public static Item createItem(String type, String id, String name, String description, double startingPrice, Map<String, String> attributes ) {
+    public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
         //Dùng 'type' để xác định danh mục sản phẩm
         //Không được để trống mục 'type' khi tạo sản phẩm
         if (type == null || type.trim().isEmpty()) {
@@ -21,20 +21,20 @@ public class ItemFactory {
             case "ELECTRONICS" -> {
                 String brand = attributes.getOrDefault("brand", "Unknown");
                 String warrantyStr = attributes.getOrDefault("warranty", "0");
-                yield new Electronics(id, name, description, startingPrice, brand, Integer.parseInt(warrantyStr.trim()));
+                yield new Electronics(name, description, startingPrice, brand, Integer.parseInt(warrantyStr.trim()));
             }
 
             case "ART" -> {
                 String author = attributes.getOrDefault("author", "Unknown");
                 String material = attributes.getOrDefault("material", "Unknown");
                 String year = attributes.getOrDefault("year", "Unknown");
-                yield new Art(id, name, description, startingPrice, author, material, year);
+                yield new Art(name, description, startingPrice, author, material, year);
             }
 
             case "VEHICLE" -> {
                 String yearStr = attributes.getOrDefault("year", "0");
                 String mileageStr = attributes.getOrDefault("mileage", "0.0");
-                yield new Vehicle(id, name, description, startingPrice, Integer.parseInt(yearStr.trim()), Double.parseDouble(mileageStr.trim()));
+                yield new Vehicle(name, description, startingPrice, Integer.parseInt(yearStr.trim()), Double.parseDouble(mileageStr.trim()));
             }
 
             //Thông báo không tìm thấy loại sản phẩm phù hợp khi tạo sản phẩm (chưa có trong danh sách loại sản phẩm)
