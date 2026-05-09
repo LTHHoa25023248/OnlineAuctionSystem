@@ -1,7 +1,5 @@
 package com.example.auctionmanagementsystem.model;
 
-import java.time.LocalDateTime;
-
 public class Vehicle extends Item {
     private int year;
     private double mileage;
