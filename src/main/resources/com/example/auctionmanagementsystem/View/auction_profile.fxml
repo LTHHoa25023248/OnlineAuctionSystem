@@ -2,24 +2,17 @@
 
 <?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1062.0" stylesheets="@../css/profilepagestyles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.ProfileController">
     <children>
 
-        <MFXButton
-                fx:id="closeButton"
-                layoutX="1010.0"
-                layoutY="14.0"
-                onAction="#onCloseButtonClick"
-                styleClass="closeButton"
-                prefWidth="36.0"
-                prefHeight="36.0">
+        <MFXButton fx:id="closeButton" layoutX="1010.0" layoutY="14.0" onAction="#onCloseButtonClick" prefHeight="36.0" prefWidth="36.0" styleClass="closeButton">
             <graphic>
                 <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                    <image><Image url="@../images/Icons/cross-circle.png"/></image>
+                    <image><Image url="@../images/Icons/cross-circle.png" /></image>
                 </ImageView>
             </graphic>
         </MFXButton>
@@ -29,15 +22,15 @@
                 <Font size="39.0" />
             </font>
         </Label>
-        <MFXPaginatedTableView fx:id="table" layoutX="155.0" layoutY="428.0" prefHeight="174.0" prefWidth="692.0" />
+
+        <MFXButton fx:id="depositButton" layoutX="530.0" layoutY="67.0" onAction="#onDepositButtonClick" prefHeight="35.0" prefWidth="120.0" styleClass="myButtons" text="Deposit" />
+
+        <MFXButton fx:id="editButton" layoutX="664.0" layoutY="67.0" prefHeight="35.0" prefWidth="120.0" styleClass="myButtons" text="Edit Profile" />
+
         <MFXTextField fx:id="nameField" allowEdit="false" floatingText="Name" layoutX="167.0" layoutY="151.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="Nguyễn Minh Đức" />
         <MFXTextField fx:id="usernameField" allowEdit="false" floatingText="Username" layoutX="531.0" layoutY="151.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="hi" />
         <MFXTextField fx:id="emailField" allowEdit="false" floatingText="Email" layoutX="167.0" layoutY="243.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="abc@gmail.con" />
         <MFXTextField fx:id="phoneField" allowEdit="false" floatingText="Phone Number" layoutX="531.0" layoutY="243.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="1234567890" />
-        <MFXButton fx:id="editButton" layoutX="722.0" layoutY="67.0" styleClass="myButtons" text="Edit Profile" />
 
-        <!-- Nút Deposit -->
-        <MFXButton fx:id="depositButton" layoutX="530.0" layoutY="67.0" styleClass="myButtons" text="Deposit" prefWidth="120.0" prefHeight="35.0" />
-        <MFXButton fx:id="depositButton" layoutX="530.0" layoutY="67.0" styleClass="myButtons" text="Deposit" prefWidth="120.0" prefHeight="35.0" onAction="#onDepositButtonClick" />
     </children>
 </AnchorPane>

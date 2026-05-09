@@ -6,7 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.auctionmanagementsystem.controller.helper.AdminDashboardController"
+            fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
             styleClass="rootPane"
             stylesheets="@../css/adminstyles.css">
 
@@ -30,15 +30,6 @@
                     <Label text="📊" styleClass="navIcon"/>
                     <Label text="Analytics" styleClass="navLabel"/>
                 </HBox>
-                <Separator styleClass="sidebarDivider"/>
-                <HBox styleClass="navItem" onMouseClicked="#handleReports">
-                    <Label text="🚩" styleClass="navIcon"/>
-                    <Label text="Reports" styleClass="navLabel"/>
-                </HBox>
-                <HBox styleClass="navItem" onMouseClicked="#handleSettings">
-                    <Label text="⚙️" styleClass="navIcon"/>
-                    <Label text="Settings" styleClass="navLabel"/>
-                </HBox>
             </VBox>
         </VBox>
     </left>
@@ -58,6 +49,7 @@
             <VBox styleClass="contentArea" spacing="16">
                 <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
 
+                <!-- Stats row -->
                 <HBox spacing="14" styleClass="statsRow">
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
                         <Label text="Total Listings" styleClass="statLabel"/>
@@ -81,6 +73,7 @@
                     </VBox>
                 </HBox>
 
+                <!-- Auction Listings Table -->
                 <VBox styleClass="tableCard">
                     <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
                         <Label text="Auction Listings" styleClass="tableHeaderTitle"/>
@@ -93,7 +86,7 @@
                             <Button text="Others"  styleClass="ftab" onAction="#filterOthers"/>
                         </HBox>
                     </HBox>
-                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="400">
+                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="350">
                         <columns>
                             <TableColumn fx:id="colItem"     text="Item"        prefWidth="220"/>
                             <TableColumn fx:id="colCategory" text="Category"    prefWidth="100"/>
@@ -101,6 +94,30 @@
                             <TableColumn fx:id="colBid"      text="Current Bid" prefWidth="110"/>
                             <TableColumn fx:id="colStatus"   text="Status"      prefWidth="120"/>
                             <TableColumn fx:id="colActions"  text="Actions"     prefWidth="130"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <!-- Users Table -->
+                <VBox fx:id="usersCard" styleClass="tableCard" visible="false" managed="false">
+                    <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
+                        <Label text="Users" styleClass="tableHeaderTitle"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="filterTabs" spacing="6">
+                            <Button text="All"    styleClass="ftab ftabActive" onAction="#filterUsersAll"/>
+                            <Button text="Active" styleClass="ftab" onAction="#filterUsersActive"/>
+                            <Button text="Banned" styleClass="ftab" onAction="#filterUsersBanned"/>
+                            <Button text="Admin"  styleClass="ftab" onAction="#filterUsersAdmin"/>
+                        </HBox>
+                    </HBox>
+                    <TableView fx:id="usersTable" styleClass="listingsTable" prefHeight="300">
+                        <columns>
+                            <TableColumn fx:id="colUserId"     text="ID"       prefWidth="60"/>
+                            <TableColumn fx:id="colUsername"   text="Username" prefWidth="150"/>
+                            <TableColumn fx:id="colEmail"      text="Email"    prefWidth="200"/>
+                            <TableColumn fx:id="colRole"       text="Role"     prefWidth="90"/>
+                            <TableColumn fx:id="colUserStatus" text="Status"   prefWidth="100"/>
+                            <TableColumn fx:id="colJoinDate"   text="Joined"   prefWidth="110"/>
                         </columns>
                     </TableView>
                 </VBox>

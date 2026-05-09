@@ -144,6 +144,19 @@
                 <VBox.margin><Insets left="57"/></VBox.margin>
             </MFXButton>
 
+            <!-- Chỉ hiện với Admin -->
+            <MFXButton
+                    fx:id="adminButton"
+                    styleClass="goldButton"
+                    text="Admin Panel"
+                    onAction="#onAdminButtonClick"
+                    prefWidth="140.0"
+                    prefHeight="48.0"
+                    visible="false"
+                    managed="false">
+                <VBox.margin><Insets left="57" top="10"/></VBox.margin>
+            </MFXButton>
+
         </VBox>
     </left>
 

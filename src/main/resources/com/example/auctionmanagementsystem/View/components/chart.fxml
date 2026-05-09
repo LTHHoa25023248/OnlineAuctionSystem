@@ -1,38 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefWidth="900"
-            prefHeight="500"
-            style="-fx-background-color: white;
-                   -fx-background-radius: 25;
-                   -fx-border-radius: 25;
-                   -fx-border-color: #E5E7EB;">
+            fx:controller="com.example.auctionmanagementsystem.controller.ChartController"
+            prefWidth="960"
+            prefHeight="560"
+            style="-fx-background-color: #1a1a2e; -fx-background-radius: 20; -fx-border-radius: 20;">
 
-    <padding>
-        <Insets top="25" right="25" bottom="25" left="25"/>
-    </padding>
+    <!-- Close button -->
+    <ImageView fx:id="closeButton"
+               fitHeight="28.0" fitWidth="28.0"
+               layoutX="916.0" layoutY="16.0"
+               pickOnBounds="true"
+               onMouseClicked="#handleClose">
+        <image><Image url="@../../images/Icons/cross-circle.png"/></image>
+    </ImageView>
 
-    <!-- ===== LINE CHART ===== -->
-    <LineChart title="Auction Revenue Overview"
-               AnchorPane.topAnchor="20.0"
+    <!-- Title -->
+    <Label text="Analytics — Revenue Overview"
+           layoutX="36.0" layoutY="20.0"
+           style="-fx-text-fill: #ecc667; -fx-font-size: 22; -fx-font-weight: bold; -fx-font-family: 'Berlin Sans FB';"/>
+
+    <!-- Stats row -->
+    <HBox layoutX="36.0" layoutY="60.0" spacing="16.0">
+
+        <VBox style="-fx-background-color: #16213e; -fx-background-radius: 12; -fx-padding: 14 24 14 24;">
+            <Label text="Total Revenue"
+                   style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+            <Label fx:id="totalRevenueLabel" text="48200 USD"
+                   style="-fx-text-fill: #ecc667; -fx-font-size: 22; -fx-font-weight: bold;"/>
+        </VBox>
+
+        <VBox style="-fx-background-color: #16213e; -fx-background-radius: 12; -fx-padding: 14 24 14 24;">
+            <Label text="This Month"
+                   style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+            <Label fx:id="monthRevenueLabel" text="8450 USD"
+                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+        </VBox>
+
+        <VBox style="-fx-background-color: #16213e; -fx-background-radius: 12; -fx-padding: 14 24 14 24;">
+            <Label text="Total Bids"
+                   style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+            <Label fx:id="totalBidsLabel" text="2340"
+                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+        </VBox>
+
+        <VBox style="-fx-background-color: #16213e; -fx-background-radius: 12; -fx-padding: 14 24 14 24;">
+            <Label text="Active Users"
+                   style="-fx-text-fill: #9ca3af; -fx-font-size: 13;"/>
+            <Label fx:id="activeUsersLabel" text="512"
+                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+        </VBox>
+
+    </HBox>
+
+    <!-- Line Chart -->
+    <LineChart fx:id="revenueChart"
+               AnchorPane.topAnchor="155.0"
                AnchorPane.leftAnchor="20.0"
                AnchorPane.rightAnchor="20.0"
                AnchorPane.bottomAnchor="20.0"
                style="-fx-background-color: transparent;">
-
         <xAxis>
-            <CategoryAxis label="Month"/>
+            <CategoryAxis label="Month"
+                          style="-fx-tick-label-fill: #9ca3af; -fx-label-fill: #9ca3af;"/>
         </xAxis>
-
         <yAxis>
-            <NumberAxis label="Revenue"/>
+            <NumberAxis label="Revenue (USD)"
+                        style="-fx-tick-label-fill: #9ca3af; -fx-label-fill: #9ca3af;"/>
         </yAxis>
-
     </LineChart>
 
 </AnchorPane>
