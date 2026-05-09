@@ -21,4 +21,7 @@ public class Admin extends User {
         System.out.printf("[Admin] ID: %d | Username: %s | Access Level: %s%n", 
                 getId(), username, accessLevel);
     }
+    public Admin() {
+        super();
+}
 }
