@@ -1,20 +1,19 @@
 package com.example.auctionmanagementsystem.model;
 
-public abstract class Item {
-    private String id, name, description;
+public abstract class Item extends Entity{
+    private String name, description;
     private double startingPrice;
 
     //Default Constructor
     public Item() {}
 
     //Constructor with full parameters
-    public Item(String id, String name, String description, double startingPrice) {
-        this.id = id;
+    public Item(String name, String description, double startingPrice) {
         this.name = name;
         this.description = description;
 
         if (startingPrice < 0) {
-            //Throwing exception for negative value of starting price
+            //Throwing com.example.auctionmanagementsystem.exception for negative value of starting price
             throw new IllegalArgumentException("Starting price must greater than 0!");
         }
         //Valiadation when initialize a item. Current price is 
@@ -24,7 +23,6 @@ public abstract class Item {
 
     //Setters and Getters
     public String getName() {return name;}
-    public String getId() {return id;}
     public String getDescription() {return description;}
     public double getStartingPrice() {return startingPrice;}
 
