@@ -5,32 +5,28 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static DatabaseConnection instance;
-    private Connection connection;
+    private static final String URL =
+            "jdbc:mysql://localhost:3306/auction_system";
 
-    private final String URL = "jdbc:mysql://localhost:3306/auction_system";
-    private final String USER = "auction_system"; 
-    private final String PASSWORD = "Huy2605@@"; 
+    private static final String USER = "auction_system";
 
-    private DatabaseConnection() {
+    private static final String PASSWORD ="Huy2605@@";
+
+    static {
         try {
-            // Nạp driver MySQL (yêu cầu thêm thư viện mysql-connector-j vào pom.xml hoặc gradle)
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
+
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi kết nối cơ sở dữ liệu!");
+
+            throw new RuntimeException("Cannot load MySQL Driver");
         }
     }
 
-    public static synchronized DatabaseConnection getInstance() {
-        if (instance == null) {
-            instance = new DatabaseConnection();
-        }
-        return instance;
-    }
+    // mỗi lần gọi tạo connection mới
+    public static Connection getConnection()
+            throws SQLException {
 
-    public Connection getConnection() {
-        return connection;
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
