@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane
+        prefHeight="-1"
+        prefWidth="-1"
+        minWidth="800.0"
+        minHeight="600.0"
+        styleClass="root"
+        stylesheets="@../css/styles.css"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.SignupController">
+
+    <top>
+        <HBox
+                styleClass="titlePane"
+                alignment="CENTER_LEFT"
+                prefHeight="88.0"
+                spacing="14.0"
+                BorderPane.alignment="CENTER">
+            <padding><Insets top="0" right="28" bottom="0" left="28"/></padding>
+
+            <Label text="Auction System" styleClass="titleLabel">
+                <font><Font name="Berlin Sans FB" size="46.0"/></font>
+            </Label>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="Already have an account?" styleClass="loggedInText">
+                <font><Font size="15.0"/></font>
+            </Label>
+            <MFXButton
+                    fx:id="loginButton"
+                    onAction="#onLoginButtonClick"
+                    styleClass="outlineButton"
+                    text="Log In"
+                    prefWidth="100.0"
+                    prefHeight="38.0"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="formScrollPane">
+            <VBox alignment="CENTER" spacing="0" styleClass="formOuter">
+                <padding><Insets top="48" right="0" bottom="48" left="0"/></padding>
+
+                <VBox styleClass="signupCard" spacing="0" maxWidth="560.0">
+
+                    <VBox styleClass="signupCardHeader" spacing="6">
+                        <padding><Insets top="32" right="36" bottom="28" left="36"/></padding>
+                        <Label text="Create Account" styleClass="signupTitle">
+                            <font><Font name="Berlin Sans FB" size="32.0"/></font>
+                        </Label>
+                        <Label text="Fill in your details to get started" styleClass="signupSubtitle">
+                            <font><Font size="14.0"/></font>
+                        </Label>
+                    </VBox>
+
+                    <Separator styleClass="cardDivider"/>
+
+                    <VBox spacing="18" styleClass="signupFormBody">
+                        <padding><Insets top="28" right="36" bottom="36" left="36"/></padding>
+
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="First Name" styleClass="fieldLabel"/>
+                                <MFXTextField
+                                        fx:id="firstNameField"
+                                        styleClass="signupField"
+                                        promptText="John"
+                                        prefHeight="48.0"
+                                        maxWidth="Infinity"
+                                        HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="firstNameError" styleClass="errorLabel" text="" visible="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Last Name" styleClass="fieldLabel"/>
+                                <MFXTextField
+                                        fx:id="lastNameField"
+                                        styleClass="signupField"
+                                        promptText="Doe"
+                                        prefHeight="48.0"
+                                        maxWidth="Infinity"/>
+                                <Label fx:id="lastNameError" styleClass="errorLabel" text="" visible="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="6">
+                            <Label text="Username" styleClass="fieldLabel"/>
+                            <MFXTextField
+                                    fx:id="usernameField"
+                                    styleClass="signupField"
+                                    promptText="johndoe123"
+                                    prefHeight="48.0"
+                                    maxWidth="Infinity"/>
+                            <Label fx:id="usernameError" styleClass="errorLabel" text="" visible="false"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Email Address" styleClass="fieldLabel"/>
+                            <MFXTextField
+                                    fx:id="emailField"
+                                    styleClass="signupField"
+                                    promptText="john@example.com"
+                                    prefHeight="48.0"
+                                    maxWidth="Infinity"/>
+                            <Label fx:id="emailError" styleClass="errorLabel" text="" visible="false"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Phone Number" styleClass="fieldLabel"/>
+                            <MFXTextField
+                                    fx:id="phoneField"
+                                    styleClass="signupField"
+                                    promptText="+1 234 567 8900"
+                                    prefHeight="48.0"
+                                    maxWidth="Infinity"/>
+                            <Label fx:id="phoneError" styleClass="errorLabel" text="" visible="false"/>
+                        </VBox>
+
+                        <HBox spacing="16">
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Password" styleClass="fieldLabel"/>
+                                <MFXPasswordField
+                                        fx:id="passwordField"
+                                        styleClass="signupField"
+                                        promptText="Min. 8 characters"
+                                        prefHeight="48.0"
+                                        maxWidth="Infinity"/>
+                                <Label fx:id="passwordError" styleClass="errorLabel" text="" visible="false"/>
+                            </VBox>
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <Label text="Confirm Password" styleClass="fieldLabel"/>
+                                <MFXPasswordField
+                                        fx:id="confirmPasswordField"
+                                        styleClass="signupField"
+                                        promptText="Repeat password"
+                                        prefHeight="48.0"
+                                        maxWidth="Infinity"/>
+                                <Label fx:id="confirmPasswordError" styleClass="errorLabel" text="" visible="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="6">
+                            <Label text="Address" styleClass="fieldLabel"/>
+                            <MFXTextField
+                                    fx:id="addressField"
+                                    styleClass="signupField"
+                                    promptText="123 Main Street, City"
+                                    prefHeight="48.0"
+                                    maxWidth="Infinity"/>
+                        </VBox>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <CheckBox fx:id="termsCheckBox" styleClass="signupCheckBox"/>
+                            <Label styleClass="termsLabel">
+                                <graphic>
+                                    <HBox spacing="4" alignment="CENTER_LEFT">
+                                        <Label text="I agree to the" styleClass="termsText"/>
+                                        <Label fx:id="termsLink" text="Terms &amp; Conditions"
+                                               styleClass="termsLink" onMouseClicked="#onTermsClick"/>
+                                    </HBox>
+                                </graphic>
+                            </Label>
+                        </HBox>
+                        <Label fx:id="termsError" styleClass="errorLabel" text="" visible="false"/>
+
+                        <MFXButton
+                                fx:id="signupButton"
+                                onAction="#onSignupButtonClick"
+                                styleClass="goldButton signupSubmitBtn"
+                                text="Create Account"
+                                prefHeight="52.0"
+                                maxWidth="Infinity"/>
+
+                        <Label fx:id="generalError" styleClass="errorLabel"
+                               text="" visible="false" alignment="CENTER" maxWidth="Infinity"/>
+
+                    </VBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

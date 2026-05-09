@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+.root {
+    -fx-background-color: #f0f0f0;
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+/* TOP BAR */
+.titlePane {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: transparent transparent #ecc667 transparent;
+    -fx-border-width: 0 0 3px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.45), 10, 0, 0, 4);
+}
+
+.titleLabel {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Berlin Sans FB';
+}
+
+.loggedInText {
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.usernameLabel {
+    -fx-text-fill: #ecc667;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-weight: bold;
+}
+
+/* GOLD BUTTON */
+.goldButton {
+    -fx-background-color: #ecc667;
+    -fx-text-fill: #1a1a1a;
+    -fx-font-family: 'Berlin Sans FB';
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.22), 5, 0, 0, 2);
+}
+
+.goldButton:hover {
+    -fx-background-color: #d4a832;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.32), 7, 0, 0, 3);
+}
+
+.goldButton:pressed {
+    -fx-background-color: #b08b29;
+    -fx-effect: none;
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* SIDEBAR */
+.menuPane {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: transparent #2e2e2e transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 10, 0, 4, 0);
+}
+
+.menuSectionLabel {
+    -fx-text-fill: rgba(255,255,255,0.3);
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.menuItems {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent transparent transparent;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.menuItems:hover {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-border-color: transparent transparent transparent #ecc667;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.menuItems:hover .label {
+    -fx-text-fill: #ecc667;
+}
+
+.menuItemActive {
+    -fx-background-color: rgba(236,198,103,0.12);
+    -fx-border-color: transparent transparent transparent #ecc667;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.menuItemActive .label {
+    -fx-text-fill: #ecc667;
+}
+
+.menuSeparator {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-padding: 0;
+}
+
+/* SECONDARY BAR */
+.secondaryBar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e2e2e2 transparent;
+    -fx-border-width: 0 0 1.5px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 5, 0, 0, 2);
+}
+
+/* CATEGORY LABELS */
+.categories {
+    -fx-background-color: #f4f4f4;
+    -fx-text-fill: #666666;
+    -fx-background-radius: 10px;
+    -fx-border-color: #d8d8d8;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-alignment: CENTER;
+    -fx-font-family: 'Berlin Sans FB';
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 0 12px;
+}
+
+.categories:hover {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #ecc667;
+    -fx-border-color: #1a1a1a;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 2);
+}
+
+.catSelected {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #ecc667;
+    -fx-border-color: #1a1a1a;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 2);
+}
+
+/* SCROLL PANE */
+.backPane {
+    -fx-background-color: #f0f0f0;
+    -fx-background: #f0f0f0;
+    -fx-border-color: transparent;
+    -fx-padding: 16px;
+}
+
+.backPane .viewport {
+    -fx-background-color: #f0f0f0;
+}
+
+.backPane > .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.backPane > .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(0,0,0,0.18);
+    -fx-background-radius: 4px;
+}
+
+/* AUCTION CARDS */
+.auctionCard {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 14px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.09), 8, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.auctionCard:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 14, 0, 0, 5);
+    -fx-border-color: #ecc667;
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.imagePane {
+    -fx-background-color: rgba(236,198,103,0.18);
+    -fx-background-radius: 12px;
+    -fx-padding: 10px;
+}
+
+.categoryLabel {
+    -fx-background-color: rgba(176,139,41,0.15);
+    -fx-text-fill: #b08b29;
+    -fx-background-radius: 8px;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 10px;
+}
+
+.popularLabel {
+    -fx-background-color: #1a1a1a;
+    -fx-text-fill: #ecc667;
+    -fx-background-radius: 8px;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 10px;
+}
+
+.itemTitle {
+    -fx-text-fill: #1a1a1a;
+    -fx-font-family: 'Berlin Sans FB';
+    -fx-font-size: 16px;
+}
+
+.bidLabel {
+    -fx-text-fill: #b08b29;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.timerLabel {
+    -fx-text-fill: #888888;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* FORM FIELDS */
+.fields {
+    -fx-padding: 10px;
+    -fx-border-color: #1a1a1a;
+    -fx-border-radius: 10px;
+    -fx-border-width: 2px;
+    -fx-background-radius: 10px;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-background-color: #ffffff;
+}
+
+.fields:focused {
+    -fx-border-color: #ecc667;
+}
+
+.fields .floating-text {
+    -fx-font-size: 15px;
+    -fx-text-fill: #1a1a1a;
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+/* ══════════════════════════════════════════
+   SIGNUP PAGE
+══════════════════════════════════════════ */
+.formScrollPane {
+    -fx-background-color: #f0f0f0;
+    -fx-background: #f0f0f0;
+    -fx-border-color: transparent;
+}
+
+.formScrollPane .viewport {
+    -fx-background-color: #f0f0f0;
+}
+
+.formOuter {
+    -fx-background-color: #f0f0f0;
+    -fx-alignment: CENTER;
+}
+
+.signupCard {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 16, 0, 0, 5);
+}
+
+.signupCardHeader {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 16px 16px 0 0;
+}
+
+.signupTitle {
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Berlin Sans FB';
+}
+
+.signupSubtitle {
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-font-family: 'Varela Round', sans-serif;
+}
+
+.cardDivider {
+    -fx-background-color: #e0e0e0;
+}
+
+.signupFormBody {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0 0 16px 16px;
+}
+
+.fieldLabel {
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.signupField {
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 10px;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 12px;
+}
+
+.signupField:focused {
+    -fx-border-color: #ecc667;
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(three-pass-box, rgba(236,198,103,0.25), 6, 0, 0, 0);
+}
+
+.errorLabel {
+    -fx-text-fill: #e53935;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 11px;
+}
+
+.signupCheckBox {
+    -fx-cursor: hand;
+}
+
+.signupCheckBox:selected .box {
+    -fx-background-color: #ecc667;
+    -fx-border-color: #ecc667;
+}
+
+.termsText {
+    -fx-text-fill: #555555;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 13px;
+}
+
+.termsLink {
+    -fx-text-fill: #b08b29;
+    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.signupSubmitBtn {
+    -fx-font-size: 16px;
+    -fx-background-radius: 12px;
+}
+
+.outlineButton {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffffff;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: 'Berlin Sans FB';
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.outlineButton:hover {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #1a1a1a;
+}

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fitToWidth="true" prefHeight="700.0" prefWidth="900.0" stylesheets="@../css/listingpagestyles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
+    <content>
+        <AnchorPane minHeight="700.0" prefWidth="887.0" styleClass="rootPane">
+            <children>
+
+                <!-- Ảnh trái -->
+                <StackPane layoutX="28.0" layoutY="42.0" prefHeight="390.0" prefWidth="378.0" styleClass="imagePane">
+                    <children>
+                        <ImageView fx:id="image" fitHeight="366.0" fitWidth="381.0" pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@../images/Icons/sample.png" /></image>
+                        </ImageView>
+                    </children>
+                </StackPane>
+
+                <!-- Listed By + Description (trái dưới) -->
+                <Label layoutX="28.0" layoutY="450.0" text="Listed By :">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label fx:id="userLabel" layoutX="118.0" layoutY="450.0" prefWidth="278.0" text="Team 5">
+                    <font><Font name="MS Reference Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label layoutX="28.0" layoutY="490.0" text="Description :">
+                    <font><Font name="Microsoft Sans Serif" size="19.0" /></font>
+                </Label>
+                <Label fx:id="descriptionLabel" alignment="TOP_LEFT" layoutX="28.0" layoutY="525.0" prefHeight="150.0" prefWidth="386.0" wrapText="true" text="This is a short description text.">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- Cột phải -->
+                <!-- Title -->
+                <Label fx:id="titleLabel" layoutX="460.0" layoutY="20.0" prefHeight="48.0" prefWidth="386.0" text="This is Title">
+                    <font><Font name="Berlin Sans FB" size="43.0" /></font>
+                </Label>
+
+                <!-- Active + Popular + Category -->
+                <Label fx:id="activeLabel" alignment="CENTER" layoutX="460.0" layoutY="80.0" prefHeight="23.0" prefWidth="90.0" styleClass="popularLabel" text="Active" textFill="WHITE">
+                    <font><Font name="Berlin Sans FB" size="15.0" /></font>
+                </Label>
+                <Label fx:id="popularNowLabel" alignment="CENTER" layoutX="560.0" layoutY="80.0" prefHeight="23.0" prefWidth="99.0" styleClass="popularLabel" text="Popular Now" textFill="WHITE">
+                    <font><Font name="Berlin Sans FB" size="15.0" /></font>
+                </Label>
+                <Label fx:id="categoryLabel" alignment="CENTER" layoutX="668.0" layoutY="80.0" prefHeight="23.0" prefWidth="107.0" styleClass="categoryLabel" text="Category" textFill="WHITE">
+                    <font><Font name="Berlin Sans FB" size="17.0" /></font>
+                </Label>
+
+                <!-- Current Price -->
+                <Label layoutX="460.0" layoutY="118.0" text=" Current Price : ">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label fx:id="priceLabel" layoutX="590.0" layoutY="118.0" prefWidth="200.0" text="100.0 $">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- Total Bids -->
+                <Label layoutX="460.0" layoutY="155.0" text=" Total Bids : ">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label fx:id="totalBidsLabel" layoutX="560.0" layoutY="155.0" text="17">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- Started On -->
+                <Label layoutX="460.0" layoutY="192.0" text=" Started On : ">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label fx:id="startLabel" layoutX="575.0" layoutY="192.0" prefWidth="191.0" text="17/02/2022">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- End On -->
+                <Label layoutX="460.0" layoutY="229.0" text=" End On : ">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <Label fx:id="endLabel" layoutX="545.0" layoutY="229.0" prefWidth="163.0" text="17/02/2022">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+                <MFXButton fx:id="endnowButton" layoutX="720.0" layoutY="225.0" text="End Now">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </MFXButton>
+
+                <!-- Winner -->
+                <Label fx:id="winnerLabel" layoutX="460.0" layoutY="268.0" prefWidth="303.0" text="">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- Place Bid -->
+                <MFXTextField fx:id="bidField" floatMode="BORDER" floatingText="  Place Bid  " layoutX="460.0" layoutY="310.0" prefHeight="48.0" prefWidth="206.0" styleClass="fields" />
+                <MFXButton fx:id="placeBidButton" layoutX="680.0" layoutY="310.0" prefHeight="48.0" prefWidth="66.0" text="Place">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </MFXButton>
+                <Label fx:id="bidValidationLabel" layoutX="460.0" layoutY="365.0" prefWidth="293.0" text="" textFill="RED">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </Label>
+
+                <!-- Comments title -->
+                <Label layoutX="460.0" layoutY="395.0" prefHeight="35.0" prefWidth="145.0" text="Comments">
+                    <font><Font name="Microsoft Sans Serif" size="25.0" /></font>
+                </Label>
+
+                <!-- Comments pane -->
+                <MFXScrollPane fx:id="commentsPane" layoutX="460.0" layoutY="435.0" prefHeight="200.0" prefWidth="390.0" styleClass="scrollPane" trackColor="#ffc800" />
+
+                <!-- Comment input -->
+                <MFXTextField fx:id="commentField" floatMode="BORDER" floatingText="  Comment  " layoutX="460.0" layoutY="645.0" prefHeight="42.0" prefWidth="278.0" styleClass="fields">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </MFXTextField>
+                <MFXButton fx:id="commentPostButton" layoutX="748.0" layoutY="645.0" prefHeight="42.0" prefWidth="66.0" text="Post">
+                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
+                </MFXButton>
+
+                <!-- Close button -->
+                <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="845.0" layoutY="14.0" pickOnBounds="true" onMouseClicked="#handleClose">
+                    <image><Image url="@../images/Icons/cross-circle.png" /></image>
+                </ImageView>
+
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>
