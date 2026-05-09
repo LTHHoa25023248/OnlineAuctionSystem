@@ -19,9 +19,6 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.example.auctionmanagementsystem.controller.SignupController">
 
-    <!-- ═══════════════════════════════════════════
-         TOP BAR
-    ════════════════════════════════════════════ -->
     <top>
         <HBox
                 styleClass="titlePane"
@@ -42,26 +39,21 @@
             </Label>
             <MFXButton
                     fx:id="loginButton"
+                    onAction="#onLoginButtonClick"
                     styleClass="outlineButton"
                     text="Log In"
-                    onAction="#onLoginButtonClick"
                     prefWidth="100.0"
                     prefHeight="38.0"/>
         </HBox>
     </top>
 
-    <!-- ═══════════════════════════════════════════
-         CENTER — SIGNUP FORM
-    ════════════════════════════════════════════ -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="formScrollPane">
             <VBox alignment="CENTER" spacing="0" styleClass="formOuter">
                 <padding><Insets top="48" right="0" bottom="48" left="0"/></padding>
 
-                <!-- Card -->
                 <VBox styleClass="signupCard" spacing="0" maxWidth="560.0">
 
-                    <!-- Card Header -->
                     <VBox styleClass="signupCardHeader" spacing="6">
                         <padding><Insets top="32" right="36" bottom="28" left="36"/></padding>
                         <Label text="Create Account" styleClass="signupTitle">
@@ -74,11 +66,9 @@
 
                     <Separator styleClass="cardDivider"/>
 
-                    <!-- Form Body -->
                     <VBox spacing="18" styleClass="signupFormBody">
                         <padding><Insets top="28" right="36" bottom="36" left="36"/></padding>
 
-                        <!-- Row 1: First + Last Name -->
                         <HBox spacing="16">
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="First Name" styleClass="fieldLabel"/>
@@ -103,7 +93,6 @@
                             </VBox>
                         </HBox>
 
-                        <!-- Username -->
                         <VBox spacing="6">
                             <Label text="Username" styleClass="fieldLabel"/>
                             <MFXTextField
@@ -115,7 +104,6 @@
                             <Label fx:id="usernameError" styleClass="errorLabel" text="" visible="false"/>
                         </VBox>
 
-                        <!-- Email -->
                         <VBox spacing="6">
                             <Label text="Email Address" styleClass="fieldLabel"/>
                             <MFXTextField
@@ -127,7 +115,6 @@
                             <Label fx:id="emailError" styleClass="errorLabel" text="" visible="false"/>
                         </VBox>
 
-                        <!-- Phone -->
                         <VBox spacing="6">
                             <Label text="Phone Number" styleClass="fieldLabel"/>
                             <MFXTextField
@@ -139,7 +126,6 @@
                             <Label fx:id="phoneError" styleClass="errorLabel" text="" visible="false"/>
                         </VBox>
 
-                        <!-- Row 2: Password + Confirm -->
                         <HBox spacing="16">
                             <VBox spacing="6" HBox.hgrow="ALWAYS">
                                 <Label text="Password" styleClass="fieldLabel"/>
@@ -163,7 +149,6 @@
                             </VBox>
                         </HBox>
 
-                        <!-- Address -->
                         <VBox spacing="6">
                             <Label text="Address" styleClass="fieldLabel"/>
                             <MFXTextField
@@ -174,7 +159,6 @@
                                     maxWidth="Infinity"/>
                         </VBox>
 
-                        <!-- Terms checkbox -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <CheckBox fx:id="termsCheckBox" styleClass="signupCheckBox"/>
                             <Label styleClass="termsLabel">
@@ -189,16 +173,14 @@
                         </HBox>
                         <Label fx:id="termsError" styleClass="errorLabel" text="" visible="false"/>
 
-                        <!-- Submit Button -->
                         <MFXButton
                                 fx:id="signupButton"
+                                onAction="#onSignupButtonClick"
                                 styleClass="goldButton signupSubmitBtn"
                                 text="Create Account"
-                                onAction="#onSignupButtonClick"
                                 prefHeight="52.0"
                                 maxWidth="Infinity"/>
 
-                        <!-- General error -->
                         <Label fx:id="generalError" styleClass="errorLabel"
                                text="" visible="false" alignment="CENTER" maxWidth="Infinity"/>
 

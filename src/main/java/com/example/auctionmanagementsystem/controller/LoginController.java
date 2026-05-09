@@ -1,151 +1,97 @@
 package com.example.auctionmanagementsystem.controller;
 
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXPasswordField;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXPasswordField;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+/**
+ * Controller cho View/auction_login.fxml
+ */
+public class LoginController {
 
-public class LoginController implements Initializable {
-
-    @FXML private MFXTextField usernameField;
+    @FXML private MFXTextField     usernameField;
     @FXML private MFXPasswordField passwordField;
-    @FXML private MFXButton loginButton;
-    @FXML private MFXButton signupButton;
-    @FXML private MFXButton forgotPassButton;
-    @FXML private Label unValidLabel;
-    @FXML private Label pwValidLabel;
-    @FXML private Label statListings;
-    @FXML private Label statMembers;
-    @FXML private Label statBids;
+    @FXML private Label            unValidLabel;
+    @FXML private Label            pwValidLabel;
+    @FXML private MFXButton        loginButton;
+    @FXML private MFXButton        signupButton;      // top-bar
+    @FXML private MFXButton        forgotPassButton;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Set stat labels (tránh ký tự đặc biệt trong FXML)
-        statListings.setText("1,200+");
-        statMembers.setText("5,800+");
-        statBids.setText("$2M+");
+    @FXML
+    public void initialize() {
+        // Ẩn error labels lúc khởi động
+        if (unValidLabel != null) unValidLabel.setVisible(false);
+        if (pwValidLabel != null) pwValidLabel.setVisible(false);
 
-        // Ẩn error labels lúc khởi tạo
-        unValidLabel.setVisible(false);
-        pwValidLabel.setVisible(false);
-
-        // Xóa lỗi khi user bắt đầu gõ
-        usernameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            unValidLabel.setVisible(false);
-        });
-        passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
-            pwValidLabel.setVisible(false);
-        });
+        // Wire buttons bằng code (backup nếu FXML chưa có onAction)
+        if (signupButton   != null) signupButton.setOnAction(e   -> goToSignup());
+        if (forgotPassButton != null) forgotPassButton.setOnAction(e -> openForgotPassword());
+        if (loginButton    != null) loginButton.setOnAction(e    -> handleLogin());
     }
 
-    // ═══════════════════════════════════════════
-    // LOGIN
-    // ═══════════════════════════════════════════
+    // ── Gọi từ FXML: signupButton top-bar ────────────────────────────────────
     @FXML
-    public void onLoginButtonClick(ActionEvent e) {
-        clearErrors();
+    public void onSignupButtonClick() {
+        goToSignup();
+    }
 
-        String username = usernameField.getText().trim();
-        String password = passwordField.getText();
+    // ── Gọi từ FXML: "Sign Up" label link trong form ─────────────────────────
+    @FXML
+    public void onSignupClick(MouseEvent event) {
+        goToSignup();
+    }
 
-        if (!validate(username, password)) return;
+    // ── Gọi từ FXML: loginButton ──────────────────────────────────────────────
+    @FXML
+    public void onLoginButtonClick() {
+        handleLogin();
+    }
 
-        // TODO: Thay bằng logic xác thực thực tế với database
-        boolean loginSuccess = checkCredentials(username, password);
+    // ── Gọi từ FXML: forgotPassButton ────────────────────────────────────────
+    @FXML
+    public void onForgotPassClick() {
+        openForgotPassword();
+    }
 
-        if (loginSuccess) {
-            navigateTo("auction_list.fxml", loginButton);
+    // ── Logic ─────────────────────────────────────────────────────────────────
+
+    private void handleLogin() {
+        // ── TEST MODE: login tự do, không cần credentials ────────────────────
+        // Xóa hoặc comment block này khi tích hợp DB thật
+
+        String username = (usernameField != null && !usernameField.getText().isBlank())
+                ? usernameField.getText().trim()
+                : "TestUser";
+
+        // Admin nếu gõ "admin", còn lại là user thường
+        boolean isAdmin = username.equalsIgnoreCase("admin");
+
+        SessionManager.getInstance().login(
+                isAdmin ? 0 : 1,
+                username,
+                username + "@demo.com",
+                isAdmin
+        );
+
+        if (isAdmin) {
+            NavigationUtil.goTo(loginButton, NavigationUtil.ADMIN);
         } else {
-            showError(unValidLabel, "Invalid username or password");
+            NavigationUtil.goTo(loginButton, NavigationUtil.AUCTION_LIST);
         }
+        // ── Kết thúc TEST MODE ────────────────────────────────────────────────
     }
 
-    // ═══════════════════════════════════════════
-    // SIGNUP BUTTON (top bar)
-    // ═══════════════════════════════════════════
-    @FXML
-    public void onSignupButtonClick(ActionEvent e) {
-        navigateTo("auction_signup.fxml", signupButton);
+    private void goToSignup() {
+        // Dùng loginButton làm source nếu signupButton null
+        javafx.scene.Node src = signupButton != null ? signupButton : loginButton;
+        NavigationUtil.goTo(src, NavigationUtil.SIGNUP);
     }
 
-    // ═══════════════════════════════════════════
-    // SIGNUP LINK (bottom of form)
-    // ═══════════════════════════════════════════
-    @FXML
-    public void onSignupClick(MouseEvent e) {
-        navigateTo("auction_signup.fxml", signupButton);
-    }
-
-    // ═══════════════════════════════════════════
-    // FORGOT PASSWORD
-    // ═══════════════════════════════════════════
-    @FXML
-    public void onForgotPassButtonClick(ActionEvent e) {
-        navigateTo("forgotpass.fxml", forgotPassButton);
-    }
-
-    // ═══════════════════════════════════════════
-    // HELPERS
-    // ═══════════════════════════════════════════
-    private boolean validate(String username, String password) {
-        boolean valid = true;
-
-        if (username.isEmpty()) {
-            showError(unValidLabel, "Username cannot be empty");
-            valid = false;
-        }
-        if (password.isEmpty()) {
-            showError(pwValidLabel, "Password cannot be empty");
-            valid = false;
-        }
-        return valid;
-    }
-
-    private boolean checkCredentials(String username, String password) {
-        // TODO: Thay bằng query database thực tế
-        // Ví dụ tạm thời để test:
-        return username.equals("admin") && password.equals("admin123");
-    }
-
-    private void showError(Label label, String message) {
-        label.setText(message);
-        label.setVisible(true);
-    }
-
-    private void clearErrors() {
-        unValidLabel.setVisible(false);
-        pwValidLabel.setVisible(false);
-        unValidLabel.setText("");
-        pwValidLabel.setText("");
-    }
-
-    private void navigateTo(String fxmlFile, javafx.scene.Node source) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/example/auctionmanagementsystem/View/" + fxmlFile
-                    )
-            );
-            Parent root = loader.load();
-            Stage stage = (Stage) source.getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    private void openForgotPassword() {
+        javafx.scene.Node src = forgotPassButton != null ? forgotPassButton : loginButton;
+        NavigationUtil.openPopup(src, NavigationUtil.FORGOT_PASS, "Đặt lại mật khẩu");
     }
 }

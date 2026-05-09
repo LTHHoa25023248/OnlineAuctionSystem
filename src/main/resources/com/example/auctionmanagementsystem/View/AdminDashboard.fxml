@@ -6,7 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
+            fx:controller="com.example.auctionmanagementsystem.controller.helper.AdminDashboardController"
             styleClass="rootPane"
             stylesheets="@../css/adminstyles.css">
 

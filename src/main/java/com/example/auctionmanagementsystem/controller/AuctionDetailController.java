@@ -1,69 +1,134 @@
 package com.example.auctionmanagementsystem.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXScrollPane;
+import io.github.palexdev.materialfx.controls.MFXTextField;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AuctionDetailController {
 
-    // 1. Khai báo các thành phần muốn tương tác (nhớ khớp fx:id)
-    @FXML
-    private TextField bidField; // Ô nhập tiền
+    @FXML private ImageView     image;
+    @FXML private Label         titleLabel;
+    @FXML private Label         priceLabel;
+    @FXML private Label         totalBidsLabel;
+    @FXML private Label         startLabel;
+    @FXML private Label         endLabel;
+    @FXML private Label         categoryLabel;
+    @FXML private Label         activeLabel;
+    @FXML private Label         popularNowLabel;
+    @FXML private Label         userLabel;
+    @FXML private Label         descriptionLabel;
+    @FXML private Label         winnerLabel;
+    @FXML private Label         bidValidationLabel;
 
-    @FXML
-    private Button placeBidButton; // Nút đặt cược
+    @FXML private MFXTextField  bidField;
+    @FXML private MFXButton     placeBidButton;
+    @FXML private MFXButton     endnowButton;
 
-    @FXML
-    private Label bidValidationLabel; // Dòng chữ báo lỗi đỏ đỏ
+    @FXML private MFXTextField  commentField;
+    @FXML private MFXButton     commentPostButton;
+    @FXML private MFXScrollPane commentsPane;
 
-    // 2. Hàm khởi tạo (chạy ngay khi bật màn hình)
+    @FXML private ImageView     closeButton;
+
+    private int currentAuctionId;
+    private List<String[]> commentList = new ArrayList<>();
+
     @FXML
     public void initialize() {
-        // Tạm thời ẩn dòng chữ báo lỗi đi
-        bidValidationLabel.setVisible(false);
+        bidValidationLabel.setText("");
+        winnerLabel.setText("");
+        endnowButton.setVisible(false);
+
+        placeBidButton.setOnAction(e    -> handlePlaceBid());
+        endnowButton.setOnAction(e      -> handleEndNow());
+        commentPostButton.setOnAction(e -> handlePostComment());
+        closeButton.setOnMouseClicked(this::handleClose);
     }
 
-    // 3. ĐÂY LÀ HÀM SẼ CHẠY KHI BẤM NÚT ĐẶT CƯỢC
-    @FXML
-    public void handlePlaceBid() {
-        // Lấy chữ người dùng nhập vào
-        String tienCuoc = bidField.getText();
+    public void loadAuction(int auctionId) {
+        this.currentAuctionId = auctionId;
 
-        if (tienCuoc.isEmpty()) {
-            // Nếu không nhập gì mà bấm nút -> Hiện chữ cảnh báo
-            bidValidationLabel.setText("Vui lòng nhập số tiền!");
-            bidValidationLabel.setVisible(true);
-        } else {
-            // Nếu có nhập -> In ra thử
-            System.out.println("Bạn vừa đặt cược số tiền là: " + tienCuoc + " $");
-            bidValidationLabel.setVisible(false);
+        // Demo — thay bằng DAO thực sau
+        titleLabel.setText("Demo Auction #" + auctionId);
+        priceLabel.setText("250.00 $");
+        totalBidsLabel.setText("7");
+        startLabel.setText("01/05/2025");
+        endLabel.setText("31/05/2025");
+        categoryLabel.setText("Jewelry");
+        userLabel.setText(SessionManager.getInstance().getUsername());
+        descriptionLabel.setText("Đây là mô tả sản phẩm demo.");
+        endnowButton.setVisible(SessionManager.getInstance().isAdmin());
 
-            // Xóa trắng ô nhập liệu sau khi bấm
-            bidField.clear();
+        loadComments();
+    }
+
+    private void handlePlaceBid() {
+        bidValidationLabel.setText("");
+        String raw = bidField.getText().trim();
+        if (raw.isEmpty()) {
+            bidValidationLabel.setText("Vui lòng nhập số tiền đấu giá.");
+            return;
         }
-    }
-
-    // =========================================================
-    // 4. ĐÂY LÀ HÀM MỚI THÊM VÀO: CHUYỂN TRANG KHI BẤM NÚT X
-    // =========================================================
-    @FXML
-    public void handleCloseButton(javafx.scene.input.MouseEvent event) {
         try {
-            // Bước 1: Gọi file giao diện màn hình Danh sách (auction_list.fxml) ra
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/example/auctionmanagementsystem/View/auction_list.fxml"));
-            javafx.scene.Parent root = loader.load();
-
-            // Bước 2: Bắt lấy cái "Cửa sổ" (Stage) hiện tại đang chứa cái nút X mà bạn vừa bấm
-            javafx.stage.Stage stage = (javafx.stage.Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Bước 3: Đắp cái giao diện Danh sách mới lên cái Cửa sổ đó
-            javafx.scene.Scene scene = new javafx.scene.Scene(root);
-            stage.setScene(scene);
-            stage.show();
-
-        } catch (java.io.IOException e) {
-            e.printStackTrace(); // Báo lỗi đỏ ở console nếu gõ sai tên file FXML
-            System.out.println("Lỗi: Không tìm thấy file auction_list.fxml");
+            double bid = Double.parseDouble(raw);
+            if (bid <= 0) throw new NumberFormatException();
+            bidValidationLabel.setText("Đã đặt giá " + bid + " $!");
+            bidField.setText("");
+        } catch (NumberFormatException ex) {
+            bidValidationLabel.setText("Số tiền không hợp lệ.");
         }
-    }}
+    }
+
+    private void handleEndNow() {
+        winnerLabel.setText("Đấu giá đã kết thúc. Người thắng đã được xác định!");
+        endnowButton.setDisable(true);
+    }
+
+    private void handlePostComment() {
+        String text = commentField.getText().trim();
+        if (text.isEmpty()) return;
+
+        // Thêm comment vào list — thay bằng CommentDAO.post() sau
+        String username = SessionManager.getInstance().getUsername();
+        commentList.add(new String[]{username, text, "Just now"});
+
+        commentField.setText("");
+        loadComments();
+    }
+
+    private void loadComments() {
+        VBox commentBox = new VBox(8);
+
+        for (String[] c : commentList) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        NavigationUtil.class.getResource("../" + NavigationUtil.COMMENT));
+                Node node = loader.load();
+                CommentController ctrl = loader.getController();
+                ctrl.setComment(c[0], c[1], c[2]);
+                commentBox.getChildren().add(node);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        commentsPane.setContent(commentBox);
+    }
+
+    @FXML
+    private void handleClose(MouseEvent e) {
+        ((Stage) closeButton.getScene().getWindow()).close();
+    }
+}

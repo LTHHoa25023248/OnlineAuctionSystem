@@ -26,8 +26,8 @@
         <MFXRadioButton fx:id="radio4" layoutX="216.0" layoutY="130.0" text="Oldest" toggleGroup="$sort" />
         <MFXRadioButton fx:id="radio5" layoutX="307.0" layoutY="90.0" text="Ending Soon" toggleGroup="$sort" />
         <MFXRadioButton fx:id="radio6" layoutX="307.0" layoutY="130.0" text="Ending Later" toggleGroup="$sort" />
-        <MFXButton fx:id="okButton" layoutX="377.0" layoutY="170.0" prefHeight="37.0" prefWidth="63.0" styleClass="myButtons" stylesheets="@../../css/addlistingstyles.css" text="Sort" />
-        <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="410.0" layoutY="20.0" pickOnBounds="true">
+        <MFXButton fx:id="okButton" layoutX="377.0" layoutY="170.0" prefHeight="37.0" prefWidth="63.0" styleClass="myButtons" stylesheets="@../../css/addlistingstyles.css" text="Sort" onAction="#applySort" />
+        <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="410.0" layoutY="20.0" pickOnBounds="true" onMouseClicked="#handleClose">
             <image>
                 <Image url="@../../images/Icons/cross-circle.png" />
             </image>

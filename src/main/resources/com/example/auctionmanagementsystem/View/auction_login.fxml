@@ -20,9 +20,6 @@
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.example.auctionmanagementsystem.controller.LoginController">
 
-    <!-- ═══════════════════════════════════════════
-         TOP BAR
-    ════════════════════════════════════════════ -->
     <top>
         <HBox
                 styleClass="titlePane"
@@ -43,6 +40,7 @@
             </Label>
             <MFXButton
                     fx:id="signupButton"
+                    onAction="#onSignupButtonClick"
                     styleClass="outlineButton"
                     text="Sign Up"
                     prefWidth="110.0"
@@ -50,9 +48,6 @@
         </HBox>
     </top>
 
-    <!-- ═══════════════════════════════════════════
-         CENTER
-    ════════════════════════════════════════════ -->
     <center>
         <StackPane styleClass="loginBackground">
 
@@ -61,7 +56,7 @@
                   maxWidth="920.0" maxHeight="520.0"
                   StackPane.alignment="CENTER">
 
-                <!-- LEFT PANEL — branding -->
+                <!-- LEFT PANEL -->
                 <VBox
                         styleClass="loginLeftPanel"
                         alignment="CENTER"
@@ -81,7 +76,6 @@
 
                     <Region prefHeight="10"/>
 
-                    <!-- Stats -->
                     <HBox spacing="20" alignment="CENTER">
                         <VBox alignment="CENTER" spacing="4">
                             <Label fx:id="statListings" text="1200+" styleClass="statNumLabel">
@@ -112,10 +106,9 @@
                     </HBox>
                 </VBox>
 
-                <!-- DIVIDER -->
                 <Separator orientation="VERTICAL" styleClass="panelDivider"/>
 
-                <!-- RIGHT PANEL — form -->
+                <!-- RIGHT PANEL -->
                 <VBox
                         styleClass="loginRightPanel"
                         alignment="CENTER"
@@ -123,12 +116,10 @@
                         prefWidth="420.0">
                     <padding><Insets top="48" right="48" bottom="48" left="48"/></padding>
 
-                    <!-- Title -->
                     <Label text="Login" styleClass="loginFormTitle">
                         <font><Font name="Berlin Sans FB" size="38.0"/></font>
                     </Label>
-                    <Label text="Enter your credentials to continue"
-                           styleClass="loginFormSub">
+                    <Label text="Enter your credentials to continue" styleClass="loginFormSub">
                         <font><Font size="13.0"/></font>
                     </Label>
 
@@ -166,6 +157,7 @@
                     <HBox alignment="CENTER_RIGHT">
                         <MFXButton
                                 fx:id="forgotPassButton"
+                                onAction="#onForgotPassClick"
                                 styleClass="forgotLink"
                                 text="Forgot Password?"/>
                     </HBox>
@@ -173,6 +165,7 @@
                     <!-- Login Button -->
                     <MFXButton
                             fx:id="loginButton"
+                            onAction="#onLoginButtonClick"
                             styleClass="goldButton signupSubmitBtn"
                             text="Login"
                             prefHeight="50.0"

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="500.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.DepositController">
+    <children>
+
+        <!-- Close button -->
+        <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="458.0" layoutY="14.0" pickOnBounds="true" onMouseClicked="#handleClose">
+            <image><Image url="@../images/Icons/cross-circle.png"/></image>
+        </ImageView>
+
+        <!-- Title -->
+        <Label layoutX="0.0" layoutY="30.0" prefWidth="500.0" alignment="CENTER" text="Deposit">
+            <font><Font name="Berlin Sans FB" size="36.0"/></font>
+        </Label>
+
+        <!-- Balance hiện tại -->
+        <Label layoutX="50.0" layoutY="110.0" text="Current Balance :">
+            <font><Font name="Microsoft Sans Serif" size="16.0"/></font>
+        </Label>
+        <Label fx:id="balanceLabel" layoutX="220.0" layoutY="110.0" prefWidth="200.0" text="0.00 USD" textFill="#e6a817">
+            <font><Font name="Berlin Sans FB" size="16.0"/></font>
+        </Label>
+
+        <!-- Quick select -->
+        <Label layoutX="50.0" layoutY="160.0" text="Quick Select :">
+            <font><Font name="Microsoft Sans Serif" size="16.0"/></font>
+        </Label>
+
+        <HBox layoutX="50.0" layoutY="190.0" spacing="12.0">
+            <MFXButton fx:id="btn10"   styleClass="goldButton" text="10 USD"    onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn50"   styleClass="goldButton" text="50 USD"    onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn100"  styleClass="goldButton" text="100 USD"   onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn500"  styleClass="goldButton" text="500 USD"   onAction="#onQuickAmount" prefWidth="90.0"/>
+        </HBox>
+
+        <HBox layoutX="50.0" layoutY="250.0" spacing="12.0">
+            <MFXButton fx:id="btn1000"  styleClass="goldButton" text="1,000 USD"  onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn2000"  styleClass="goldButton" text="2,000 USD"  onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn5000"  styleClass="goldButton" text="5,000 USD"  onAction="#onQuickAmount" prefWidth="90.0"/>
+            <MFXButton fx:id="btn10000" styleClass="goldButton" text="10,000 USD" onAction="#onQuickAmount" prefWidth="90.0"/>
+        </HBox>
+
+        <!-- Nhập thủ công -->
+        <Label layoutX="50.0" layoutY="315.0" text="Or enter amount :">
+            <font><Font name="Microsoft Sans Serif" size="16.0"/></font>
+        </Label>
+        <MFXTextField fx:id="amountField" floatMode="BORDER" floatingText="  Amount (USD)  " layoutX="50.0" layoutY="345.0" prefHeight="48.0" prefWidth="390.0"/>
+
+        <!-- Validation -->
+        <Label fx:id="validationLabel" layoutX="50.0" layoutY="400.0" prefWidth="390.0" text="" textFill="RED">
+            <font><Font name="Microsoft Sans Serif" size="14.0"/></font>
+        </Label>
+
+        <!-- Nút nạp -->
+        <MFXButton fx:id="depositButton" styleClass="goldButton" text="Deposit" layoutX="175.0" layoutY="430.0" prefWidth="150.0" prefHeight="45.0" onAction="#handleDeposit">
+            <font><Font name="Berlin Sans FB" size="18.0"/></font>
+        </MFXButton>
+
+    </children>
+</AnchorPane>

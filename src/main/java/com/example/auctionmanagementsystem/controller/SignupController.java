@@ -1,28 +1,31 @@
 package com.example.auctionmanagementsystem.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+/**
+ * Controller cho auction_signup.fxml
+ *
+ * Điều hướng:
+ *   loginButton (top-bar)  → auction_login.fxml
+ *   signupButton (submit)  → auction_login.fxml (sau khi đăng ký thành công)
+ */
+public class SignupController {
 
-public class SignupController implements Initializable {
-
-    @FXML private MFXTextField firstNameField;
-    @FXML private MFXTextField lastNameField;
-    @FXML private MFXTextField usernameField;
-    @FXML private MFXTextField emailField;
-    @FXML private MFXTextField phoneField;
-    @FXML private MFXTextField addressField;
+    @FXML private MFXTextField     firstNameField;
+    @FXML private MFXTextField     lastNameField;
+    @FXML private MFXTextField     usernameField;
+    @FXML private MFXTextField     emailField;
+    @FXML private MFXTextField     phoneField;
     @FXML private MFXPasswordField passwordField;
     @FXML private MFXPasswordField confirmPasswordField;
-    @FXML private CheckBox termsCheckBox;
+    @FXML private MFXTextField     addressField;
+    @FXML private CheckBox         termsCheckBox;
 
     @FXML private Label firstNameError;
     @FXML private Label lastNameError;
@@ -34,92 +37,82 @@ public class SignupController implements Initializable {
     @FXML private Label termsError;
     @FXML private Label generalError;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {}
+    @FXML private MFXButton loginButton;
+    @FXML private MFXButton signupButton;
 
     @FXML
-    public void onSignupButtonClick(ActionEvent e) {
+    public void initialize() {
+        // loginButton dùng onAction="#onLoginButtonClick" trong FXML
+    }
+
+    @FXML
+    private void onLoginButtonClick() {
+        NavigationUtil.goTo(loginButton, NavigationUtil.LOGIN);
+    }
+
+    @FXML
+    private void onSignupButtonClick() {
+        if (!validateForm()) return;
+
+        /* ── Thay bằng DAO thực ─────────────────────────────────────────────
+         *   UserDAO.register(
+         *       firstNameField.getText(), lastNameField.getText(),
+         *       usernameField.getText(),  emailField.getText(),
+         *       phoneField.getText(),     passwordField.getText(),
+         *       addressField.getText());
+         * ─────────────────────────────────────────────────────────────────── */
+
+        NavigationUtil.goTo(signupButton, NavigationUtil.LOGIN);
+    }
+
+    @FXML
+    private void onTermsClick(MouseEvent event) {
+        // TODO: mở dialog điều khoản
+        System.out.println("Terms clicked");
+    }
+
+    // ── Validation ────────────────────────────────────────────────────────────
+
+    private boolean validateForm() {
         clearErrors();
-        if (!validate()) return;
-
-        // TODO: Gọi service để đăng ký tài khoản
-        String username  = usernameField.getText().trim();
-        String email     = emailField.getText().trim();
-        String password  = passwordField.getText();
-        String firstName = firstNameField.getText().trim();
-        String lastName  = lastNameField.getText().trim();
-        String phone     = phoneField.getText().trim();
-        String address   = addressField.getText().trim();
-
-        System.out.println("Registering: " + username + " / " + email);
-        // TODO: navigate to login or home after success
-    }
-
-    @FXML
-    public void onLoginButtonClick(ActionEvent e) {
-        // TODO: navigate to login screen
-    }
-
-    @FXML
-    public void onTermsClick(MouseEvent e) {
-        // TODO: show terms dialog
-    }
-
-    private boolean validate() {
-        boolean valid = true;
+        boolean ok = true;
 
         if (firstNameField.getText().trim().isEmpty()) {
-            showError(firstNameError, "First name is required");
-            valid = false;
+            show(firstNameError, "First name là bắt buộc."); ok = false;
         }
         if (lastNameField.getText().trim().isEmpty()) {
-            showError(lastNameError, "Last name is required");
-            valid = false;
+            show(lastNameError, "Last name là bắt buộc."); ok = false;
         }
         if (usernameField.getText().trim().isEmpty()) {
-            showError(usernameError, "Username is required");
-            valid = false;
+            show(usernameError, "Username là bắt buộc."); ok = false;
         }
-        if (emailField.getText().trim().isEmpty()) {
-            showError(emailError, "Email is required");
-            valid = false;
-        } else if (!emailField.getText().contains("@")) {
-            showError(emailError, "Invalid email address");
-            valid = false;
+        String email = emailField.getText().trim();
+        if (email.isEmpty() || !email.contains("@")) {
+            show(emailError, "Email không hợp lệ."); ok = false;
         }
         if (phoneField.getText().trim().isEmpty()) {
-            showError(phoneError, "Phone number is required");
-            valid = false;
+            show(phoneError, "Số điện thoại là bắt buộc."); ok = false;
         }
         if (passwordField.getText().length() < 8) {
-            showError(passwordError, "Password must be at least 8 characters");
-            valid = false;
+            show(passwordError, "Mật khẩu phải có ít nhất 8 ký tự."); ok = false;
         }
         if (!passwordField.getText().equals(confirmPasswordField.getText())) {
-            showError(confirmPasswordError, "Passwords do not match");
-            valid = false;
+            show(confirmPasswordError, "Mật khẩu không khớp."); ok = false;
         }
         if (!termsCheckBox.isSelected()) {
-            showError(termsError, "You must agree to the Terms & Conditions");
-            valid = false;
+            show(termsError, "Bạn phải đồng ý điều khoản."); ok = false;
         }
-        return valid;
+        return ok;
     }
 
-    private void showError(Label label, String message) {
-        label.setText(message);
+    private void show(Label label, String msg) {
+        label.setText(msg);
         label.setVisible(true);
     }
 
     private void clearErrors() {
-        Label[] errors = {
-                firstNameError, lastNameError, usernameError,
-                emailError, phoneError, passwordError,
-                confirmPasswordError, termsError, generalError
-        };
-        for (Label l : errors) {
-            l.setText("");
-            l.setVisible(false);
-        }
+        Label[] all = {firstNameError, lastNameError, usernameError, emailError,
+                phoneError, passwordError, confirmPasswordError, termsError, generalError};
+        for (Label l : all) { l.setText(""); l.setVisible(false); }
     }
 }

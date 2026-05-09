@@ -148,7 +148,7 @@
     </left>
 
     <center>
-        <VBox BorderPane.alignment="CENTER">
+        <VBox BorderPane.alignment="CENTER" spacing="0">
 
             <HBox
                     fx:id="secondaryBar"
@@ -195,7 +195,9 @@
                     fx:id="scrollPane"
                     styleClass="backPane"
                     fitToWidth="true"
-                    VBox.vgrow="ALWAYS"/>
+                    VBox.vgrow="ALWAYS">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+            </MFXScrollPane>
 
         </VBox>
     </center>

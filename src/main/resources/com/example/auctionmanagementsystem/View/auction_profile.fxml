@@ -4,9 +4,26 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1062.0" stylesheets="@../css/profilepagestyles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.ProfileController">
     <children>
+
+        <MFXButton
+                fx:id="closeButton"
+                layoutX="1010.0"
+                layoutY="14.0"
+                onAction="#onCloseButtonClick"
+                styleClass="closeButton"
+                prefWidth="36.0"
+                prefHeight="36.0">
+            <graphic>
+                <ImageView fitHeight="28.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                    <image><Image url="@../images/Icons/cross-circle.png"/></image>
+                </ImageView>
+            </graphic>
+        </MFXButton>
+
         <Label fx:id="name" layoutX="167.0" layoutY="52.0" prefHeight="56.0" prefWidth="501.0" text="Nguyễn Minh Đức">
             <font>
                 <Font size="39.0" />
@@ -18,5 +35,9 @@
         <MFXTextField fx:id="emailField" allowEdit="false" floatingText="Email" layoutX="167.0" layoutY="243.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="abc@gmail.con" />
         <MFXTextField fx:id="phoneField" allowEdit="false" floatingText="Phone Number" layoutX="531.0" layoutY="243.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields" text="1234567890" />
         <MFXButton fx:id="editButton" layoutX="722.0" layoutY="67.0" styleClass="myButtons" text="Edit Profile" />
+
+        <!-- Nút Deposit -->
+        <MFXButton fx:id="depositButton" layoutX="530.0" layoutY="67.0" styleClass="myButtons" text="Deposit" prefWidth="120.0" prefHeight="35.0" />
+        <MFXButton fx:id="depositButton" layoutX="530.0" layoutY="67.0" styleClass="myButtons" text="Deposit" prefWidth="120.0" prefHeight="35.0" onAction="#onDepositButtonClick" />
     </children>
 </AnchorPane>

@@ -1,24 +1,28 @@
 package com.example.auctionmanagementsystem.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+/**
+ * Controller cho View/AdminDashboard.fxml
+ *
+ * Điều hướng:
+ *   handleHome      → auction_list.fxml
+ *   handleAnalytics → chart.fxml (popup)
+ *   handleLogout    → auction_login.fxml
+ *   filter buttons  → reload table
+ */
+public class AdminDashboardController {
 
-public class AdminDashboardController implements Initializable {
+    @FXML private Label       usernameLabel;
+    @FXML private Label       totalListingsLabel;
+    @FXML private Label       activeAuctionsLabel;
+    @FXML private Label       totalUsersLabel;
+    @FXML private Label       revenueLabel;
 
-    @FXML private TableView listingsTable;
-    @FXML private Label totalListingsLabel;
-    @FXML private Label activeAuctionsLabel;
-    @FXML private Label totalUsersLabel;
-    @FXML private Label revenueLabel;
-    @FXML private Label usernameLabel;
-
+    @FXML private TableView   listingsTable;
     @FXML private TableColumn colItem;
     @FXML private TableColumn colCategory;
     @FXML private TableColumn colSeller;
@@ -26,49 +30,58 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn colStatus;
     @FXML private TableColumn colActions;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        totalListingsLabel.setText("1,248");
-        activeAuctionsLabel.setText("342");
-        totalUsersLabel.setText("5,831");
-        revenueLabel.setText("$84,210");
+    @FXML
+    public void initialize() {
+        usernameLabel.setText(SessionManager.getInstance().getUsername());
+        loadStats();
+        loadTable("ALL");
     }
 
+    // ── Sidebar ───────────────────────────────────────────────────────────────
+    @FXML private void handleHome()      { NavigationUtil.goTo(usernameLabel, NavigationUtil.AUCTION_LIST); }
+    @FXML private void handleListings()  { loadTable("ALL"); }
+    @FXML private void handleUsers()     { /* TODO: màn hình quản lý user */ }
+    @FXML private void handleAnalytics() { NavigationUtil.openPopup(usernameLabel, NavigationUtil.CHART, "Analytics"); }
+    @FXML private void handleReports()   { /* TODO */ }
+    @FXML private void handleSettings()  { /* TODO */ }
+
     @FXML
-    public void handleLogout(ActionEvent e) {
-        // TODO: navigate to login screen
+    private void handleLogout() {
+        SessionManager.getInstance().logout();
+        NavigationUtil.goTo(usernameLabel, NavigationUtil.LOGIN);
     }
 
-    @FXML
-    public void handleHome(javafx.scene.input.MouseEvent e) {}
+    // ── Filter buttons ────────────────────────────────────────────────────────
+    @FXML private void filterAll()     { loadTable("ALL"); }
+    @FXML private void filterJewelry() { loadTable("Jewelry"); }
+    @FXML private void filterWatches() { loadTable("Watches"); }
+    @FXML private void filterCars()    { loadTable("Cars"); }
+    @FXML private void filterOthers()  { loadTable("Others"); }
 
-    @FXML
-    public void handleListings(javafx.scene.input.MouseEvent e) {}
+    // ── Data ──────────────────────────────────────────────────────────────────
 
-    @FXML
-    public void handleUsers(javafx.scene.input.MouseEvent e) {}
+    private void loadStats() {
+        /* ── Thay bằng DAO thực ─────────────────────────────────────────────
+         *   totalListingsLabel.setText(String.valueOf(AuctionDAO.count()));
+         *   activeAuctionsLabel.setText(String.valueOf(AuctionDAO.countActive()));
+         *   totalUsersLabel.setText(String.valueOf(UserDAO.count()));
+         *   revenueLabel.setText("$" + AuctionDAO.totalRevenue());
+         * ─────────────────────────────────────────────────────────────────── */
+        totalListingsLabel.setText("128");
+        activeAuctionsLabel.setText("34");
+        totalUsersLabel.setText("512");
+        revenueLabel.setText("$48,200");
+    }
 
-    @FXML
-    public void handleAnalytics(javafx.scene.input.MouseEvent e) {}
-
-    @FXML
-    public void handleReports(javafx.scene.input.MouseEvent e) {}
-
-    @FXML
-    public void handleSettings(javafx.scene.input.MouseEvent e) {}
-
-    @FXML
-    public void filterAll(ActionEvent e) {}
-
-    @FXML
-    public void filterJewelry(ActionEvent e) {}
-
-    @FXML
-    public void filterWatches(ActionEvent e) {}
-
-    @FXML
-    public void filterCars(ActionEvent e) {}
-
-    @FXML
-    public void filterOthers(ActionEvent e) {}
+    @SuppressWarnings("unchecked")
+    private void loadTable(String category) {
+        /* ── Thay bằng DAO + setCellValueFactory ────────────────────────────
+         *   colItem.setCellValueFactory(new PropertyValueFactory<>("title"));
+         *   ...
+         *   List<Auction> data = "ALL".equals(category)
+         *       ? AuctionDAO.getAll() : AuctionDAO.getByCategory(category);
+         *   listingsTable.setItems(FXCollections.observableArrayList(data));
+         * ─────────────────────────────────────────────────────────────────── */
+        System.out.println("Admin load table: " + category);
+    }
 }
