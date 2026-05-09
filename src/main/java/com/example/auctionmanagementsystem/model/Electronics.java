@@ -10,6 +10,12 @@ public class Electronics extends Item {
         this.warrantyMonths = warrantyMonths;
     }
 
+    public void setBrand(String newBrand) {this.brand = newBrand;}
+    public void setWarrantyMonths(int newWarrantyMonths) {this.warrantyMonths = newWarrantyMonths;}
+
+    public String getBrand() {return brand;}
+    public int getWarrantyMonths() {return warrantyMonths;}
+
     @Override
     public String getCategoryDetails() {
         return String.format("Brand: %s | Warranty: %d", brand, warrantyMonths);
