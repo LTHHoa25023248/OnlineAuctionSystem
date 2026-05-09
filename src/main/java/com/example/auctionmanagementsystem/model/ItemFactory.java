@@ -20,15 +20,15 @@ public class ItemFactory {
             return switch(type.toUpperCase()) {
             case "ELECTRONICS" -> {
                 String brand = attributes.getOrDefault("brand", "Unknown");
-                String warrantyStr = attributes.getOrDefault("warranty", "0");
-                yield new Electronics(name, description, startingPrice, brand, Integer.parseInt(warrantyStr.trim()));
+                String warrantyMonthsStr = attributes.getOrDefault("warranty", "0");
+                yield new Electronics(name, description, startingPrice, brand, Integer.parseInt(warrantyMonthsStr.trim()));
             }
 
             case "ART" -> {
-                String author = attributes.getOrDefault("author", "Unknown");
+                String artist = attributes.getOrDefault("artist", "Unknown");
                 String material = attributes.getOrDefault("material", "Unknown");
-                String year = attributes.getOrDefault("year", "Unknown");
-                yield new Art(name, description, startingPrice, author, material, year);
+                String theme = attributes.getOrDefault("theme", "Unknown");
+                yield new Art(name, description, startingPrice, artist, theme, material);
             }
 
             case "VEHICLE" -> {
