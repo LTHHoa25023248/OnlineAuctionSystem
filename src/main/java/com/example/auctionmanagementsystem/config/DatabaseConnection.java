@@ -9,7 +9,7 @@ public class DatabaseConnection {
     private Connection connection;
 
     private final String URL = "jdbc:mysql://localhost:3306/auction_system";
-    private final String USER = "auction_system"; 
+    private final String USER = "root";
     private final String PASSWORD = "Huy2605@@"; 
 
     private DatabaseConnection() {
