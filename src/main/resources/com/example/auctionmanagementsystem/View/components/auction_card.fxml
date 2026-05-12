@@ -8,7 +8,6 @@
 
 <HBox onMouseClicked="#onCardClick"
       styleClass="auctionCard"
-      stylesheets="@../../css/styles.css"
       prefWidth="490.0"
       prefHeight="240.0"
       spacing="0"
@@ -24,17 +23,18 @@
         </ImageView>
     </StackPane>
 
-    <!-- Thông tin phải -->
-    <VBox spacing="10" prefWidth="270.0" style="-fx-padding: 20 16 20 16;">
+    <!-- Thông tin phải — dùng styleClass để dark/light CSS override được -->
+    <VBox spacing="10" prefWidth="270.0" styleClass="cardContent">
 
-        <!-- Popular + Category -->
+        <!-- Popular + Category badges -->
         <HBox spacing="8">
             <Label fx:id="popularNowLabel" text="Popular Now" styleClass="popularLabel"/>
             <Label fx:id="categoryLabel"   text="Category"   styleClass="categoryLabel"/>
         </HBox>
 
         <!-- Title -->
-        <Label fx:id="title" text="Item Title" wrapText="true" prefWidth="240.0">
+        <Label fx:id="title" text="Item Title" wrapText="true"
+               prefWidth="240.0" styleClass="itemTitle">
             <font><Font name="Berlin Sans FB" size="24.0"/></font>
         </Label>
 

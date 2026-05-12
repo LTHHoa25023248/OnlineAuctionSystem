@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
-            styleClass="rootPane"
-            stylesheets="@../css/adminstyles.css">
+<BorderPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
+        styleClass="rootPane">
 
     <left>
         <VBox styleClass="sidebar" prefWidth="220">
-            <Label text="Auction System" styleClass="sidebarTitle"/>
+            <Label text="Auction House" styleClass="sidebarTitle">
+                <font><Font name="Georgia" size="15.0"/></font>
+            </Label>
             <VBox styleClass="sidebarNav" VBox.vgrow="ALWAYS">
                 <HBox styleClass="navItem" onMouseClicked="#handleHome">
-                    <Label text="🏠" styleClass="navIcon"/>
                     <Label text="Home" styleClass="navLabel"/>
                 </HBox>
                 <HBox styleClass="navItem navActive" onMouseClicked="#handleListings">
-                    <Label text="📋" styleClass="navIcon"/>
                     <Label text="All Listings" styleClass="navLabel"/>
                 </HBox>
                 <HBox styleClass="navItem" onMouseClicked="#handleUsers">
-                    <Label text="👥" styleClass="navIcon"/>
                     <Label text="Users" styleClass="navLabel"/>
                 </HBox>
                 <HBox styleClass="navItem" onMouseClicked="#handleAnalytics">
-                    <Label text="📊" styleClass="navIcon"/>
                     <Label text="Analytics" styleClass="navLabel"/>
                 </HBox>
             </VBox>
@@ -38,42 +37,50 @@
         <HBox styleClass="topbar" alignment="CENTER_LEFT">
             <Label text="Admin Dashboard" styleClass="topbarTitle"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label text="Logged in as  " styleClass="topbarUser"/>
+            <Label text="Logged in as " styleClass="topbarUser"/>
             <Label fx:id="usernameLabel" text="Admin" styleClass="topbarUserBold"/>
-            <Button text="Log Out" styleClass="btnLogout" onAction="#handleLogout"/>
+            <Button text="Log Out" styleClass="btnLogout" onAction="#handleLogout">
+                <HBox.margin><Insets left="14"/></HBox.margin>
+            </Button>
         </HBox>
     </top>
 
     <center>
         <ScrollPane styleClass="contentScroll" fitToWidth="true">
-            <VBox styleClass="contentArea" spacing="16">
-                <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+            <VBox styleClass="contentArea" spacing="18">
+                <padding><Insets top="22" right="26" bottom="22" left="26"/></padding>
 
-                <!-- Stats row -->
                 <HBox spacing="14" styleClass="statsRow">
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
-                        <Label text="Total Listings" styleClass="statLabel"/>
-                        <Label fx:id="totalListingsLabel" text="" styleClass="statValue"/>
+                        <Label text="TOTAL LISTINGS" styleClass="statLabel"/>
+                        <Label fx:id="totalListingsLabel" text="---" styleClass="statValue">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
                         <Label text="+12 this week" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
-                        <Label text="Active Auctions" styleClass="statLabel"/>
-                        <Label fx:id="activeAuctionsLabel" text="" styleClass="statValue statValueGold"/>
+                        <Label text="ACTIVE AUCTIONS" styleClass="statLabel"/>
+                        <Label fx:id="activeAuctionsLabel" text="---" styleClass="statValue statValueGold">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
                         <Label text="Ends within 7 days" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
-                        <Label text="Total Users" styleClass="statLabel"/>
-                        <Label fx:id="totalUsersLabel" text="" styleClass="statValue"/>
+                        <Label text="TOTAL USERS" styleClass="statLabel"/>
+                        <Label fx:id="totalUsersLabel" text="---" styleClass="statValue">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
                         <Label text="+48 this month" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
-                        <Label text="Revenue" styleClass="statLabel"/>
-                        <Label fx:id="revenueLabel" text="" styleClass="statValue"/>
+                        <Label text="REVENUE" styleClass="statLabel"/>
+                        <Label fx:id="revenueLabel" text="---" styleClass="statValue statValueGold">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
                         <Label text="Lifetime total" styleClass="statSub"/>
                     </VBox>
                 </HBox>
 
-                <!-- Auction Listings Table -->
                 <VBox styleClass="tableCard">
                     <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
                         <Label text="Auction Listings" styleClass="tableHeaderTitle"/>
@@ -86,19 +93,22 @@
                             <Button text="Others"  styleClass="ftab" onAction="#filterOthers"/>
                         </HBox>
                     </HBox>
-                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="350">
+                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="320">
                         <columns>
                             <TableColumn fx:id="colItem"     text="Item"        prefWidth="220"/>
                             <TableColumn fx:id="colCategory" text="Category"    prefWidth="100"/>
                             <TableColumn fx:id="colSeller"   text="Seller"      prefWidth="100"/>
                             <TableColumn fx:id="colBid"      text="Current Bid" prefWidth="110"/>
-                            <TableColumn fx:id="colStatus"   text="Status"      prefWidth="120"/>
-                            <TableColumn fx:id="colActions"  text="Actions"     prefWidth="130"/>
+                            <TableColumn fx:id="colStatus"   text="Status"      prefWidth="110"/>
+                            <TableColumn fx:id="colActions"  text="Actions"     prefWidth="120"/>
                         </columns>
+                        <placeholder>
+                            <Label text="No listings found"
+                                   style="-fx-text-fill: rgba(168,164,156,0.40); -fx-font-size: 13px;"/>
+                        </placeholder>
                     </TableView>
                 </VBox>
 
-                <!-- Users Table -->
                 <VBox fx:id="usersCard" styleClass="tableCard" visible="false" managed="false">
                     <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
                         <Label text="Users" styleClass="tableHeaderTitle"/>
@@ -110,7 +120,7 @@
                             <Button text="Admin"  styleClass="ftab" onAction="#filterUsersAdmin"/>
                         </HBox>
                     </HBox>
-                    <TableView fx:id="usersTable" styleClass="listingsTable" prefHeight="300">
+                    <TableView fx:id="usersTable" styleClass="listingsTable" prefHeight="280">
                         <columns>
                             <TableColumn fx:id="colUserId"     text="ID"       prefWidth="60"/>
                             <TableColumn fx:id="colUsername"   text="Username" prefWidth="150"/>
@@ -119,6 +129,10 @@
                             <TableColumn fx:id="colUserStatus" text="Status"   prefWidth="100"/>
                             <TableColumn fx:id="colJoinDate"   text="Joined"   prefWidth="110"/>
                         </columns>
+                        <placeholder>
+                            <Label text="No users found"
+                                   style="-fx-text-fill: rgba(168,164,156,0.40); -fx-font-size: 13px;"/>
+                        </placeholder>
                     </TableView>
                 </VBox>
 

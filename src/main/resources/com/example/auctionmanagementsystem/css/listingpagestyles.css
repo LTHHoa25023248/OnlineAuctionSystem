@@ -1,50 +1,185 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — AUCTION DETAIL PAGE
+   listingpagestyles.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ROOT ──────────────────────────────────────────────────── */
 .rootPane {
-    -fx-background-color: white;
+    -fx-background-color: #0D1018;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', sans-serif;
 }
 
+/* ── SCROLL PANE ───────────────────────────────────────────── */
+.scroll-pane {
+    -fx-background-color: #0D1018;
+    -fx-background: #0D1018;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: #0D1018;
+}
+
+/* ── IMAGE PANEL ───────────────────────────────────────────── */
 .imagePane {
-    -fx-padding: 10;
-    -fx-background-color: rgba(253, 168, 30, 0.42);
-    -fx-background-radius: 10px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-
+    -fx-background-color: rgba(212,168,58,0.06);
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(212,168,58,0.18);
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 18, 0, 0, 5);
 }
 
-.fields {
-    -fx-background-color: white;
-    -fx-background-radius: 10px;
-    -fx-padding: 10;
-    -fx-border-color: black;
-}
-
-.fields .floating-text{
-    -fx-text-fill: black;
-    -fx-font-size: 15;
-    -fx-font-family: "Berlin Sans FB";
-}
-
-.button {
-    -fx-background-color: #ecc667;
-    -fx-background-radius: 10;
-    -fx-text-fill: black;
-    -fx-font-size: 15;
+/* ── TYPOGRAPHY ────────────────────────────────────────────── */
+.detailTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 28px;
     -fx-font-weight: bold;
-    -fx-padding: 10;
 }
 
+.detailSectionLabel {
+    -fx-text-fill: rgba(168,164,156,0.60);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.detailValue {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+}
+
+.detailPriceValue {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 6, 0, 0, 0);
+}
+
+/* ── BADGES ────────────────────────────────────────────────── */
 .categoryLabel {
-    -fx-background-color: #b08b29;
-    -fx-background-radius: 10;
-    -fx-text-alignment: center;
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-text-fill: #D4A83A;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
 }
 
 .popularLabel {
-    -fx-background-color: black;
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
-    -fx-text-alignment: center;
+    -fx-background-color: rgba(242,240,236,0.07);
+    -fx-text-fill: rgba(242,240,236,0.80);
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
 }
 
+.activeStatusBadge {
+    -fx-background-color: rgba(61,186,127,0.12);
+    -fx-text-fill: #3DBA7F;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
+}
+
+/* ── FORM FIELDS (bid input, comment) ──────────────────────── */
+.fields {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
+}
+
+.fields:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 8, 0, 0, 0);
+}
+
+.fields .floating-text {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── BUTTONS (Place Bid, Post Comment, End Now) ────────────── */
+.button, .mfx-button {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.30), 8, 0, 0, 2);
+}
+
+.button:hover, .mfx-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.50), 12, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed, .mfx-button:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: none;
+}
+
+/* ── COMMENTS SECTION ──────────────────────────────────────── */
 .scrollPane {
-    -fx-background-radius: 10;
+    -fx-background-color: #131720;
+    -fx-background: #131720;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-border-width: 1px;
+}
+
+.scrollPane .viewport {
+    -fx-background-color: #131720;
+    -fx-background-radius: 10px;
+}
+
+/* Comment section title */
+.commentTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Validation / error text */
+.errorText {
+    -fx-fill: #E05454;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* ── SECTION DIVIDER ───────────────────────────────────────── */
+.detailSeparator {
+    -fx-background-color: rgba(255,255,255,0.06);
+}
+
+/* ── WINNER LABEL ──────────────────────────────────────────── */
+.winnerText {
+    -fx-text-fill: #3DBA7F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
 }

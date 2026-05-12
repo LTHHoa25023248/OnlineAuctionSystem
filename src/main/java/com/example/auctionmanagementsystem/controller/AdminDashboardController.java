@@ -1,5 +1,7 @@
 package com.example.auctionmanagementsystem.controller;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,18 +10,32 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
+/**
+ * AdminDashboardController — Màn hình quản trị (AdminDashboard.fxml).
+ *
+ * Chỉ truy cập được nếu SessionManager.isAdmin() == true.
+ * Mở từ AuctionListController (adminButton) — chuyển trang, không phải popup.
+ *
+ * Tính năng:
+ *   - Stat cards: tổng listing, active auctions, tổng users, doanh thu
+ *   - Bảng Listings: filter theo category, xem/sửa từng item
+ *   - Bảng Users: toggle hiện/ẩn, filter theo role/status
+ *
+ * TODO: Thay dữ liệu mẫu bằng AuctionDAO và UserDAO thật.
+ */
 public class AdminDashboardController {
 
+    // ── FXML fields — Top bar ─────────────────────────────────────────────────
     @FXML private Label usernameLabel;
+
+    // ── FXML fields — Stat cards ──────────────────────────────────────────────
     @FXML private Label totalListingsLabel;
     @FXML private Label activeAuctionsLabel;
     @FXML private Label totalUsersLabel;
     @FXML private Label revenueLabel;
 
-    // ── Auction Table ─────────────────────────────────────────────────────────
+    // ── FXML fields — Listings table ─────────────────────────────────────────
     @FXML private TableView<AuctionRow>           listingsTable;
     @FXML private TableColumn<AuctionRow, String> colItem;
     @FXML private TableColumn<AuctionRow, String> colCategory;
@@ -28,8 +44,8 @@ public class AdminDashboardController {
     @FXML private TableColumn<AuctionRow, String> colStatus;
     @FXML private TableColumn<AuctionRow, String> colActions;
 
-    // ── Users Table ───────────────────────────────────────────────────────────
-    @FXML private VBox                         usersCard;
+    // ── FXML fields — Users table (ẩn mặc định) ──────────────────────────────
+    @FXML private VBox                         usersCard;  // container ẩn/hiện
     @FXML private TableView<UserRow>           usersTable;
     @FXML private TableColumn<UserRow, String> colUserId;
     @FXML private TableColumn<UserRow, String> colUsername;
@@ -38,7 +54,12 @@ public class AdminDashboardController {
     @FXML private TableColumn<UserRow, String> colUserStatus;
     @FXML private TableColumn<UserRow, String> colJoinDate;
 
-    // ── AuctionRow ────────────────────────────────────────────────────────────
+    // ── Inner classes: Row models cho TableView ───────────────────────────────
+
+    /**
+     * Model một hàng trong bảng Listings.
+     * JavaFX TableView yêu cầu getter cho mỗi cột (PropertyValueFactory).
+     */
     public static class AuctionRow {
         private final StringProperty item, category, seller, bid, status, actions;
 
@@ -52,6 +73,7 @@ public class AdminDashboardController {
             this.actions  = new SimpleStringProperty(actions);
         }
 
+        // Getters — phải đúng tên để PropertyValueFactory tìm được
         public String getItem()     { return item.get(); }
         public String getCategory() { return category.get(); }
         public String getSeller()   { return seller.get(); }
@@ -60,7 +82,9 @@ public class AdminDashboardController {
         public String getActions()  { return actions.get(); }
     }
 
-    // ── UserRow ───────────────────────────────────────────────────────────────
+    /**
+     * Model một hàng trong bảng Users.
+     */
     public static class UserRow {
         private final StringProperty userId, username, email, role, status, joinDate;
 
@@ -83,19 +107,28 @@ public class AdminDashboardController {
     }
 
     // ── Initialize ────────────────────────────────────────────────────────────
+
     @FXML
     public void initialize() {
         usernameLabel.setText(SessionManager.getInstance().getUsername());
         loadStats();
         setupTable();
-        loadTable("ALL");
-        setupUsersTable();
+        loadTable("ALL");   // load bảng listing mặc định
+        setupUsersTable();  // chuẩn bị cột, chưa load data
     }
 
-    // ── Sidebar ───────────────────────────────────────────────────────────────
+    // ── Sidebar handlers ──────────────────────────────────────────────────────
+
+    /** Quay về màn hình danh sách auction */
     @FXML private void handleHome()     { NavigationUtil.goTo(usernameLabel, NavigationUtil.AUCTION_LIST); }
+
+    /** Reload bảng listing toàn bộ */
     @FXML private void handleListings() { loadTable("ALL"); }
 
+    /**
+     * Toggle hiển thị bảng Users.
+     * Lần đầu mở sẽ load dữ liệu.
+     */
     @FXML
     private void handleUsers() {
         boolean show = !usersCard.isVisible();
@@ -104,30 +137,39 @@ public class AdminDashboardController {
         if (show) loadUsersTable("ALL");
     }
 
-    @FXML private void handleAnalytics() { NavigationUtil.openPopup(usernameLabel, NavigationUtil.CHART, "Analytics"); }
-    @FXML private void handleReports()   { /* TODO */ }
-    @FXML private void handleSettings()  { /* TODO */ }
+    /** Mở popup biểu đồ Analytics */
+    @FXML private void handleAnalytics() {
+        NavigationUtil.openPopup(usernameLabel, NavigationUtil.CHART, "Analytics");
+    }
 
+    /** Đăng xuất và về trang Login */
     @FXML
     private void handleLogout() {
         SessionManager.getInstance().logout();
         NavigationUtil.goTo(usernameLabel, NavigationUtil.LOGIN);
     }
 
-    // ── Auction filter ────────────────────────────────────────────────────────
+    // ── Auction filter buttons ────────────────────────────────────────────────
+
     @FXML private void filterAll()     { loadTable("ALL"); }
     @FXML private void filterJewelry() { loadTable("Jewelry"); }
     @FXML private void filterWatches() { loadTable("Watches"); }
     @FXML private void filterCars()    { loadTable("Cars"); }
     @FXML private void filterOthers()  { loadTable("Others"); }
 
-    // ── Users filter ──────────────────────────────────────────────────────────
+    // ── Users filter buttons ──────────────────────────────────────────────────
+
     @FXML private void filterUsersAll()    { loadUsersTable("ALL"); }
     @FXML private void filterUsersActive() { loadUsersTable("Active"); }
     @FXML private void filterUsersBanned() { loadUsersTable("Banned"); }
     @FXML private void filterUsersAdmin()  { loadUsersTable("Admin"); }
 
-    // ── Setup columns ─────────────────────────────────────────────────────────
+    // ── Setup column mappings ─────────────────────────────────────────────────
+
+    /**
+     * Kết nối cột TableView với getter của AuctionRow.
+     * PropertyValueFactory("item") tìm getItem() trong AuctionRow.
+     */
     private void setupTable() {
         colItem.setCellValueFactory(new PropertyValueFactory<>("item"));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -146,36 +188,43 @@ public class AdminDashboardController {
         colJoinDate.setCellValueFactory(new PropertyValueFactory<>("joinDate"));
     }
 
-    // ── Stats ─────────────────────────────────────────────────────────────────
+    // ── Stats (TODO: thay bằng DAO thật) ─────────────────────────────────────
+
     private void loadStats() {
         totalListingsLabel.setText("128");
         activeAuctionsLabel.setText("34");
         totalUsersLabel.setText("512");
-        revenueLabel.setText("$48,200");
+        revenueLabel.setText("48,200 USD");
     }
 
-    // ── Auction data ──────────────────────────────────────────────────────────
+    // ── Listings data ─────────────────────────────────────────────────────────
+
+    /**
+     * Load dữ liệu vào bảng Listings, filter theo category nếu cần.
+     * TODO: Thay bằng AuctionDAO.getAll() hoặc AuctionDAO.getByCategory(category).
+     *
+     * @param category "ALL" để lấy tất cả, hoặc tên category cụ thể
+     */
     private void loadTable(String category) {
         ObservableList<AuctionRow> data = FXCollections.observableArrayList();
 
+        // Dữ liệu mẫu — mỗi phần tử: {tên, category, seller, giá, status, action}
         Object[][] rows = {
-                {"Rolex Daytona",       "Jewelry",  "alice",   "$ 15,000",  "Active", "Edit | End"},
-                {"Diamond Ring",        "Jewelry",  "bob",     "$ 8,500",   "Active", "Edit | End"},
-                {"Pearl Necklace",      "Jewelry",  "carol",   "$ 3,200",   "Ended",  "View"},
-                {"Omega Seamaster",     "Watches",  "dave",    "$ 5,400",   "Active", "Edit | End"},
-                {"Patek Philippe",      "Watches",  "eve",     "$ 22,000",  "Active", "Edit | End"},
-                {"TAG Heuer Monaco",    "Watches",  "frank",   "$ 4,100",   "Ended",  "View"},
-                {"Hermes Birkin",       "Bags",     "grace",   "$ 12,000",  "Active", "Edit | End"},
-                {"Chanel Flap",         "Bags",     "heidi",   "$ 7,800",   "Active", "Edit | End"},
-                {"Louis Vuitton",       "Bags",     "ivan",    "$ 3,500",   "Ended",  "View"},
-                {"Porsche 911",         "Cars",     "judy",    "$ 95,000",  "Active", "Edit | End"},
-                {"Ferrari 488",         "Cars",     "kevin",   "$ 180,000", "Active", "Edit | End"},
-                {"Lamborghini Huracan", "Cars",     "laura",   "$ 220,000", "Ended",  "View"},
-                {"Mona Lisa Print",     "Fine Art", "mike",    "$ 45,000",  "Active", "Edit | End"},
-                {"Starry Night",        "Fine Art", "nancy",   "$ 38,000",  "Active", "Edit | End"},
-                {"Vintage Guitar",      "Others",   "oscar",   "$ 2,800",   "Active", "Edit | End"},
-                {"Antique Clock",       "Others",   "peggy",   "$ 1,500",   "Ended",  "View"},
-                {"Rare Coin",           "Others",   "quentin", "$ 900",     "Active", "Edit | End"},
+                {"Rolex Daytona",       "Jewelry",  "alice",   "15,000 USD",  "Active", "Edit"},
+                {"Diamond Ring",        "Jewelry",  "bob",     "8,500 USD",   "Active", "Edit"},
+                {"Pearl Necklace",      "Jewelry",  "carol",   "3,200 USD",   "Ended",  "View"},
+                {"Omega Seamaster",     "Watches",  "dave",    "5,400 USD",   "Active", "Edit"},
+                {"Patek Philippe",      "Watches",  "eve",     "22,000 USD",  "Active", "Edit"},
+                {"TAG Heuer Monaco",    "Watches",  "frank",   "4,100 USD",   "Ended",  "View"},
+                {"Hermes Birkin",       "Bags",     "grace",   "12,000 USD",  "Active", "Edit"},
+                {"Chanel Flap",         "Bags",     "heidi",   "7,800 USD",   "Active", "Edit"},
+                {"Porsche 911",         "Cars",     "judy",    "95,000 USD",  "Active", "Edit"},
+                {"Ferrari 488",         "Cars",     "kevin",   "180,000 USD", "Active", "Edit"},
+                {"Lamborghini Huracan", "Cars",     "laura",   "220,000 USD", "Ended",  "View"},
+                {"Mona Lisa Print",     "Fine Art", "mike",    "45,000 USD",  "Active", "Edit"},
+                {"Vintage Guitar",      "Others",   "oscar",   "2,800 USD",   "Active", "Edit"},
+                {"Antique Clock",       "Others",   "peggy",   "1,500 USD",   "Ended",  "View"},
+                {"Rare Coin",           "Others",   "quentin", "900 USD",     "Active", "Edit"},
         };
 
         for (Object[] row : rows) {
@@ -186,12 +235,17 @@ public class AdminDashboardController {
                         (String) row[3], (String) row[4], (String) row[5]));
             }
         }
-
         listingsTable.setItems(data);
-        System.out.println("Admin load table: " + category);
     }
 
     // ── Users data ────────────────────────────────────────────────────────────
+
+    /**
+     * Load dữ liệu vào bảng Users, filter theo role hoặc status.
+     * TODO: Thay bằng UserDAO.getAll() hoặc UserDAO.getByStatus(filter).
+     *
+     * @param filter "ALL", "Active", "Banned", hoặc "Admin"
+     */
     private void loadUsersTable(String filter) {
         ObservableList<UserRow> data = FXCollections.observableArrayList();
 
@@ -211,6 +265,7 @@ public class AdminDashboardController {
         for (Object[] u : users) {
             String role   = (String) u[3];
             String status = (String) u[4];
+            // Match nếu là ALL, hoặc khớp status, hoặc khớp role
             boolean match = filter.equals("ALL")
                     || filter.equalsIgnoreCase(status)
                     || filter.equalsIgnoreCase(role);
@@ -220,8 +275,6 @@ public class AdminDashboardController {
                         role, status, (String) u[5]));
             }
         }
-
         usersTable.setItems(data);
-        System.out.println("Users load: " + filter);
     }
 }

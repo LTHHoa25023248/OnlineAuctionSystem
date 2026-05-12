@@ -1,127 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" prefHeight="700.0" prefWidth="900.0" stylesheets="@../css/listingpagestyles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
-    <content>
-        <AnchorPane minHeight="700.0" prefWidth="887.0" styleClass="rootPane">
-            <children>
+<BorderPane
+        prefWidth="900.0"
+        prefHeight="700.0"
+        styleClass="rootPane"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
 
-                <!-- Ảnh trái -->
-                <StackPane layoutX="28.0" layoutY="42.0" prefHeight="390.0" prefWidth="378.0" styleClass="imagePane">
-                    <children>
-                        <ImageView fx:id="image" fitHeight="366.0" fitWidth="381.0" pickOnBounds="true" preserveRatio="true">
-                            <image><Image url="@../images/Icons/sample.png" /></image>
+    <!-- TOP BAR -->
+    <top>
+        <HBox styleClass="detailTopBar" alignment="CENTER_LEFT" prefHeight="52.0">
+            <padding><Insets top="0" right="20" bottom="0" left="20"/></padding>
+            <Label text="Auction Detail" styleClass="detailTopBarTitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ImageView fx:id="closeButton"
+                       fitHeight="26.0" fitWidth="25.0"
+                       pickOnBounds="true"
+                       onMouseClicked="#handleClose">
+                <image><Image url="@../images/Icons/cross-circle.png"/></image>
+            </ImageView>
+        </HBox>
+    </top>
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="detailScrollPane">
+            <HBox spacing="0">
+
+                <!-- LEFT: ảnh + listed by + description -->
+                <VBox spacing="20" prefWidth="380.0" minWidth="340.0"
+                      styleClass="detailLeftPanel">
+                    <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+                    <StackPane styleClass="imagePane" prefHeight="300.0">
+                        <ImageView fx:id="image"
+                                   fitHeight="280.0" fitWidth="330.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@../images/Icons/sample.png"/></image>
                         </ImageView>
-                    </children>
-                </StackPane>
+                    </StackPane>
 
-                <!-- Listed By + Description (trái dưới) -->
-                <Label layoutX="28.0" layoutY="450.0" text="Listed By :">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label fx:id="userLabel" layoutX="118.0" layoutY="450.0" prefWidth="278.0" text="Team 5">
-                    <font><Font name="MS Reference Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label layoutX="28.0" layoutY="490.0" text="Description :">
-                    <font><Font name="Microsoft Sans Serif" size="19.0" /></font>
-                </Label>
-                <Label fx:id="descriptionLabel" alignment="TOP_LEFT" layoutX="28.0" layoutY="525.0" prefHeight="150.0" prefWidth="386.0" wrapText="true" text="This is a short description text.">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                    <VBox spacing="4">
+                        <Label text="LISTED BY" styleClass="detailSectionLabel"/>
+                        <Label fx:id="userLabel" text="---" styleClass="detailBodyText"/>
+                    </VBox>
 
-                <!-- Cột phải -->
-                <!-- Title -->
-                <Label fx:id="titleLabel" layoutX="460.0" layoutY="20.0" prefHeight="48.0" prefWidth="386.0" text="This is Title">
-                    <font><Font name="Berlin Sans FB" size="43.0" /></font>
-                </Label>
+                    <Separator styleClass="detailSeparator"/>
 
-                <!-- Active + Popular + Category -->
-                <Label fx:id="activeLabel" alignment="CENTER" layoutX="460.0" layoutY="80.0" prefHeight="23.0" prefWidth="90.0" styleClass="popularLabel" text="Active" textFill="WHITE">
-                    <font><Font name="Berlin Sans FB" size="15.0" /></font>
-                </Label>
-                <Label fx:id="popularNowLabel" alignment="CENTER" layoutX="560.0" layoutY="80.0" prefHeight="23.0" prefWidth="99.0" styleClass="popularLabel" text="Popular Now" textFill="WHITE">
-                    <font><Font name="Berlin Sans FB" size="15.0" /></font>
-                </Label>
-                <Label fx:id="categoryLabel" alignment="CENTER" layoutX="668.0" layoutY="80.0" prefHeight="23.0" prefWidth="107.0" styleClass="categoryLabel" text="Category" textFill="WHITE">
-                    <font><Font name="Berlin Sans FB" size="17.0" /></font>
-                </Label>
+                    <VBox spacing="6" VBox.vgrow="ALWAYS">
+                        <Label text="DESCRIPTION" styleClass="detailSectionLabel"/>
+                        <Label fx:id="descriptionLabel" wrapText="true"
+                               styleClass="detailBodyTextMuted"/>
+                    </VBox>
+                </VBox>
 
-                <!-- Current Price -->
-                <Label layoutX="460.0" layoutY="118.0" text=" Current Price : ">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label fx:id="priceLabel" layoutX="590.0" layoutY="118.0" prefWidth="200.0" text="100.0 $">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                <!-- RIGHT: info + bid + comments -->
+                <VBox HBox.hgrow="ALWAYS">
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                styleClass="detailScrollPane">
+                        <VBox spacing="20">
+                            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
 
-                <!-- Total Bids -->
-                <Label layoutX="460.0" layoutY="155.0" text=" Total Bids : ">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label fx:id="totalBidsLabel" layoutX="560.0" layoutY="155.0" text="17">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                            <!-- Title -->
+                            <Label fx:id="titleLabel" text="Item Title"
+                                   wrapText="true" styleClass="detailTitle"/>
 
-                <!-- Started On -->
-                <Label layoutX="460.0" layoutY="192.0" text=" Started On : ">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label fx:id="startLabel" layoutX="575.0" layoutY="192.0" prefWidth="191.0" text="17/02/2022">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                            <!-- Badges -->
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label fx:id="activeLabel" text="Active"
+                                       styleClass="badgeActive"/>
+                                <Label fx:id="popularNowLabel" text="Popular Now"
+                                       styleClass="badgePending"/>
+                                <Label fx:id="categoryLabel" text="Category"
+                                       styleClass="badgeCategory"/>
+                            </HBox>
 
-                <!-- End On -->
-                <Label layoutX="460.0" layoutY="229.0" text=" End On : ">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <Label fx:id="endLabel" layoutX="545.0" layoutY="229.0" prefWidth="163.0" text="17/02/2022">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
-                <MFXButton fx:id="endnowButton" layoutX="720.0" layoutY="225.0" text="End Now">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </MFXButton>
+                            <Separator styleClass="detailSeparator"/>
 
-                <!-- Winner -->
-                <Label fx:id="winnerLabel" layoutX="460.0" layoutY="268.0" prefWidth="303.0" text="">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                            <!-- Info box -->
+                            <VBox spacing="12" styleClass="detailInfoBox">
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Current Price"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="priceLabel" text="---"
+                                           styleClass="detailPriceValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Total Bids"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="totalBidsLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Started On"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="startLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Ends On"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="endLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <MFXButton fx:id="endnowButton" text="End Now"
+                                               styleClass="endNowButton"
+                                               prefHeight="32.0" prefWidth="88.0"/>
+                                </HBox>
+                            </VBox>
 
-                <!-- Place Bid -->
-                <MFXTextField fx:id="bidField" floatMode="BORDER" floatingText="  Place Bid  " layoutX="460.0" layoutY="310.0" prefHeight="48.0" prefWidth="206.0" styleClass="fields" />
-                <MFXButton fx:id="placeBidButton" layoutX="680.0" layoutY="310.0" prefHeight="48.0" prefWidth="66.0" text="Place">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </MFXButton>
-                <Label fx:id="bidValidationLabel" layoutX="460.0" layoutY="365.0" prefWidth="293.0" text="" textFill="RED">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </Label>
+                            <Label fx:id="winnerLabel" text=""
+                                   styleClass="winnerLabel" wrapText="true"/>
 
-                <!-- Comments title -->
-                <Label layoutX="460.0" layoutY="395.0" prefHeight="35.0" prefWidth="145.0" text="Comments">
-                    <font><Font name="Microsoft Sans Serif" size="25.0" /></font>
-                </Label>
+                            <Separator styleClass="detailSeparator"/>
 
-                <!-- Comments pane -->
-                <MFXScrollPane fx:id="commentsPane" layoutX="460.0" layoutY="435.0" prefHeight="200.0" prefWidth="390.0" styleClass="scrollPane" trackColor="#ffc800" />
+                            <!-- Place Bid -->
+                            <VBox spacing="8">
+                                <Label text="PLACE BID" styleClass="detailSectionLabel"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <MFXTextField fx:id="bidField" styleClass="fields"
+                                                  promptText="Enter bid amount (USD)"
+                                                  prefHeight="48.0"
+                                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    <MFXButton fx:id="placeBidButton" styleClass="goldButton"
+                                               text="Place Bid"
+                                               prefHeight="48.0" prefWidth="100.0"/>
+                                </HBox>
+                                <Label fx:id="bidValidationLabel" styleClass="errorLabel"
+                                       text="" wrapText="true"/>
+                            </VBox>
 
-                <!-- Comment input -->
-                <MFXTextField fx:id="commentField" floatMode="BORDER" floatingText="  Comment  " layoutX="460.0" layoutY="645.0" prefHeight="42.0" prefWidth="278.0" styleClass="fields">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </MFXTextField>
-                <MFXButton fx:id="commentPostButton" layoutX="748.0" layoutY="645.0" prefHeight="42.0" prefWidth="66.0" text="Post">
-                    <font><Font name="Microsoft Sans Serif" size="17.0" /></font>
-                </MFXButton>
+                            <Separator styleClass="detailSeparator"/>
 
-                <!-- Close button -->
-                <ImageView fx:id="closeButton" fitHeight="26.0" fitWidth="25.0" layoutX="845.0" layoutY="14.0" pickOnBounds="true" onMouseClicked="#handleClose">
-                    <image><Image url="@../images/Icons/cross-circle.png" /></image>
-                </ImageView>
+                            <!-- Comments -->
+                            <VBox spacing="10">
+                                <Label text="COMMENTS" styleClass="detailSectionLabel"/>
+                                <MFXScrollPane fx:id="commentsPane" styleClass="scrollPane"
+                                               prefHeight="180.0" maxWidth="Infinity"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <MFXTextField fx:id="commentField" styleClass="fields"
+                                                  promptText="Write a comment..."
+                                                  prefHeight="44.0"
+                                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    <MFXButton fx:id="commentPostButton" styleClass="goldButton"
+                                               text="Post"
+                                               prefHeight="44.0" prefWidth="70.0"/>
+                                </HBox>
+                            </VBox>
 
-            </children>
-        </AnchorPane>
-    </content>
-</ScrollPane>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+            </HBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
