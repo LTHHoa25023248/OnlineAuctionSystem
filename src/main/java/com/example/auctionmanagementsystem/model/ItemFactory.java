@@ -1,0 +1,50 @@
+package com.example.auctionmanagementsystem.model;
+
+import java.util.Map;
+
+public class ItemFactory {
+    public static Item createItem(String type, String id, String name, String description, double startingPrice, Map<String, String> attributes ) {
+        //Dùng 'type' để xác định danh mục sản phẩm
+        //Không được để trống mục 'type' khi tạo sản phẩm
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("You must enter product category!");
+        }
+
+        //Tránh NullPointerException cho attributes khi tạo sản phẩm
+        if (attributes == null) {
+            throw new IllegalArgumentException("Please add more information!");
+        }
+
+        //Khởi tạo sản phẩm cho từng loại 
+        try {
+            return switch(type.toUpperCase()) {
+            case "ELECTRONICS" -> {
+                String brand = attributes.getOrDefault("brand", "Unknown");
+                String warrantyStr = attributes.getOrDefault("warranty", "0");
+                yield new Electronics(id, name, description, startingPrice, brand, Integer.parseInt(warrantyStr.trim()));
+            }
+
+            case "ART" -> {
+                String author = attributes.getOrDefault("author", "Unknown");
+                String material = attributes.getOrDefault("material", "Unknown");
+                String year = attributes.getOrDefault("year", "Unknown");
+                yield new Art(id, name, description, startingPrice, author, material, year);
+            }
+
+            case "VEHICLE" -> {
+                String yearStr = attributes.getOrDefault("year", "0");
+                String mileageStr = attributes.getOrDefault("mileage", "0.0");
+                yield new Vehicle(id, name, description, startingPrice, Integer.parseInt(yearStr.trim()), Double.parseDouble(mileageStr.trim()));
+            }
+
+            //Thông báo không tìm thấy loại sản phẩm phù hợp khi tạo sản phẩm (chưa có trong danh sách loại sản phẩm)
+            default -> throw new IllegalArgumentException("Your product has not supported by our system yet!");
+            };
+        } catch (Exception e) {
+            System.err.println("ERROR: Found error in ItemFactory.java!" + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to create item", e);
+        }
+
+    }
+}

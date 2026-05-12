@@ -1,16 +1,19 @@
 package com.example.auctionmanagementsystem.model;
 
-abstract class Entity {
-    protected String id;
-    public Entity(){};
-    public Entity(String id){
-        this.id=id;
+public abstract class Entity {
+    protected int id;
+
+//Constructor mặc định, id=0 được hiểu là chưa được lưu vào Database
+    public Entity() {
+        this.id = 0;
     }
-    public String getId(){
+
+    public int getId() {
         return id;
     }
-    public void setId(String id) {
+
+    // Thêm setter để DAO có thể cập nhật ID sau khi Database sinh ra
+    public void setId(int id) {
         this.id = id;
     }
 }
-
