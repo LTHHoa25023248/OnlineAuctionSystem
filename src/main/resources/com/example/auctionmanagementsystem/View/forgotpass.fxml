@@ -3,90 +3,198 @@
 <?import io.github.palexdev.materialfx.controls.MFXButton?>
 <?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="659.0" prefWidth="920.0" styleClass="backgroudPane" stylesheets="@../css/loginsignupstyles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.auctionmanagementsystem.ForgotPassController">
-    <children>
-        <AnchorPane layoutY="-1.0" prefHeight="660.0" prefWidth="515.0">
-            <children>
-                <ImageView fitHeight="660.0" fitWidth="515.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../images/Icons/loginpageimage.png" />
-                    </image>
-                </ImageView>
-              <Text layoutX="315.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header" text="Change Password">
-                  <font>
-                      <Font size="25.0" />
-                  </font>
-                  <stroke>
-                      <LinearGradient endX="1.0" endY="1.0">
-                          <stops>
-                              <Stop>
-                                  <color>
-                                      <Color red="0.10999999940395355" green="0.07719298452138901" blue="0.11578947305679321" />
-                                  </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                  <color>
-                                      <Color red="1.0" green="1.0" blue="1.0" />
-                                  </color>
-                              </Stop>
-                          </stops>
-                      </LinearGradient>
-                  </stroke>
-                  <fill>
-                      <LinearGradient endX="1.0" endY="1.0">
-                          <stops>
-                              <Stop>
-                                  <color>
-                                      <Color red="0.1894736886024475" green="0.16023391485214233" blue="0.11929824203252792" />
-                                  </color>
-                              </Stop>
-                              <Stop offset="1.0">
-                                  <color>
-                                      <Color />
-                                  </color>
-                              </Stop>
-                          </stops>
-                      </LinearGradient>
-                  </fill>
-              </Text>
-              <MFXTextField fx:id="emailField" floatMode="BORDER" floatingText="  Email  " layoutX="300.0" layoutY="200.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields">
-                  <font>
-                      <Font name="Verdana" size="13.0" />
-                  </font>
-            </MFXTextField>
-              <MFXTextField fx:id="codeField" floatMode="BORDER" floatingText="  Verification Code  " layoutX="300.0" layoutY="304.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields">
-                  <font>
-                      <Font name="Verdana" size="13.0" />
-                  </font>
-              </MFXTextField>
-              <MFXPasswordField fx:id="passwordField" floatMode="BORDER" floatingText="  Password  " layoutX="300.0" layoutY="381.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields">
-                  <font>
-                      <Font size="13.0" />
-                  </font>
-            </MFXPasswordField>
-              <MFXPasswordField fx:id="confirmPasswordField" floatMode="BORDER" floatingText="  Confirm Password  " layoutX="300.0" layoutY="452.0" prefHeight="50.0" prefWidth="278.0" styleClass="fields">
-                  <font>
-                      <Font size="13.0" />
-                  </font>
-              </MFXPasswordField>
-            </children>
-        </AnchorPane>
-        <Label fx:id="pwValidLabel" layoutX="582.0" layoutY="424.0" prefHeight="18.0" prefWidth="278.0" styleClass="validationLabel" text="Label" visible="false" />
-        <Label fx:id="unValidLabel" layoutX="582.0" layoutY="340.0" prefHeight="18.0" prefWidth="278.0" styleClass="validationLabel" text="Label" visible="false" />
-        <Label layoutX="715.0" layoutY="30.0" prefHeight="18.0" prefWidth="113.0" text="Didn't have account?" />
-        <MFXButton fx:id="signupButton" layoutX="832.0" layoutY="26.0" styleClass="outline-button" text="Signup" />
-        <Label fx:id="label" layoutX="582.0" layoutY="517.0" prefHeight="18.0" prefWidth="267.0" textAlignment="CENTER" />
-        <MFXButton fx:id="sendCodeButton" layoutX="562.0" layoutY="269.0" styleClass="myButtons" text="Send Code" />
-        <MFXButton fx:id="okButton" layoutX="573.0" layoutY="511.0" prefHeight="33.0" prefWidth="72.0" styleClass="myButtons" text="Save" />
-    </children>
-</AnchorPane>
+<StackPane
+        prefWidth="920.0"
+        prefHeight="660.0"
+        style="-fx-background-color: #0D1018;"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.ForgotPassController">
+
+    <BorderPane styleClass="root"
+                maxWidth="920.0" maxHeight="660.0">
+
+        <top>
+            <HBox styleClass="titlePane" alignment="CENTER_LEFT"
+                  prefHeight="68.0" spacing="14.0">
+                <padding><Insets top="0" right="32" bottom="0" left="32"/></padding>
+                <Label text="Auction House" styleClass="titleLabel">
+                    <font><Font name="Georgia" size="22.0"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <MFXButton fx:id="closeButton"
+                           styleClass="outlineButton"
+                           text="X"
+                           onAction="#handleClose"
+                           prefWidth="40.0" prefHeight="36.0"/>
+            </HBox>
+        </top>
+
+        <center>
+            <HBox styleClass="loginBackground">
+
+                <VBox alignment="CENTER" spacing="36"
+                      prefWidth="360.0" minWidth="300.0"
+                      style="-fx-background-color: linear-gradient(to bottom, #1A1F2E, #080A0F);
+                             -fx-border-color: transparent rgba(255,255,255,0.06) transparent transparent;
+                             -fx-border-width: 0 1px 0 0;">
+                    <padding><Insets top="64" right="48" bottom="64" left="48"/></padding>
+
+                    <StackPane prefWidth="84.0" prefHeight="84.0" alignment="CENTER"
+                               style="-fx-background-color: rgba(212,168,58,0.10);
+                                      -fx-background-radius: 999px;
+                                      -fx-border-color: rgba(212,168,58,0.22);
+                                      -fx-border-radius: 999px;
+                                      -fx-border-width: 1px;">
+                        <Label text="[ ]"
+                               style="-fx-text-fill: #F0C060;
+                                      -fx-font-size: 22px;
+                                      -fx-font-weight: bold;"/>
+                    </StackPane>
+
+                    <VBox spacing="10" alignment="CENTER">
+                        <Label text="Secure Reset"
+                               style="-fx-text-fill: #F0C060; -fx-font-family: Georgia;
+                                      -fx-font-size: 24px; -fx-font-weight: bold;"
+                               wrapText="true" textAlignment="CENTER"/>
+                        <Label text="We will send a verification code to your registered email."
+                               style="-fx-text-fill: rgba(168,164,156,0.58); -fx-font-size: 13px;"
+                               wrapText="true" textAlignment="CENTER"/>
+                    </VBox>
+
+                    <VBox spacing="18" alignment="CENTER_LEFT"
+                          style="-fx-background-color: rgba(255,255,255,0.025);
+                                 -fx-background-radius: 12px;
+                                 -fx-border-color: rgba(255,255,255,0.06);
+                                 -fx-border-radius: 12px;
+                                 -fx-border-width: 1px;
+                                 -fx-padding: 22px 24px;">
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <StackPane prefWidth="26" prefHeight="26"
+                                       style="-fx-background-color: rgba(212,168,58,0.16);
+                                              -fx-background-radius: 999px;">
+                                <Label text="1" style="-fx-text-fill: #F0C060;
+                                               -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                            </StackPane>
+                            <Label text="Enter your email address"
+                                   style="-fx-text-fill: rgba(168,164,156,0.72); -fx-font-size: 13px;"/>
+                        </HBox>
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <StackPane prefWidth="26" prefHeight="26"
+                                       style="-fx-background-color: rgba(212,168,58,0.16);
+                                              -fx-background-radius: 999px;">
+                                <Label text="2" style="-fx-text-fill: #F0C060;
+                                               -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                            </StackPane>
+                            <Label text="Enter the verification code"
+                                   style="-fx-text-fill: rgba(168,164,156,0.72); -fx-font-size: 13px;"/>
+                        </HBox>
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <StackPane prefWidth="26" prefHeight="26"
+                                       style="-fx-background-color: rgba(212,168,58,0.16);
+                                              -fx-background-radius: 999px;">
+                                <Label text="3" style="-fx-text-fill: #F0C060;
+                                               -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                            </StackPane>
+                            <Label text="Set your new password"
+                                   style="-fx-text-fill: rgba(168,164,156,0.72); -fx-font-size: 13px;"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: #0D1018;
+                                   -fx-background: #0D1018;
+                                   -fx-border-color: transparent;">
+                    <VBox alignment="TOP_LEFT" spacing="0" minHeight="592.0"
+                          style="-fx-background-color: #0D1018;">
+                        <padding><Insets top="64" right="88" bottom="64" left="76"/></padding>
+
+                        <Label text="Change Password"
+                               style="-fx-text-fill: #F2F0EC; -fx-font-family: Georgia;
+                                      -fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        <Region prefHeight="6.0"/>
+                        <Label text="Fill in the fields below to reset your account password"
+                               style="-fx-text-fill: rgba(168,164,156,0.55); -fx-font-size: 13px;"/>
+                        <Region prefHeight="40.0"/>
+
+                        <Label text="EMAIL ADDRESS"
+                               style="-fx-text-fill: rgba(168,164,156,0.80);
+                                      -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <Region prefHeight="7.0"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <MFXTextField fx:id="emailField" styleClass="signupField"
+                                          promptText="Enter your registered email"
+                                          prefHeight="52.0" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <MFXButton fx:id="sendCodeButton" styleClass="outlineButton"
+                                       text="Send Code" prefHeight="52.0" prefWidth="126.0"/>
+                        </HBox>
+                        <Region prefHeight="5.0"/>
+                        <Label fx:id="unValidLabel" styleClass="errorLabel"
+                               text="" visible="false" managed="false"/>
+
+                        <Region prefHeight="24.0"/>
+                        <Label text="VERIFICATION CODE"
+                               style="-fx-text-fill: rgba(168,164,156,0.80);
+                                      -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <Region prefHeight="7.0"/>
+                        <MFXTextField fx:id="codeField" styleClass="signupField"
+                                      promptText="6-digit code sent to your email"
+                                      prefHeight="52.0" maxWidth="Infinity"/>
+
+                        <Region prefHeight="30.0"/>
+                        <HBox alignment="CENTER" spacing="14">
+                            <Separator HBox.hgrow="ALWAYS"
+                                       style="-fx-background-color: rgba(255,255,255,0.07);"/>
+                            <Label text="NEW PASSWORD"
+                                   style="-fx-text-fill: rgba(168,164,156,0.38);
+                                          -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                            <Separator HBox.hgrow="ALWAYS"
+                                       style="-fx-background-color: rgba(255,255,255,0.07);"/>
+                        </HBox>
+
+                        <Region prefHeight="30.0"/>
+                        <Label text="NEW PASSWORD"
+                               style="-fx-text-fill: rgba(168,164,156,0.80);
+                                      -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <Region prefHeight="7.0"/>
+                        <MFXPasswordField fx:id="passwordField" styleClass="signupField"
+                                          promptText="Minimum 8 characters"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+                        <Region prefHeight="5.0"/>
+                        <Label fx:id="pwValidLabel" styleClass="errorLabel"
+                               text="" visible="false" managed="false"/>
+
+                        <Region prefHeight="24.0"/>
+                        <Label text="CONFIRM PASSWORD"
+                               style="-fx-text-fill: rgba(168,164,156,0.80);
+                                      -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <Region prefHeight="7.0"/>
+                        <MFXPasswordField fx:id="confirmPasswordField" styleClass="signupField"
+                                          promptText="Repeat your new password"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+
+                        <Region prefHeight="10.0"/>
+                        <Label fx:id="label" styleClass="errorLabel"
+                               text="" wrapText="true" maxWidth="Infinity"/>
+                        <Region prefHeight="36.0"/>
+
+                        <MFXButton fx:id="okButton"
+                                   styleClass="goldButton signupSubmitBtn"
+                                   text="Save New Password"
+                                   prefHeight="54.0" maxWidth="Infinity"/>
+                    </VBox>
+                </ScrollPane>
+
+            </HBox>
+        </center>
+
+    </BorderPane>
+</StackPane>

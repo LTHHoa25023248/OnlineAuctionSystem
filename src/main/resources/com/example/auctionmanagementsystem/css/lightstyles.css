@@ -1,0 +1,620 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — LIGHT THEME
+   lightstyles.css
+   Áp dụng khi user bật Light Mode
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ROOT ──────────────────────────────────────────────────── */
+.root {
+    -fx-background-color: #F5F5F0;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+/* ── TOP BAR ───────────────────────────────────────────────── */
+.titlePane {
+    -fx-background-color: #1A1A1A;
+    -fx-border-color: transparent transparent #D4A83A transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 3);
+    -fx-min-height: 68px;
+    -fx-max-height: 68px;
+}
+
+.titleLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Georgia', serif;
+}
+
+.loggedInText {
+    -fx-text-fill: rgba(255,255,255,0.60);
+    -fx-font-size: 13px;
+}
+
+.usernameLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ── GOLD BUTTON ───────────────────────────────────────────── */
+.goldButton {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 8, 0, 0, 2);
+}
+
+.goldButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.55), 12, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.goldButton:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ── OUTLINE BUTTON ────────────────────────────────────────── */
+.outlineButton {
+    -fx-background-color: transparent;
+    -fx-border-color: #D4A83A;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #A07828;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.outlineButton:hover {
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-border-color: #A07828;
+}
+
+/* ── SIDEBAR ───────────────────────────────────────────────── */
+.menuPane {
+    -fx-background-color: #1A1A1A;
+    -fx-border-color: transparent #2E2E2E transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 12, 0, 4, 0);
+}
+
+.menuSectionLabel {
+    -fx-text-fill: rgba(255,255,255,0.40);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.menuItems {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 3px;
+    -fx-padding: 0 20px;
+    -fx-pref-height: 46px;
+}
+
+.menuItems:hover {
+    -fx-background-color: rgba(212,168,58,0.10);
+    -fx-border-color: transparent transparent transparent #D4A83A;
+}
+
+.menuItems:hover .label {
+    -fx-text-fill: #F0C060;
+}
+
+.menuItemActive {
+    -fx-background-color: rgba(212,168,58,0.15);
+    -fx-border-color: transparent transparent transparent #F0C060;
+    -fx-border-width: 0 0 0 3px;
+}
+
+.menuItemActive .label {
+    -fx-text-fill: #F0C060;
+    -fx-font-weight: bold;
+}
+
+.menuSeparator {
+    -fx-background-color: rgba(255,255,255,0.10);
+}
+
+/* ── CATEGORY BAR ──────────────────────────────────────────── */
+.secondaryBar {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent transparent #E0E0E0 transparent;
+    -fx-border-width: 0 0 1.5px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 5, 0, 0, 2);
+    -fx-min-height: 60px;
+    -fx-max-height: 60px;
+}
+
+.categories {
+    -fx-background-color: #F0EDE8;
+    -fx-text-fill: #555555;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 6px 16px;
+}
+
+.categories:hover {
+    -fx-background-color: #1A1A1A;
+    -fx-text-fill: #F0C060;
+    -fx-border-color: #1A1A1A;
+}
+
+.catSelected {
+    -fx-background-color: #1A1A1A;
+    -fx-text-fill: #F0C060;
+    -fx-border-color: #1A1A1A;
+    -fx-font-weight: bold;
+}
+
+/* ── SCROLL PANE ───────────────────────────────────────────── */
+.backPane {
+    -fx-background-color: #F5F5F0;
+    -fx-background: #F5F5F0;
+    -fx-border-color: transparent;
+}
+
+.backPane .viewport {
+    -fx-background-color: #F5F5F0;
+}
+
+.backPane > .scroll-bar:vertical {
+    -fx-pref-width: 6px;
+}
+
+.backPane > .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(212,168,58,0.35);
+    -fx-background-radius: 3px;
+}
+
+/* ── AUCTION CARDS ─────────────────────────────────────────── */
+.auctionCard {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3);
+    -fx-cursor: hand;
+}
+
+.auctionCard:hover {
+    -fx-background-color: #FDFCF8;
+    -fx-border-color: #D4A83A;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.22), 16, 0, 0, 5);
+    -fx-scale-x: 1.015;
+    -fx-scale-y: 1.015;
+}
+
+/* Card image area */
+.imagePane {
+    -fx-background-color: #F5EDD5;
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(212,168,58,0.25);
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px;
+}
+
+/* ── BADGES ────────────────────────────────────────────────── */
+.categoryLabel {
+    -fx-background-color: #F0C060;
+    -fx-text-fill: #1A1A1A;
+    -fx-background-radius: 6px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 10px;
+}
+
+.popularLabel {
+    -fx-background-color: #1A1A1A;
+    -fx-text-fill: #F0C060;
+    -fx-background-radius: 6px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 10px;
+}
+
+/* ── CARD TEXT ─────────────────────────────────────────────── */
+.itemTitle {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.bidLabel {
+    -fx-text-fill: #A07828;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.timerLabel {
+    -fx-text-fill: #888888;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* ── FORM FIELDS ───────────────────────────────────────────── */
+.fields, .signupField {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1.5px;
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+}
+
+.fields:focused, .signupField:focused {
+    -fx-border-color: #D4A83A;
+    -fx-background-color: #FFFDF5;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.20), 6, 0, 0, 0);
+}
+
+.fields .floating-text, .signupField .floating-text {
+    -fx-text-fill: #888888;
+    -fx-font-size: 13px;
+}
+
+.fieldLabel {
+    -fx-text-fill: #555555;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.errorLabel {
+    -fx-text-fill: #CC3333;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+/* ── STATUS BADGES ─────────────────────────────────────────── */
+.badgeActive {
+    -fx-background-color: #E8F5EE;
+    -fx-text-fill: #1A7A42;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+.badgeEnded {
+    -fx-background-color: #F0F0F0;
+    -fx-text-fill: #888888;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+.badgePending {
+    -fx-background-color: #FFF8E0;
+    -fx-text-fill: #A07800;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+/* ── PROFILE / DEPOSIT ─────────────────────────────────────── */
+.myButtons {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.30), 8, 0, 0, 2);
+}
+
+.myButtons:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* ── CLOSE BUTTON ──────────────────────────────────────────── */
+.closeButton {
+    -fx-background-color: #F0F0F0;
+    -fx-background-radius: 8px;
+    -fx-border-color: #CCCCCC;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-cursor: hand;
+}
+
+.closeButton:hover {
+    -fx-background-color: #FFE0E0;
+    -fx-border-color: #CC3333;
+}
+
+/* ── SIGNUP / LOGIN CARD ───────────────────────────────────── */
+.loginBackground {
+    -fx-background-color: #F5F5F0;
+}
+
+.loginCard {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 18px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 18px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 28, 0, 0, 8);
+}
+
+.loginLeftPanel {
+    -fx-background-color: #1A1A1A;
+    -fx-background-radius: 18px 0 0 18px;
+}
+
+.loginWelcomeTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 28px;
+}
+
+.loginWelcomeSub {
+    -fx-text-fill: rgba(255,255,255,0.65);
+    -fx-font-size: 13px;
+}
+
+.statNumLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.statTextLabel {
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-font-size: 11px;
+}
+
+.loginRightPanel {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 0 18px 18px 0;
+}
+
+.loginFormTitle {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 26px;
+}
+
+.loginFormSub {
+    -fx-text-fill: #888888;
+    -fx-font-size: 13px;
+}
+
+.forgotLink {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A07828;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.forgotLink:hover {
+    -fx-text-fill: #D4A83A;
+    -fx-underline: true;
+}
+
+.orLabel {
+    -fx-text-fill: #AAAAAA;
+    -fx-font-size: 12px;
+}
+
+.termsLink {
+    -fx-text-fill: #A07828;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.termsText {
+    -fx-text-fill: #888888;
+    -fx-font-size: 13px;
+}
+
+.signupCard {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 20, 0, 0, 6);
+}
+
+.signupCardHeader {
+    -fx-background-color: #1A1A1A;
+    -fx-background-radius: 16px 16px 0 0;
+    -fx-border-color: transparent transparent #D4A83A transparent;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.signupTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 22px;
+}
+
+.signupSubtitle {
+    -fx-text-fill: rgba(255,255,255,0.60);
+    -fx-font-size: 13px;
+}
+
+.cardDivider {
+    -fx-background-color: #E0E0E0;
+}
+
+.signupFormBody {
+    -fx-background-color: #FFFFFF;
+}
+
+.formScrollPane {
+    -fx-background-color: #F5F5F0;
+    -fx-background: #F5F5F0;
+    -fx-border-color: transparent;
+}
+
+.formOuter {
+    -fx-background-color: #F5F5F0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION CARD — Light mode
+   ═══════════════════════════════════════════════════════════════ */
+
+.cardContent {
+    -fx-padding: 20px 16px 20px 16px;
+    -fx-background-color: #FFFFFF;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION DETAIL — Light mode
+   ═══════════════════════════════════════════════════════════════ */
+
+.detailTopBar {
+    -fx-background-color: #1A1A1A;
+    -fx-border-color: transparent transparent #D4A83A transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.detailTopBarTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: Georgia;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.detailScrollPane {
+    -fx-background-color: #F5F5F0;
+    -fx-background: #F5F5F0;
+    -fx-border-color: transparent;
+}
+
+.detailScrollPane .viewport {
+    -fx-background-color: #F5F5F0;
+}
+
+.detailLeftPanel {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent #E0E0E0 transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.detailSectionLabel {
+    -fx-text-fill: #888888;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.detailBodyText {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-size: 14px;
+}
+
+.detailBodyTextMuted {
+    -fx-text-fill: #555555;
+    -fx-font-size: 13px;
+}
+
+.detailSeparator {
+    -fx-background-color: #E0E0E0;
+}
+
+.detailTitle {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: Georgia;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.badgeCategory {
+    -fx-background-color: rgba(212,168,58,0.15);
+    -fx-text-fill: #A07828;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
+}
+
+.detailInfoBox {
+    -fx-background-color: #F8F8F5;
+    -fx-background-radius: 10px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+}
+
+.detailInfoKey {
+    -fx-text-fill: #888888;
+    -fx-font-size: 12px;
+}
+
+.detailInfoValue {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-size: 14px;
+}
+
+.detailPriceValue {
+    -fx-text-fill: #A07828;
+    -fx-font-family: Georgia;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.endNowButton {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(224,84,84,0.50);
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #E05454;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.winnerLabel {
+    -fx-text-fill: #1A7A42;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+/* ── ADD LISTING POPUP ─────────────────────────────────────── */
+
+.addListingRoot {
+    -fx-background-color: #F5F5F0;
+}
+
+.addListingTitle {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-family: 'Berlin Sans FB', Georgia, serif;
+}
+
+.addListingFileLabel {
+    -fx-text-fill: #555555;
+    -fx-font-size: 13px;
+}

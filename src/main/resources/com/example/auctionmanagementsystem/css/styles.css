@@ -1,326 +1,529 @@
-@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — LUXURY DARK THEME
+   styles.css · Main stylesheet
+   Palette: Obsidian · Champagne Gold · Ivory
+   ═══════════════════════════════════════════════════════════════ */
 
-.root {
-    -fx-background-color: #f0f0f0;
-    -fx-font-family: 'Varela Round', sans-serif;
+/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+* {
+    /* Backgrounds */
+    -bg-deep:        #080A0F;
+    -bg-base:        #0D1018;
+    -bg-surface:     #131720;
+    -bg-elevated:    #1A1F2E;
+    -bg-overlay:     #1F2535;
+    -bg-hover:       #252B3B;
+
+    /* Gold Accent */
+    -gold-bright:    #F0C060;
+    -gold-mid:       #D4A83A;
+    -gold-muted:     #A07828;
+    -gold-dim:       #6B5020;
+    -gold-glow:      rgba(212,168,58,0.18);
+    -gold-border:    rgba(212,168,58,0.30);
+
+    /* Text */
+    -text-primary:   #F2F0EC;
+    -text-secondary: #A8A49C;
+    -text-muted:     #5C5850;
+    -text-accent:    #F0C060;
+
+    /* UI Chrome */
+    -border-subtle:  rgba(255,255,255,0.06);
+    -border-mid:     rgba(255,255,255,0.10);
+    -border-strong:  rgba(255,255,255,0.16);
+
+    /* Status */
+    -green:   #3DBA7F;
+    -red:     #E05454;
+    -amber:   #E8A020;
+
+    /* Radius */
+    -r-sm:   6px;
+    -r-md:   10px;
+    -r-lg:   14px;
+    -r-xl:   20px;
+    -r-full: 999px;
+
+    /* Shadow */
+    -shadow-sm:   dropshadow(gaussian, rgba(0,0,0,0.40), 8,  0, 0, 2);
+    -shadow-md:   dropshadow(gaussian, rgba(0,0,0,0.55), 16, 0, 0, 4);
+    -shadow-lg:   dropshadow(gaussian, rgba(0,0,0,0.70), 28, 0, 0, 8);
+    -shadow-gold: dropshadow(gaussian, rgba(212,168,58,0.30), 14, 0, 0, 0);
 }
 
-/* TOP BAR */
+/* ── ROOT ──────────────────────────────────────────────────── */
+.root {
+    -fx-background-color: #0D1018;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOP BAR / HEADER
+══════════════════════════════════════════════════════════════ */
 .titlePane {
-    -fx-background-color: #1a1a1a;
-    -fx-border-color: transparent transparent #ecc667 transparent;
-    -fx-border-width: 0 0 3px 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.45), 10, 0, 0, 4);
+    -fx-background-color: #080A0F;
+    -fx-border-color: transparent transparent rgba(212,168,58,0.40) transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.70), 20, 0, 0, 6);
+    -fx-min-height: 68px;
+    -fx-max-height: 68px;
 }
 
 .titleLabel {
-    -fx-text-fill: #ffffff;
-    -fx-font-family: 'Berlin Sans FB';
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.50), 10, 0, 0, 0);
 }
 
 .loggedInText {
-    -fx-text-fill: rgba(255,255,255,0.55);
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: rgba(168,164,156,0.70);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
 }
 
 .usernameLabel {
-    -fx-text-fill: #ecc667;
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', sans-serif;
 }
 
-/* GOLD BUTTON */
+/* ══════════════════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════════════════ */
+
+/* Primary — Gold Fill */
 .goldButton {
-    -fx-background-color: #ecc667;
-    -fx-text-fill: #1a1a1a;
-    -fx-font-family: 'Berlin Sans FB';
-    -fx-font-size: 15px;
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-background-radius: 10px;
+    -fx-background-radius: 8px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.22), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 10, 0, 0, 2);
+    -fx-padding: 0 18px;
 }
 
 .goldButton:hover {
-    -fx-background-color: #d4a832;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.32), 7, 0, 0, 3);
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.55), 14, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 .goldButton:pressed {
-    -fx-background-color: #b08b29;
-    -fx-effect: none;
+    -fx-background-color: linear-gradient(to bottom, #C89830, #A07828);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.40), 4, 0, 0, 1);
+}
+
+/* Secondary — Ghost/Outline */
+.outlineButton {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(212,168,58,0.50);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 0 18px;
+}
+
+.outlineButton:hover {
+    -fx-background-color: rgba(212,168,58,0.10);
+    -fx-border-color: #F0C060;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.20), 8, 0, 0, 0);
+}
+
+.outlineButton:pressed {
+    -fx-background-color: rgba(212,168,58,0.18);
     -fx-scale-x: 0.97;
     -fx-scale-y: 0.97;
 }
 
-/* SIDEBAR */
+/* Danger */
+.dangerButton {
+    -fx-background-color: rgba(224,84,84,0.12);
+    -fx-border-color: rgba(224,84,84,0.40);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #E05454;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-padding: 4px 12px;
+    -fx-background-radius: 8px;
+}
+
+.dangerButton:hover {
+    -fx-background-color: rgba(224,84,84,0.22);
+    -fx-border-color: #E05454;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR / LEFT MENU
+══════════════════════════════════════════════════════════════ */
 .menuPane {
-    -fx-background-color: #1a1a1a;
-    -fx-border-color: transparent #2e2e2e transparent transparent;
+    -fx-background-color: #080A0F;
+    -fx-border-color: transparent rgba(255,255,255,0.06) transparent transparent;
     -fx-border-width: 0 1px 0 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.35), 10, 0, 4, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.60), 20, 0, 8, 0);
+    -fx-pref-width: 240px;
 }
 
 .menuSectionLabel {
-    -fx-text-fill: rgba(255,255,255,0.3);
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 11px;
+    -fx-text-fill: rgba(168,164,156,0.40);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 10px;
     -fx-font-weight: bold;
+    -fx-letter-spacing: 1.5px;
 }
 
 .menuItems {
     -fx-cursor: hand;
     -fx-background-color: transparent;
     -fx-border-color: transparent transparent transparent transparent;
-    -fx-border-width: 0 0 0 3px;
+    -fx-border-width: 0 0 0 2px;
+    -fx-padding: 0 20px;
+    -fx-pref-height: 46px;
 }
 
 .menuItems:hover {
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-border-color: transparent transparent transparent #ecc667;
-    -fx-border-width: 0 0 0 3px;
+    -fx-background-color: rgba(212,168,58,0.07);
+    -fx-border-color: transparent transparent transparent rgba(212,168,58,0.50);
 }
 
 .menuItems:hover .label {
-    -fx-text-fill: #ecc667;
+    -fx-text-fill: #F0C060;
 }
 
 .menuItemActive {
-    -fx-background-color: rgba(236,198,103,0.12);
-    -fx-border-color: transparent transparent transparent #ecc667;
-    -fx-border-width: 0 0 0 3px;
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-border-color: transparent transparent transparent #F0C060;
+    -fx-border-width: 0 0 0 2px;
 }
 
 .menuItemActive .label {
-    -fx-text-fill: #ecc667;
+    -fx-text-fill: #F0C060;
+    -fx-font-weight: bold;
 }
 
 .menuSeparator {
-    -fx-background-color: rgba(255,255,255,0.1);
-    -fx-padding: 0;
+    -fx-background-color: rgba(255,255,255,0.06);
 }
 
-/* SECONDARY BAR */
-.secondaryBar {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #e2e2e2 transparent;
-    -fx-border-width: 0 0 1.5px 0;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 5, 0, 0, 2);
-}
-
-/* CATEGORY LABELS */
-.categories {
-    -fx-background-color: #f4f4f4;
-    -fx-text-fill: #666666;
+/* Sell / CTA button in sidebar */
+.sellCta {
+    -fx-background-color: linear-gradient(to bottom right, #F0C060, #C48A20);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
     -fx-background-radius: 10px;
-    -fx-border-color: #d8d8d8;
-    -fx-border-radius: 10px;
-    -fx-border-width: 1.5px;
-    -fx-alignment: CENTER;
-    -fx-font-family: 'Berlin Sans FB';
-    -fx-font-size: 14px;
     -fx-cursor: hand;
-    -fx-padding: 0 12px;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.40), 12, 0, 0, 3);
+}
+
+.sellCta:hover {
+    -fx-background-color: linear-gradient(to bottom right, #F8D070, #D4A030);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.60), 16, 0, 0, 4);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SECONDARY / CATEGORY BAR
+══════════════════════════════════════════════════════════════ */
+.secondaryBar {
+    -fx-background-color: #0D1018;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.07) transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-min-height: 60px;
+    -fx-max-height: 60px;
+}
+
+.categories {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(168,164,156,0.70);
+    -fx-background-radius: 6px;
+    -fx-border-color: transparent;
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 6px 16px;
 }
 
 .categories:hover {
-    -fx-background-color: #1a1a1a;
-    -fx-text-fill: #ecc667;
-    -fx-border-color: #1a1a1a;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 2);
+    -fx-background-color: rgba(212,168,58,0.08);
+    -fx-text-fill: #F0C060;
+    -fx-border-color: rgba(212,168,58,0.25);
 }
 
 .catSelected {
-    -fx-background-color: #1a1a1a;
-    -fx-text-fill: #ecc667;
-    -fx-border-color: #1a1a1a;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 4, 0, 0, 2);
+    -fx-background-color: rgba(212,168,58,0.14);
+    -fx-text-fill: #F0C060;
+    -fx-border-color: rgba(212,168,58,0.40);
+    -fx-font-weight: bold;
 }
 
-/* SCROLL PANE */
+/* ══════════════════════════════════════════════════════════════
+   SCROLL PANE / CONTENT AREA
+══════════════════════════════════════════════════════════════ */
 .backPane {
-    -fx-background-color: #f0f0f0;
-    -fx-background: #f0f0f0;
+    -fx-background-color: #0D1018;
+    -fx-background: #0D1018;
     -fx-border-color: transparent;
-    -fx-padding: 16px;
 }
 
 .backPane .viewport {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: #0D1018;
 }
 
 .backPane > .scroll-bar:vertical {
     -fx-background-color: transparent;
-    -fx-pref-width: 8px;
+    -fx-pref-width: 6px;
 }
 
 .backPane > .scroll-bar:vertical .thumb {
-    -fx-background-color: rgba(0,0,0,0.18);
-    -fx-background-radius: 4px;
+    -fx-background-color: rgba(212,168,58,0.25);
+    -fx-background-radius: 3px;
 }
 
-/* AUCTION CARDS */
+.backPane > .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(212,168,58,0.45);
+}
+
+.backPane > .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   AUCTION CARDS
+══════════════════════════════════════════════════════════════ */
 .auctionCard {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 14px;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 14px;
+    -fx-background-color: #131720;
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 12px;
     -fx-border-width: 1px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.09), 8, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 14, 0, 0, 4);
     -fx-cursor: hand;
 }
 
 .auctionCard:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.18), 14, 0, 0, 5);
-    -fx-border-color: #ecc667;
-    -fx-scale-x: 1.01;
-    -fx-scale-y: 1.01;
+    -fx-background-color: #1A1F2E;
+    -fx-border-color: rgba(212,168,58,0.40);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.20), 22, 0, 0, 6);
+    -fx-scale-x: 1.015;
+    -fx-scale-y: 1.015;
 }
 
 .imagePane {
-    -fx-background-color: rgba(236,198,103,0.18);
-    -fx-background-radius: 12px;
+    -fx-background-color: rgba(212,168,58,0.07);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(212,168,58,0.12);
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
     -fx-padding: 10px;
 }
 
-.categoryLabel {
-    -fx-background-color: rgba(176,139,41,0.15);
-    -fx-text-fill: #b08b29;
-    -fx-background-radius: 8px;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 3px 10px;
-}
-
-.popularLabel {
-    -fx-background-color: #1a1a1a;
-    -fx-text-fill: #ecc667;
-    -fx-background-radius: 8px;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 3px 10px;
-}
-
 .itemTitle {
-    -fx-text-fill: #1a1a1a;
-    -fx-font-family: 'Berlin Sans FB';
-    -fx-font-size: 16px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
 }
 
 .bidLabel {
-    -fx-text-fill: #b08b29;
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Segoe UI', sans-serif;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 
 .timerLabel {
-    -fx-text-fill: #888888;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 12px;
+    -fx-text-fill: rgba(168,164,156,0.60);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
 }
 
-/* FORM FIELDS */
+/* ══════════════════════════════════════════════════════════════
+   BADGES / TAGS
+══════════════════════════════════════════════════════════════ */
+.categoryLabel {
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-text-fill: #D4A83A;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+.popularLabel {
+    -fx-background-color: rgba(242,240,236,0.08);
+    -fx-text-fill: #F2F0EC;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+}
+
+.badgeActive {
+    -fx-background-color: rgba(61,186,127,0.12);
+    -fx-text-fill: #3DBA7F;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.badgeEnded {
+    -fx-background-color: rgba(168,164,156,0.10);
+    -fx-text-fill: #A8A49C;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.badgePending {
+    -fx-background-color: rgba(232,160,32,0.12);
+    -fx-text-fill: #E8A020;
+    -fx-background-radius: 4px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FORM FIELDS (MFXTextField / MFXPasswordField)
+══════════════════════════════════════════════════════════════ */
+.signupField {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
+}
+
+.signupField:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 8, 0, 0, 0);
+}
+
+.signupField .floating-text {
+    -fx-text-fill: rgba(168,164,156,0.70);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* Legacy .fields alias */
 .fields {
-    -fx-padding: 10px;
-    -fx-border-color: #1a1a1a;
-    -fx-border-radius: 10px;
-    -fx-border-width: 2px;
-    -fx-background-radius: 10px;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-background-color: #ffffff;
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
 }
 
 .fields:focused {
-    -fx-border-color: #ecc667;
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 8, 0, 0, 0);
 }
 
 .fields .floating-text {
-    -fx-font-size: 15px;
-    -fx-text-fill: #1a1a1a;
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: rgba(168,164,156,0.70);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
 }
-/* ══════════════════════════════════════════
-   SIGNUP PAGE
-══════════════════════════════════════════ */
+
+.fieldLabel {
+    -fx-text-fill: rgba(168,164,156,0.80);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.errorLabel {
+    -fx-text-fill: #E05454;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIGNUP / REGISTER CARD
+══════════════════════════════════════════════════════════════ */
 .formScrollPane {
-    -fx-background-color: #f0f0f0;
-    -fx-background: #f0f0f0;
+    -fx-background-color: #0D1018;
+    -fx-background: #0D1018;
     -fx-border-color: transparent;
 }
 
 .formScrollPane .viewport {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: #0D1018;
 }
 
 .formOuter {
-    -fx-background-color: #f0f0f0;
+    -fx-background-color: #0D1018;
     -fx-alignment: CENTER;
 }
 
 .signupCard {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #131720;
     -fx-background-radius: 16px;
-    -fx-border-color: #e0e0e0;
+    -fx-border-color: rgba(255,255,255,0.08);
     -fx-border-radius: 16px;
-    -fx-border-width: 1.5px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 16, 0, 0, 5);
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.65), 28, 0, 0, 8);
 }
 
 .signupCardHeader {
-    -fx-background-color: #1a1a1a;
+    -fx-background-color: linear-gradient(to right, #1A1F2E, #0D1018);
     -fx-background-radius: 16px 16px 0 0;
+    -fx-border-color: transparent transparent rgba(212,168,58,0.25) transparent;
+    -fx-border-width: 0 0 1px 0;
 }
 
 .signupTitle {
-    -fx-text-fill: #ffffff;
-    -fx-font-family: 'Berlin Sans FB';
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 26px;
 }
 
 .signupSubtitle {
-    -fx-text-fill: rgba(255,255,255,0.55);
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: rgba(168,164,156,0.60);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
 }
 
 .cardDivider {
-    -fx-background-color: #e0e0e0;
+    -fx-background-color: rgba(255,255,255,0.07);
 }
 
 .signupFormBody {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 0 0 16px 16px;
-}
-
-.fieldLabel {
-    -fx-text-fill: #333333;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.signupField {
-    -fx-border-color: #d0d0d0;
-    -fx-border-radius: 10px;
-    -fx-border-width: 1.5px;
-    -fx-background-color: #fafafa;
-    -fx-background-radius: 10px;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 14px;
-    -fx-padding: 0 12px;
-}
-
-.signupField:focused {
-    -fx-border-color: #ecc667;
-    -fx-background-color: #ffffff;
-    -fx-effect: dropshadow(three-pass-box, rgba(236,198,103,0.25), 6, 0, 0, 0);
-}
-
-.errorLabel {
-    -fx-text-fill: #e53935;
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 11px;
+    -fx-background-color: transparent;
 }
 
 .signupCheckBox {
@@ -328,19 +531,19 @@
 }
 
 .signupCheckBox:selected .box {
-    -fx-background-color: #ecc667;
-    -fx-border-color: #ecc667;
+    -fx-background-color: #D4A83A;
+    -fx-border-color: #D4A83A;
 }
 
 .termsText {
-    -fx-text-fill: #555555;
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: rgba(168,164,156,0.70);
+    -fx-font-family: 'Segoe UI', sans-serif;
     -fx-font-size: 13px;
 }
 
 .termsLink {
-    -fx-text-fill: #b08b29;
-    -fx-font-family: 'Varela Round', sans-serif;
+    -fx-text-fill: #D4A83A;
+    -fx-font-family: 'Segoe UI', sans-serif;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
@@ -348,22 +551,147 @@
 }
 
 .signupSubmitBtn {
-    -fx-font-size: 16px;
-    -fx-background-radius: 12px;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-pref-height: 48px;
 }
 
-.outlineButton {
+.orLabel {
+    -fx-text-fill: rgba(168,164,156,0.40);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+}
+/* ═══════════════════════════════════════════════════════════════
+   PATCH — Thêm vào cuối styles.css (dark theme)
+   Copy phần này và dán vào cuối file styles.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── AUCTION CARD ──────────────────────────────────────────── */
+.cardContent {
+    -fx-padding: 20px 16px 20px 16px;
     -fx-background-color: transparent;
-    -fx-border-color: #ffffff;
-    -fx-border-radius: 10px;
-    -fx-border-width: 1.5px;
-    -fx-text-fill: #ffffff;
-    -fx-font-family: 'Berlin Sans FB';
+}
+
+/* ── AUCTION DETAIL ────────────────────────────────────────── */
+.detailTopBar {
+    -fx-background-color: #080A0F;
+    -fx-border-color: transparent transparent rgba(212,168,58,0.25) transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.detailTopBarTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: Georgia;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.detailScrollPane {
+    -fx-background-color: #0D1018;
+    -fx-background: #0D1018;
+    -fx-border-color: transparent;
+}
+
+.detailScrollPane .viewport {
+    -fx-background-color: #0D1018;
+}
+
+.detailLeftPanel {
+    -fx-background-color: #0D1018;
+    -fx-border-color: transparent rgba(255,255,255,0.06) transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.detailSectionLabel {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.detailBodyText {
+    -fx-text-fill: #F2F0EC;
     -fx-font-size: 14px;
+}
+
+.detailBodyTextMuted {
+    -fx-text-fill: rgba(168,164,156,0.75);
+    -fx-font-size: 13px;
+}
+
+.detailSeparator {
+    -fx-background-color: rgba(255,255,255,0.06);
+}
+
+.detailTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: Georgia;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.badgeCategory {
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-text-fill: #D4A83A;
+    -fx-background-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
+}
+
+.detailInfoBox {
+    -fx-background-color: rgba(255,255,255,0.02);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(255,255,255,0.06);
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+}
+
+.detailInfoKey {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 12px;
+}
+
+.detailInfoValue {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-size: 14px;
+}
+
+.detailPriceValue {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: Georgia;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.endNowButton {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(224,84,84,0.40);
+    -fx-border-radius: 6px;
+    -fx-border-width: 1px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: #E05454;
+    -fx-font-size: 12px;
     -fx-cursor: hand;
 }
 
-.outlineButton:hover {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #1a1a1a;
+.winnerLabel {
+    -fx-text-fill: #3DBA7F;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+/* ── ADD LISTING POPUP ─────────────────────────────────────── */
+
+.addListingRoot {
+    -fx-background-color: #0D1018;
+}
+
+.addListingTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Berlin Sans FB', Georgia, serif;
+}
+
+.addListingFileLabel {
+    -fx-text-fill: rgba(168,164,156,0.75);
+    -fx-font-size: 13px;
 }

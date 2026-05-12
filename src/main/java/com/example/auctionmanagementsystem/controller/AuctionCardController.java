@@ -1,48 +1,12 @@
-//package com.example.auctionmanagementsystem.controller;
-//
-//import javafx.fxml.FXML;
-//import javafx.scene.input.MouseEvent;
-//
-///**
-// * Controller cho View/components/auction_card.fxml
-// * Được load động bởi AuctionListController.
-// *
-// * FXML: thêm onMouseClicked="#onCardClick" vào root container của auction_card.fxml
-// */
-//public class AuctionCardController {
-//
-//    private AuctionListController parentController;
-//    private int auctionId;
-//
-//    /** Gọi sau khi load FXML để truyền dữ liệu vào card */
-//    public void setAuction(int auctionId, AuctionListController parent) {
-//        this.auctionId        = auctionId;
-//        this.parentController = parent;
-//
-//        /* ── Điền dữ liệu vào các Label/ImageView trong card ────────────────
-//         *   titleLabel.setText(auction.getTitle());
-//         *   priceLabel.setText(auction.getCurrentBid() + " $");
-//         *   categoryLabel.setText(auction.getCategory());
-//         *   if (auction.getImagePath() != null)
-//         *       thumbnail.setImage(new Image(auction.getImagePath()));
-//         * ─────────────────────────────────────────────────────────────────── */
-//    }
-//
-//    @FXML
-//    private void onCardClick(MouseEvent event) {
-//        if (parentController != null)
-//            parentController.openAuctionDetail(auctionId);
-//    }
-//}
-
-
-//chạy thử bằng cách tự tạo sp
 package com.example.auctionmanagementsystem.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+
+import java.io.File;
 
 public class AuctionCardController {
 
@@ -57,24 +21,66 @@ public class AuctionCardController {
     private AuctionListController parentController;
     private int auctionId;
 
-    public void setAuction(int auctionId, AuctionListController parent) {
-        this.auctionId        = auctionId;
+    /**
+     * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
+     *
+     * Nhận AuctionItem và điền dữ liệu vào card.
+     * Signature đổi từ (int, AuctionListController)
+     *                 → (AuctionItem, AuctionListController)
+     * để nhận đủ thông tin thật từ item.
+     *
+     * @param item   AuctionItem chứa toàn bộ thông tin sản phẩm
+     * @param parent Reference về AuctionListController để callback khi click
+     */
+    public void setAuction(AuctionListController.AuctionItem item,
+                           AuctionListController parent) {
+        this.auctionId        = item.id;
         this.parentController = parent;
 
-        String[] categories = {"Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others"};
-        String[] names      = {"Rolex Daytona", "Chanel Classic", "Porsche 911",
-                "Mona Lisa Print", "Patek Philippe", "Vintage Guitar"};
+        title.setText(item.name);
+        price.setText(String.format("%,.0f USD", item.price));
+        totalBids.setText(item.bids + " bids");
+        timeLeft.setText("Ending In: " + item.daysLeft + " day(s)");
+        categoryLabel.setText(item.category);
 
-        int idx = (auctionId - 1) % categories.length;
-
-        title.setText(names[idx]);
-        price.setText(String.format("%,d USD", auctionId * 1000));
-        totalBids.setText(auctionId + " bids");
-        timeLeft.setText("Ending In :  " + auctionId + " D 07 Hrs");
-        categoryLabel.setText(categories[idx]);
-        popularNowLabel.setText("Popular Now");
+        // Chỉ hiện "Popular Now" nếu có nhiều bid
+        popularNowLabel.setText(item.bids > 10 ? "Popular Now" : "");
     }
 
+    /**
+     * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
+     *
+     * Load ảnh từ đường dẫn file tuyệt đối.
+     * null hoặc file không tồn tại → giữ placeholder, không crash.
+     *
+     * @param imagePath Đường dẫn tuyệt đối đến file ảnh, null nếu chưa có ảnh
+     *
+     * TODO (khi có DB):
+     *   Nếu lưu relative path trong DB:
+     *   File file = new File(AppConfig.IMAGE_FOLDER + imagePath);
+     */
+    public void setImage(String imagePath) {
+        if (imagePath == null || imagePath.isBlank()) return;
+
+        try {
+            File file = new File(imagePath);
+            if (file.exists()) {
+                Image img = new Image(file.toURI().toString());
+                image.setImage(img);
+                image.setPreserveRatio(true);
+            } else {
+                System.err.println("[AuctionCard] File not found: " + imagePath);
+            }
+        } catch (Exception e) {
+            System.err.println("[AuctionCard] Cannot load image: " + imagePath);
+        }
+    }
+
+    /**
+     * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
+     * Click card → mở popup AuctionDetail.
+     * FXML cần: onMouseClicked="#onCardClick" trên root container.
+     */
     @FXML
     private void onCardClick(MouseEvent event) {
         if (parentController != null)

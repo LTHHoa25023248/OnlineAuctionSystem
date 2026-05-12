@@ -1,45 +1,95 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — AUCTION LISTING CARDS
+   cardstyles.css
+   ═══════════════════════════════════════════════════════════════ */
 
-
+/* ── CARD CONTAINER ────────────────────────────────────────── */
 .cardPane {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-color: #131720;
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 14, 0, 0, 4);
+    -fx-cursor: hand;
 }
 
 .cardPane:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-    -fx-background-color: silver;
+    -fx-background-color: #1A1F2E;
+    -fx-border-color: rgba(212,168,58,0.38);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 22, 0, 0, 6);
+    -fx-scale-x: 1.015;
+    -fx-scale-y: 1.015;
 }
 
+/* ── IMAGE AREA ────────────────────────────────────────────── */
 .image {
-    -fx-background-color: rgba(208, 208, 208, 0.97);
-    -fx-background-radius: 40;
-    -fx-padding: 10;
-    -fx-border-radius: 40;
+    -fx-background-color: rgba(212,168,58,0.06);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(212,168,58,0.12);
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 10px;
 }
 
+/* ── BADGES / TAGS ─────────────────────────────────────────── */
 .categoryLabel {
-    -fx-background-color: #ffc42e;
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(212,168,58,0.12);
+    -fx-text-fill: #D4A83A;
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
     -fx-text-alignment: center;
-    -fx-font-family: 'Varela Round', sans-serif;
 }
 
 .popularLabel {
-    -fx-background-color: black;
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
+    -fx-background-color: rgba(242,240,236,0.07);
+    -fx-text-fill: rgba(242,240,236,0.80);
+    -fx-background-radius: 4px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3px 9px;
     -fx-text-alignment: center;
-    -fx-font-family: 'Varela Round', sans-serif;
 }
 
+/* ── TYPOGRAPHY ────────────────────────────────────────────── */
 .labels {
-    -fx-font-family: 'Varela Round', sans-serif;
-    -fx-font-size: 15;
-    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(168,164,156,0.70);
 }
 
 .titleCard {
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-font-size: 30;
-    -fx-font-family: "Varela Round", sans-serif;
+    -fx-text-fill: #F2F0EC;
+}
+
+.bidAmount {
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F0C060;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.25), 4, 0, 0, 0);
+}
+
+.timeRemaining {
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(168,164,156,0.50);
+}
+
+.bidCount {
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(168,164,156,0.45);
+}
+
+/* ── CARD DIVIDER ──────────────────────────────────────────── */
+.cardDivider {
+    -fx-background-color: rgba(255,255,255,0.05);
 }

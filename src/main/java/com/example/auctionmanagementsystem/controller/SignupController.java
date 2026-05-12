@@ -5,18 +5,23 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 
 /**
- * Controller cho auction_signup.fxml
+ * SignupController — Điều khiển màn hình đăng ký (auction_signup.fxml).
  *
- * Điều hướng:
- *   loginButton (top-bar)  → auction_login.fxml
- *   signupButton (submit)  → auction_login.fxml (sau khi đăng ký thành công)
+ * Luồng:
+ *   User điền form → bấm "Create Account"
+ *   → validateForm() kiểm tra từng trường
+ *   → Nếu hợp lệ: gọi UserDAO.register() → chuyển về màn hình Login
+ *
+ * Mỗi trường input đều có một error label riêng (firstNameError, emailError...).
+ * Error label dùng managed="false" khi ẩn để không chiếm không gian layout.
  */
 public class SignupController {
 
+    // ── FXML input fields ─────────────────────────────────────────────────────
     @FXML private MFXTextField     firstNameField;
     @FXML private MFXTextField     lastNameField;
     @FXML private MFXTextField     usernameField;
@@ -27,6 +32,7 @@ public class SignupController {
     @FXML private MFXTextField     addressField;
     @FXML private CheckBox         termsCheckBox;
 
+    // ── Error labels (hiển thị lỗi ngay bên dưới mỗi field) ─────────────────
     @FXML private Label firstNameError;
     @FXML private Label lastNameError;
     @FXML private Label usernameError;
@@ -35,84 +41,107 @@ public class SignupController {
     @FXML private Label passwordError;
     @FXML private Label confirmPasswordError;
     @FXML private Label termsError;
-    @FXML private Label generalError;
+    @FXML private Label generalError; // lỗi tổng quát (ít dùng)
 
-    @FXML private MFXButton loginButton;
-    @FXML private MFXButton signupButton;
+    // ── Buttons ───────────────────────────────────────────────────────────────
+    @FXML private MFXButton loginButton;  // top-bar: về trang Login
+    @FXML private MFXButton signupButton; // submit form
 
     @FXML
     public void initialize() {
-        // loginButton dùng onAction="#onLoginButtonClick" trong FXML
+        // Sự kiện đã khai báo onAction trong FXML, không cần wire thêm
     }
 
+    /** Gọi từ nút "Log In" trên top bar */
     @FXML
     private void onLoginButtonClick() {
         NavigationUtil.goTo(loginButton, NavigationUtil.LOGIN);
     }
 
+    /**
+     * Gọi khi bấm "Create Account".
+     * Chỉ tiếp tục nếu form hợp lệ.
+     * TODO: Thay comment bằng UserDAO.register() khi có DB.
+     */
     @FXML
     private void onSignupButtonClick() {
         if (!validateForm()) return;
 
-        /* ── Thay bằng DAO thực ─────────────────────────────────────────────
-         *   UserDAO.register(
-         *       firstNameField.getText(), lastNameField.getText(),
-         *       usernameField.getText(),  emailField.getText(),
-         *       phoneField.getText(),     passwordField.getText(),
-         *       addressField.getText());
-         * ─────────────────────────────────────────────────────────────────── */
+        // TODO: UserDAO.register(
+        //     firstNameField.getText(), lastNameField.getText(),
+        //     usernameField.getText(),  emailField.getText(),
+        //     phoneField.getText(),     passwordField.getText(),
+        //     addressField.getText());
 
+        // Sau khi đăng ký thành công → về trang Login
         NavigationUtil.goTo(signupButton, NavigationUtil.LOGIN);
     }
 
+    /** Gọi khi click vào "Terms & Conditions" */
     @FXML
     private void onTermsClick(MouseEvent event) {
-        // TODO: mở dialog điều khoản
-        System.out.println("Terms clicked");
+        // TODO: Mở dialog điều khoản sử dụng
+        System.out.println("[Signup] Terms clicked");
     }
 
     // ── Validation ────────────────────────────────────────────────────────────
 
+    /**
+     * Kiểm tra toàn bộ form.
+     * Chạy qua tất cả trường, hiển thị lỗi ngay cả khi có nhiều trường sai.
+     *
+     * @return true nếu tất cả hợp lệ, false nếu có ít nhất 1 lỗi
+     */
     private boolean validateForm() {
-        clearErrors();
+        clearErrors(); // xóa lỗi cũ trước
         boolean ok = true;
 
         if (firstNameField.getText().trim().isEmpty()) {
-            show(firstNameError, "First name là bắt buộc."); ok = false;
+            show(firstNameError, "First name is required."); ok = false;
         }
         if (lastNameField.getText().trim().isEmpty()) {
-            show(lastNameError, "Last name là bắt buộc."); ok = false;
+            show(lastNameError, "Last name is required."); ok = false;
         }
         if (usernameField.getText().trim().isEmpty()) {
-            show(usernameError, "Username là bắt buộc."); ok = false;
+            show(usernameError, "Username is required."); ok = false;
         }
+
+        // Kiểm tra email có dấu @ tối thiểu
         String email = emailField.getText().trim();
         if (email.isEmpty() || !email.contains("@")) {
-            show(emailError, "Email không hợp lệ."); ok = false;
+            show(emailError, "Invalid email."); ok = false;
         }
+
         if (phoneField.getText().trim().isEmpty()) {
-            show(phoneError, "Số điện thoại là bắt buộc."); ok = false;
+            show(phoneError, "Phone number is required."); ok = false;
         }
         if (passwordField.getText().length() < 8) {
-            show(passwordError, "Mật khẩu phải có ít nhất 8 ký tự."); ok = false;
+            show(passwordError, "Password must be at least 8 characters."); ok = false;
         }
         if (!passwordField.getText().equals(confirmPasswordField.getText())) {
-            show(confirmPasswordError, "Mật khẩu không khớp."); ok = false;
+            show(confirmPasswordError, "Passwords do not match."); ok = false;
         }
         if (!termsCheckBox.isSelected()) {
-            show(termsError, "Bạn phải đồng ý điều khoản."); ok = false;
+            show(termsError, "You must agree to the terms."); ok = false;
         }
         return ok;
     }
 
+    /** Hiển thị error label với message */
     private void show(Label label, String msg) {
         label.setText(msg);
         label.setVisible(true);
+        label.setManaged(true); // chiếm không gian layout
     }
 
+    /** Ẩn tất cả error labels và xóa text */
     private void clearErrors() {
-        Label[] all = {firstNameError, lastNameError, usernameError, emailError,
-                phoneError, passwordError, confirmPasswordError, termsError, generalError};
-        for (Label l : all) { l.setText(""); l.setVisible(false); }
+        Label[] all = {
+                firstNameError, lastNameError, usernameError, emailError,
+                phoneError, passwordError, confirmPasswordError, termsError, generalError
+        };
+        for (Label l : all) {
+            if (l != null) { l.setText(""); l.setVisible(false); l.setManaged(false); }
+        }
     }
 }
