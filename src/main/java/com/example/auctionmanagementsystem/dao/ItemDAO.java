@@ -11,6 +11,7 @@ import java.sql.*;
 import static java.lang.Integer.parseInt;
 
  public class ItemDAO implements DAOInterface <Item>{
+    @Override
     public int insert(Item item){
         //Su dung commit, rollback. Commit de luu du lieu neu da insert thanh cong, neu khong thi rollback de tra ve trang thai ban dau luc chua insert
         //tranh truwowng hop bang item co du lieu nhung bang vehicle,... ko co su lieu
@@ -20,74 +21,53 @@ import static java.lang.Integer.parseInt;
                  connect= DatabaseConnection.getConnection();
                  //luu du lieu tam thoi, ko luu vao database
                  connect.setAutoCommit(false);
-            String sqlItem="INSERT INTO items( name, description, starting_price, item_type) VALUES(?,?,?,?)";
+            String sqlItem="INSERT INTO items(type, name, description, starting_price) VALUES(?,?,?,?)";
+
+            //xac dinh loai item
+            String type = "";
+            if (item instanceof Vehicle){
+                type="VEHICLE";
+            } else if (item instanceof Art){
+                type="ART";
+            } else if (item instanceof Electronics){
+                type="ELECTRONICS";
+            }
 
             //Bang luu du lieu
             PreparedStatement psItem=connect.prepareStatement(sqlItem, Statement.RETURN_GENERATED_KEYS);
-            psItem.setString(1,item.getName());
-            psItem.setString(2,item.getDescription());
-            psItem.setDouble(3,item.getStartingPrice());
-            //xac dinh loai item
-              String type = "";
-              if (item instanceof Vehicle vehicle){
-                  type="VEHICLE";
-              }else if (item instanceof Art){
-                  type="ART";
-              }else if (item instanceof Electronics){
-                  type="ELECTRONICS";
-              }
-              //luu item vao DataBase
-              psItem.setString(4,type);
-              psItem.executeUpdate();
-              //lay ID tu dong sinh ra ru DB
-              ResultSet  resultSet=psItem.getGeneratedKeys();
-              int itemId=-1;
-              if(resultSet.next()){
-                  itemId=resultSet.getInt(1);
-                  item.setId(Integer.valueOf(itemId));
-              }
+            psItem.setString(1,type);
+            psItem.setString(2,item.getName());
+            psItem.setString(3,item.getDescription());
+            psItem.setDouble(4,item.getStartingPrice());
+            psItem.executeUpdate();
+
+            //lay ID tu dong sinh ra ru DB
+            ResultSet  resultSet=psItem.getGeneratedKeys();
+            int itemId = -1;
+            if(resultSet.next()){
+                itemId=resultSet.getInt(1);
+                item.setId(Integer.valueOf(itemId));
+            }
               //ko lay duoc id thi loi
-            if(itemId==-1){
-                throw new RuntimeException("Cannot get generated item ID")
+            if(itemId == -1) {
+                throw new RuntimeException("Cannot get generated item ID");
             }
 
-              if(item instanceof Vehicle vehicle){
-                //Thong tin rieng cua vehicle
-                String sqlVehicle="INSERT INTO vehicle_items(item_id, year, mileage) VALUES (?,?,?)";
-                PreparedStatement ps= connect.prepareStatement(sqlVehicle);
-                ps.setInt(1, itemId);
-                ps.setInt(2, vehicle.getYear());
-                ps.setDouble(3, vehicle.getMileage());
-                ps.executeUpdate();
+            /**
+             * Hàm được định nghĩa trong từng lớp cụ thể của Item (Lớp con Art, Electronics, Vehicle)
+             */
+            item.insertSubData(connect, itemId);
 
-            }
-            else if( item instanceof Art art){
-                String sqlArt="INSERT INTO art_items(item_id, artist, theme, material) VALUES(?,?,?,?)";
-                PreparedStatement ps=connect.prepareStatement(sqlArt);
-                ps.setInt(1, itemId);
-                ps.setString(2, art.getArtist());
-                ps.setString(3, art.getTheme());
-                ps.setString(4,art.getMaterial());
-                ps.executeUpdate();
-            }
-            else if(item instanceof Electronics electronic){
-                String sqlElectronic="INSERT INTO electronics_items(item_id, brand, warranty_months) VALUES (?,?,?)";
-                PreparedStatement ps=connect.prepareStatement(sqlElectronic);
-                ps.setInt(1, itemId);
-                ps.setString(2, electronic.getBrand());
-                ps.setInt(3, electronic.getWarrantyMonths());
-                ps.executeUpdate();
-            }
             //luu het du lieu neu tat ca ok
             connect.commit();
             return 1;//thanh cong
-        }catch (Exception e){
+        } catch (Exception e){
             //rollback neu loi. Tro lai trang thai du lieu ban dau, huy toan bo thay doi
             try{
                 if(connect != null){
                     connect.rollback();
                 }
-            }catch(SQLException sqle){
+            } catch(SQLException sqle){
                 sqle.printStackTrace();
             }
             e.printStackTrace();
@@ -104,27 +84,31 @@ import static java.lang.Integer.parseInt;
         return 0;//that bai insert
 
     }
+
+    @Override
     // return tra ve so co nghai la so dong thay doi thanh cong, tra ve 0 nghia la that bai
-    //update khong duoc sua gia bat dau(starting_price)
+    // update khong duoc sua gia bat dau(starting_price)
     public int update(Item item){
         String sql="UPDATE items SET name=?, description=? WHERE id=?";
         try(Connection connect=DatabaseConnection.getConnection();
             PreparedStatement ps=connect.prepareStatement(sql)){
             ps.setString(1, item.getName());
             ps.setString(2,item.getDescription());
-            ps.setInt(3, parseInt(item.getId()));
+            ps.setInt(3, item.getId());
             return ps.executeUpdate();
         }catch(Exception e){
             e.printStackTrace();
         }
         return 0;
     }
+
+    @Override
     //delete item
     public int delete(Item item){
         String sql="DELETE FROM items WHERE id=?";
         try(Connection connect=DatabaseConnection.getConnection();
           PreparedStatement ps=connect.prepareStatement(sql)){
-            ps.setInt(1, parseInt(item.getId()));
+            ps.setInt(1, item.getId());
             return ps.executeUpdate();
         }catch (Exception e){
             e.printStackTrace();

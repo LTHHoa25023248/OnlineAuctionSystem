@@ -6,7 +6,7 @@ public interface DAOInterface <T> {
     //them du lieu
     int insert(T obj);
     //Cap nhat du lieu
-    int upadate(T obj);
+    int update(T obj);
     //Xoa du lieu
     int delete(T obj);
 
