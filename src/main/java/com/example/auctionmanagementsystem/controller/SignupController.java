@@ -1,27 +1,22 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.dao.UserDAO;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 
-/**
- * SignupController — Điều khiển màn hình đăng ký (auction_signup.fxml).
- *
- * Luồng:
- *   User điền form → bấm "Create Account"
- *   → validateForm() kiểm tra từng trường
- *   → Nếu hợp lệ: gọi UserDAO.register() → chuyển về màn hình Login
- *
- * Mỗi trường input đều có một error label riêng (firstNameError, emailError...).
- * Error label dùng managed="false" khi ẩn để không chiếm không gian layout.
- */
 public class SignupController {
 
-    // ── FXML input fields ─────────────────────────────────────────────────────
+    @FXML private ToggleButton     bidderToggle;
+    @FXML private ToggleButton     sellerToggle;
+
     @FXML private MFXTextField     firstNameField;
     @FXML private MFXTextField     lastNameField;
     @FXML private MFXTextField     usernameField;
@@ -32,7 +27,6 @@ public class SignupController {
     @FXML private MFXTextField     addressField;
     @FXML private CheckBox         termsCheckBox;
 
-    // ── Error labels (hiển thị lỗi ngay bên dưới mỗi field) ─────────────────
     @FXML private Label firstNameError;
     @FXML private Label lastNameError;
     @FXML private Label usernameError;
@@ -41,107 +35,205 @@ public class SignupController {
     @FXML private Label passwordError;
     @FXML private Label confirmPasswordError;
     @FXML private Label termsError;
-    @FXML private Label generalError; // lỗi tổng quát (ít dùng)
+    @FXML private Label generalError;
 
-    // ── Buttons ───────────────────────────────────────────────────────────────
-    @FXML private MFXButton loginButton;  // top-bar: về trang Login
-    @FXML private MFXButton signupButton; // submit form
+    @FXML private MFXButton loginButton;
+    @FXML private MFXButton signupButton;
 
     @FXML
     public void initialize() {
-        // Sự kiện đã khai báo onAction trong FXML, không cần wire thêm
+        if (signupButton != null) signupButton.setOnAction(e -> onSignupButtonClick());
+        if (loginButton  != null) loginButton.setOnAction(e  -> onLoginButtonClick());
+
+        if (bidderToggle != null) {
+            bidderToggle.setOnAction(e -> {
+                bidderToggle.setSelected(true);
+                sellerToggle.setSelected(false);
+            });
+        }
+        if (sellerToggle != null) {
+            sellerToggle.setOnAction(e -> {
+                sellerToggle.setSelected(true);
+                bidderToggle.setSelected(false);
+            });
+        }
     }
 
-    /** Gọi từ nút "Log In" trên top bar */
+    @FXML
+    private void onRoleToggle() {}
+
+    private boolean isSeller() {
+        return sellerToggle != null && sellerToggle.isSelected();
+    }
+
     @FXML
     private void onLoginButtonClick() {
         NavigationUtil.goTo(loginButton, NavigationUtil.LOGIN);
     }
 
-    /**
-     * Gọi khi bấm "Create Account".
-     * Chỉ tiếp tục nếu form hợp lệ.
-     * TODO: Thay comment bằng UserDAO.register() khi có DB.
-     */
     @FXML
     private void onSignupButtonClick() {
         if (!validateForm()) return;
 
-        // TODO: UserDAO.register(
-        //     firstNameField.getText(), lastNameField.getText(),
-        //     usernameField.getText(),  emailField.getText(),
-        //     phoneField.getText(),     passwordField.getText(),
-        //     addressField.getText());
+        setSignupButtonState(false, "Đang đăng ký...");
+        clearGeneralError();
 
-        // Sau khi đăng ký thành công → về trang Login
-        NavigationUtil.goTo(signupButton, NavigationUtil.LOGIN);
+        final String firstName = firstNameField.getText().trim();
+        final String lastName  = lastNameField.getText().trim();
+        final String username  = usernameField.getText().trim();
+        final String email     = emailField.getText().trim();
+        final String phone     = phoneField.getText().trim();
+        final String password  = passwordField.getText();
+        final String address   = addressField.getText() != null ? addressField.getText().trim() : "";
+        final boolean seller   = isSeller();
+
+        Task<RegisterResult> task = new Task<>() {
+            @Override
+            protected RegisterResult call() {
+                if (UserDAO.usernameExists(username)) return RegisterResult.USERNAME_TAKEN;
+                if (UserDAO.emailExists(email))       return RegisterResult.EMAIL_TAKEN;
+
+                boolean success = seller
+                        ? UserDAO.registerSeller(firstName, lastName, username, email, phone, password, address)
+                        : UserDAO.register(firstName, lastName, username, email, phone, password, address);
+
+                return success ? RegisterResult.SUCCESS : RegisterResult.DB_ERROR;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            switch (task.getValue()) {
+                case SUCCESS        -> NavigationUtil.goTo(signupButton, NavigationUtil.LOGIN);
+                case USERNAME_TAKEN -> {
+                    show(usernameError, "Tên đăng nhập đã được sử dụng.");
+                    setSignupButtonState(true, "Create Account");
+                }
+                case EMAIL_TAKEN    -> {
+                    show(emailError, "Email đã được đăng ký.");
+                    setSignupButtonState(true, "Create Account");
+                }
+                case DB_ERROR       -> {
+                    showGeneralError("Đăng ký thất bại. Vui lòng thử lại sau.");
+                    setSignupButtonState(true, "Create Account");
+                }
+            }
+        });
+
+        task.setOnFailed(e -> {
+            showGeneralError("Lỗi kết nối. Vui lòng kiểm tra lại.");
+            setSignupButtonState(true, "Create Account");
+            task.getException().printStackTrace();
+        });
+
+        new Thread(task).start();
     }
 
-    /** Gọi khi click vào "Terms & Conditions" */
     @FXML
-    private void onTermsClick(MouseEvent event) {
-        // TODO: Mở dialog điều khoản sử dụng
-        System.out.println("[Signup] Terms clicked");
-    }
+    private void onTermsClick(MouseEvent event) {}
 
-    // ── Validation ────────────────────────────────────────────────────────────
-
-    /**
-     * Kiểm tra toàn bộ form.
-     * Chạy qua tất cả trường, hiển thị lỗi ngay cả khi có nhiều trường sai.
-     *
-     * @return true nếu tất cả hợp lệ, false nếu có ít nhất 1 lỗi
-     */
     private boolean validateForm() {
-        clearErrors(); // xóa lỗi cũ trước
+        clearErrors();
         boolean ok = true;
 
         if (firstNameField.getText().trim().isEmpty()) {
-            show(firstNameError, "First name is required."); ok = false;
+            show(firstNameError, "Vui lòng nhập họ."); ok = false;
         }
         if (lastNameField.getText().trim().isEmpty()) {
-            show(lastNameError, "Last name is required."); ok = false;
-        }
-        if (usernameField.getText().trim().isEmpty()) {
-            show(usernameError, "Username is required."); ok = false;
+            show(lastNameError, "Vui lòng nhập tên."); ok = false;
         }
 
-        // Kiểm tra email có dấu @ tối thiểu
+        String username = usernameField.getText().trim();
+        if (username.isEmpty()) {
+            show(usernameError, "Vui lòng nhập tên đăng nhập."); ok = false;
+        } else if (username.length() < 4) {
+            show(usernameError, "Tên đăng nhập phải có ít nhất 4 ký tự."); ok = false;
+        } else if (username.contains(" ")) {
+            show(usernameError, "Tên đăng nhập không được chứa khoảng trắng."); ok = false;
+        }
+
         String email = emailField.getText().trim();
-        if (email.isEmpty() || !email.contains("@")) {
-            show(emailError, "Invalid email."); ok = false;
+        if (email.isEmpty()) {
+            show(emailError, "Vui lòng nhập email."); ok = false;
+        } else if (!isValidEmail(email)) {
+            show(emailError, "Email không hợp lệ."); ok = false;
         }
 
-        if (phoneField.getText().trim().isEmpty()) {
-            show(phoneError, "Phone number is required."); ok = false;
+        String phone = phoneField.getText().trim();
+        if (phone.isEmpty()) {
+            show(phoneError, "Vui lòng nhập số điện thoại."); ok = false;
+        } else if (!phone.matches("[+\\d\\s\\-()]+")) {
+            show(phoneError, "Số điện thoại không hợp lệ."); ok = false;
         }
-        if (passwordField.getText().length() < 8) {
-            show(passwordError, "Password must be at least 8 characters."); ok = false;
+
+        String pass = passwordField.getText();
+        if (pass.length() < 8) {
+            show(passwordError, "Mật khẩu phải có ít nhất 8 ký tự."); ok = false;
+        } else if (!pass.matches(".*[a-zA-Z].*") || !pass.matches(".*\\d.*")) {
+            show(passwordError, "Mật khẩu phải có cả chữ cái và chữ số."); ok = false;
         }
-        if (!passwordField.getText().equals(confirmPasswordField.getText())) {
-            show(confirmPasswordError, "Passwords do not match."); ok = false;
+
+        if (!pass.equals(confirmPasswordField.getText())) {
+            show(confirmPasswordError, "Mật khẩu xác nhận không khớp."); ok = false;
         }
-        if (!termsCheckBox.isSelected()) {
-            show(termsError, "You must agree to the terms."); ok = false;
+
+        if (termsCheckBox != null && !termsCheckBox.isSelected()) {
+            show(termsError, "Bạn phải đồng ý với điều khoản sử dụng."); ok = false;
         }
+
         return ok;
     }
 
-    /** Hiển thị error label với message */
-    private void show(Label label, String msg) {
-        label.setText(msg);
-        label.setVisible(true);
-        label.setManaged(true); // chiếm không gian layout
+    private boolean isValidEmail(String email) {
+        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     }
 
-    /** Ẩn tất cả error labels và xóa text */
+    private void show(Label label, String msg) {
+        if (label == null) return;
+        label.setText(msg);
+        label.setVisible(true);
+        label.setManaged(true);
+    }
+
     private void clearErrors() {
         Label[] all = {
                 firstNameError, lastNameError, usernameError, emailError,
-                phoneError, passwordError, confirmPasswordError, termsError, generalError
+                phoneError, passwordError, confirmPasswordError,
+                termsError, generalError
         };
         for (Label l : all) {
             if (l != null) { l.setText(""); l.setVisible(false); l.setManaged(false); }
         }
+    }
+
+    private void showGeneralError(String msg) {
+        Platform.runLater(() -> {
+            if (generalError != null) {
+                generalError.setText(msg);
+                generalError.setStyle("-fx-text-fill: #FF6B6B;");
+                generalError.setVisible(true);
+                generalError.setManaged(true);
+            }
+        });
+    }
+
+    private void clearGeneralError() {
+        if (generalError != null) {
+            generalError.setText("");
+            generalError.setVisible(false);
+            generalError.setManaged(false);
+        }
+    }
+
+    private void setSignupButtonState(boolean enabled, String text) {
+        Platform.runLater(() -> {
+            if (signupButton != null) {
+                signupButton.setDisable(!enabled);
+                signupButton.setText(text);
+            }
+        });
+    }
+
+    private enum RegisterResult {
+        SUCCESS, USERNAME_TAKEN, EMAIL_TAKEN, DB_ERROR
     }
 }

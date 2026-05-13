@@ -1,5 +1,9 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.dao.UserDAO;
+import com.example.auctionmanagementsystem.service.EmailService;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -8,17 +12,25 @@ import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 
 /**
- * ForgotPassController — Popup đặt lại mật khẩu (forgotpass.fxml).
+ * ForgotPassController — Popup đặt lại mật khẩu 3 bước (forgotpass.fxml).
  *
- * Mở từ: LoginController → openForgotPassword() dạng popup modal.
- * Đóng: Bấm nút X trên top bar → đóng popup, trở về màn hình Login.
+ * Luồng đầy đủ:
  *
- * Luồng 3 bước:
- *   Bước 1: Nhập email → bấm "Send Code"
- *   Bước 2: Nhập mã xác thực vào codeField
- *   Bước 3: Nhập mật khẩu mới → bấm "Save New Password"
+ *   Bước 1 — Nhập email → bấm "Send Code"
+ *     • Validate email hợp lệ
+ *     • Kiểm tra email có trong DB không (UserDAO.emailExistsForReset)
+ *     • Tạo OTP 6 chữ số (EmailService.generateCode)
+ *     • Lưu OTP vào DB với thời gian hết hạn (UserDAO.saveResetCode)
+ *     • Gửi email chứa OTP (EmailService.sendResetCode) — trên background thread
+ *     • Vô hiệu hoá nút Send để tránh spam
  *
- * TODO: Tích hợp EmailService gửi code thật và UserDAO để reset password.
+ *   Bước 2 — Nhập mã OTP từ email vào codeField
+ *
+ *   Bước 3 — Nhập mật khẩu mới → bấm "Save New Password"
+ *     • Validate mật khẩu ≥ 8 ký tự, chứa chữ+số, hai trường khớp
+ *     • Xác thực OTP với DB (UserDAO.verifyResetCode)
+ *     • Cập nhật mật khẩu + xóa OTP (UserDAO.resetPassword)
+ *     • Thông báo thành công → tự đóng popup sau 2 giây
  */
 public class ForgotPassController {
 
@@ -29,103 +41,299 @@ public class ForgotPassController {
     @FXML private MFXPasswordField confirmPasswordField;
     @FXML private MFXButton        sendCodeButton;
     @FXML private MFXButton        okButton;
-    @FXML private MFXButton        closeButton;  // nút X đóng popup
-    @FXML private Label            unValidLabel;
-    @FXML private Label            pwValidLabel;
-    @FXML private Label            label;
+    @FXML private MFXButton        closeButton;
+    @FXML private Label            unValidLabel;  // lỗi email / OTP
+    @FXML private Label            pwValidLabel;  // lỗi password
+    @FXML private Label            label;         // thông báo chung (xanh = OK, đỏ = lỗi)
+
+    /** Email đã được xác nhận tồn tại trong DB — lưu để dùng ở bước 3 */
+    private String verifiedEmail = null;
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     @FXML
     public void initialize() {
-        if (unValidLabel != null) { unValidLabel.setVisible(false); unValidLabel.setManaged(false); }
-        if (pwValidLabel != null) { pwValidLabel.setVisible(false); pwValidLabel.setManaged(false); }
-        if (label        != null)   label.setText("");
+        hideError(unValidLabel);
+        hideError(pwValidLabel);
+        clearStatus();
 
+        // Wire backup (phòng khi FXML không khai báo onAction)
         if (sendCodeButton != null) sendCodeButton.setOnAction(e -> handleSendCode());
         if (okButton       != null) okButton.setOnAction(e       -> handleSave());
-        // closeButton dùng onAction="#handleClose" trong FXML, không cần wire thêm
     }
 
-    // ── Bước 1: Gửi mã xác thực ──────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    // BƯỚC 1: Gửi OTP
+    // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * Validate email rồi gửi mã xác thực.
-     * TODO: Thay System.out.println bằng EmailService.sendCode(email).
+     * Validate email → kiểm tra DB → tạo và gửi OTP.
+     * Chạy IO trên background thread.
      */
     @FXML
     private void handleSendCode() {
-        String email = emailField.getText().trim();
-        if (email.isEmpty() || !email.contains("@")) {
-            show(unValidLabel, "Please enter a valid email.");
+        hideError(unValidLabel);
+        clearStatus();
+
+        String email = emailField != null ? emailField.getText().trim() : "";
+
+        // Validate định dạng email
+        if (email.isEmpty()) {
+            showError(unValidLabel, "Vui lòng nhập địa chỉ email.");
             return;
         }
-        hide(unValidLabel);
-        if (label != null) {
-            label.setStyle("-fx-text-fill: #3DBA7F;");
-            label.setText("Code sent to " + email);
+        if (!isValidEmail(email)) {
+            showError(unValidLabel, "Địa chỉ email không hợp lệ.");
+            return;
         }
-        System.out.println("[ForgotPass] Send code to: " + email);
+
+        setSendCodeButtonState(false, "Đang gửi...");
+
+        Task<SendCodeResult> task = new Task<>() {
+            @Override
+            protected SendCodeResult call() {
+                // Kiểm tra email có trong hệ thống không
+                if (!UserDAO.emailExistsForReset(email)) {
+                    return SendCodeResult.EMAIL_NOT_FOUND;
+                }
+
+                // Tạo OTP + tính thời gian hết hạn (10 phút)
+                String code       = EmailService.generateCode();
+                long   expiresAt  = System.currentTimeMillis() + EmailService.OTP_EXPIRE_MS;
+
+                // Lưu vào DB
+                boolean saved = UserDAO.saveResetCode(email, code, expiresAt);
+                if (!saved) return SendCodeResult.DB_ERROR;
+
+                // Gửi email
+                boolean sent = EmailService.sendResetCode(email, code);
+                if (!sent) return SendCodeResult.EMAIL_SEND_FAIL;
+
+                return SendCodeResult.SUCCESS;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            SendCodeResult result = task.getValue();
+            switch (result) {
+                case SUCCESS -> {
+                    verifiedEmail = email;
+                    showStatus("✅ Mã đã được gửi đến " + email
+                            + ". Vui lòng kiểm tra hộp thư (và thư mục Spam).", true);
+                    // Disable nút 60 giây chống spam
+                    startResendCountdown();
+                }
+                case EMAIL_NOT_FOUND -> {
+                    showError(unValidLabel, "Email này chưa được đăng ký trong hệ thống.");
+                    setSendCodeButtonState(true, "Send Code");
+                }
+                case DB_ERROR -> {
+                    showStatus("❌ Lỗi hệ thống. Vui lòng thử lại.", false);
+                    setSendCodeButtonState(true, "Send Code");
+                }
+                case EMAIL_SEND_FAIL -> {
+                    showStatus("❌ Không thể gửi email. Kiểm tra cấu hình SMTP.", false);
+                    setSendCodeButtonState(true, "Send Code");
+                }
+            }
+        });
+
+        task.setOnFailed(e -> {
+            showStatus("❌ Lỗi kết nối. Vui lòng thử lại.", false);
+            setSendCodeButtonState(true, "Send Code");
+            task.getException().printStackTrace();
+        });
+
+        new Thread(task).start();
     }
 
-    // ── Bước 3: Lưu mật khẩu mới ─────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════════
+    // BƯỚC 3: Lưu mật khẩu mới
+    // ══════════════════════════════════════════════════════════════════════════
 
     /**
-     * Validate mã xác thực và mật khẩu mới, sau đó reset.
-     * TODO: Thay bằng UserDAO.resetPassword(code, newPassword).
+     * Validate OTP + mật khẩu → cập nhật DB → thông báo + đóng popup.
      */
     @FXML
     private void handleSave() {
-        if (label != null) label.setText("");
+        hideError(unValidLabel);
+        hideError(pwValidLabel);
+        clearStatus();
 
         String code    = codeField            != null ? codeField.getText().trim()    : "";
         String pass    = passwordField        != null ? passwordField.getText()        : "";
         String confirm = confirmPasswordField != null ? confirmPasswordField.getText() : "";
 
+        // ── Validate client-side ──────────────────────────────────────────────
+        if (verifiedEmail == null) {
+            showError(unValidLabel, "Vui lòng gửi mã xác thực trước.");
+            return;
+        }
         if (code.isEmpty()) {
-            show(unValidLabel, "Please enter the verification code.");
+            showError(unValidLabel, "Vui lòng nhập mã xác thực.");
+            return;
+        }
+        if (code.length() != 6 || !code.matches("\\d+")) {
+            showError(unValidLabel, "Mã xác thực phải là 6 chữ số.");
             return;
         }
         if (pass.length() < 8) {
-            show(pwValidLabel, "Password must be at least 8 characters.");
-            return;
+            showError(pwValidLabel, "Mật khẩu phải có ít nhất 8 ký tự."); return;
+        }
+        if (!pass.matches(".*[a-zA-Z].*") || !pass.matches(".*\\d.*")) {
+            showError(pwValidLabel, "Mật khẩu phải có cả chữ cái và chữ số."); return;
         }
         if (!pass.equals(confirm)) {
-            show(pwValidLabel, "Passwords do not match.");
-            return;
+            showError(pwValidLabel, "Mật khẩu xác nhận không khớp."); return;
         }
 
-        hide(unValidLabel);
-        hide(pwValidLabel);
+        setOkButtonState(false, "Đang lưu...");
 
-        if (label != null) {
-            label.setStyle("-fx-text-fill: #3DBA7F;");
-            label.setText("Password updated successfully!");
-        }
-        // TODO: UserDAO.resetPassword(code, pass);
+        final String emailToReset = verifiedEmail;
+
+        Task<ResetResult> task = new Task<>() {
+            @Override
+            protected ResetResult call() {
+                boolean ok = UserDAO.resetPassword(emailToReset, code, pass);
+                if (!ok) {
+                    // Phân biệt: sai code hay DB lỗi
+                    boolean codeValid = UserDAO.verifyResetCode(emailToReset, code);
+                    return codeValid ? ResetResult.DB_ERROR : ResetResult.INVALID_CODE;
+                }
+                return ResetResult.SUCCESS;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            ResetResult result = task.getValue();
+            switch (result) {
+                case SUCCESS -> {
+                    showStatus("✅ Mật khẩu đã được cập nhật thành công!", true);
+                    // Tự đóng popup sau 2 giây
+                    new Thread(() -> {
+                        try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
+                        Platform.runLater(this::closePopup);
+                    }).start();
+                }
+                case INVALID_CODE -> {
+                    showError(unValidLabel, "Mã xác thực sai hoặc đã hết hạn.");
+                    setOkButtonState(true, "Save New Password");
+                }
+                case DB_ERROR -> {
+                    showStatus("❌ Lỗi hệ thống. Vui lòng thử lại.", false);
+                    setOkButtonState(true, "Save New Password");
+                }
+            }
+        });
+
+        task.setOnFailed(e -> {
+            showStatus("❌ Lỗi kết nối. Vui lòng thử lại.", false);
+            setOkButtonState(true, "Save New Password");
+            task.getException().printStackTrace();
+        });
+
+        new Thread(task).start();
     }
 
-    /**
-     * Đóng popup ForgotPass, trở về màn hình Login.
-     * Gọi từ nút X trên top bar qua onAction="#handleClose" trong FXML.
-     */
+    // ── Đóng popup ────────────────────────────────────────────────────────────
+
     @FXML
     private void handleClose() {
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        stage.close();
+        closePopup();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    private void closePopup() {
+        if (closeButton != null && closeButton.getScene() != null) {
+            Stage stage = (Stage) closeButton.getScene().getWindow();
+            stage.close();
+        }
+    }
 
-    private void show(Label lbl, String msg) {
+    // ── Countdown chống spam gửi email ───────────────────────────────────────
+
+    /**
+     * Disable nút Send Code trong 60 giây, đếm ngược hiển thị trên button.
+     */
+    private void startResendCountdown() {
+        new Thread(() -> {
+            for (int i = 60; i >= 1; i--) {
+                final int sec = i;
+                Platform.runLater(() ->
+                        setSendCodeButtonText("Gửi lại sau " + sec + "s"));
+                try { Thread.sleep(1000); } catch (InterruptedException ignored) { break; }
+            }
+            Platform.runLater(() -> setSendCodeButtonState(true, "Send Code"));
+        }).start();
+    }
+
+    // ── Validation Helpers ────────────────────────────────────────────────────
+
+    private boolean isValidEmail(String email) {
+        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    }
+
+    // ── UI Helpers ────────────────────────────────────────────────────────────
+
+    private void showError(Label lbl, String msg) {
         if (lbl == null) return;
-        lbl.setText(msg);
-        lbl.setVisible(true);
-        lbl.setManaged(true);
+        Platform.runLater(() -> {
+            lbl.setText(msg);
+            lbl.setStyle("-fx-text-fill: #FF6B6B;");
+            lbl.setVisible(true);
+            lbl.setManaged(true);
+        });
     }
 
-    private void hide(Label lbl) {
+    private void hideError(Label lbl) {
         if (lbl == null) return;
         lbl.setText("");
         lbl.setVisible(false);
         lbl.setManaged(false);
     }
+
+    private void showStatus(String msg, boolean isSuccess) {
+        if (label == null) return;
+        Platform.runLater(() -> {
+            label.setText(msg);
+            label.setStyle(isSuccess
+                    ? "-fx-text-fill: #3DBA7F;"
+                    : "-fx-text-fill: #FF6B6B;");
+            label.setVisible(true);
+            label.setManaged(true);
+        });
+    }
+
+    private void clearStatus() {
+        if (label == null) return;
+        label.setText("");
+        label.setVisible(false);
+        label.setManaged(false);
+    }
+
+    private void setSendCodeButtonState(boolean enabled, String text) {
+        Platform.runLater(() -> {
+            if (sendCodeButton != null) {
+                sendCodeButton.setDisable(!enabled);
+                sendCodeButton.setText(text);
+            }
+        });
+    }
+
+    private void setSendCodeButtonText(String text) {
+        if (sendCodeButton != null) sendCodeButton.setText(text);
+    }
+
+    private void setOkButtonState(boolean enabled, String text) {
+        Platform.runLater(() -> {
+            if (okButton != null) {
+                okButton.setDisable(!enabled);
+                okButton.setText(text);
+            }
+        });
+    }
+
+    // ── Inner enums ───────────────────────────────────────────────────────────
+
+    private enum SendCodeResult { SUCCESS, EMAIL_NOT_FOUND, DB_ERROR, EMAIL_SEND_FAIL }
+    private enum ResetResult    { SUCCESS, INVALID_CODE, DB_ERROR }
 }

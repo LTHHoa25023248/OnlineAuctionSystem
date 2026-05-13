@@ -19,21 +19,16 @@
         <HBox styleClass="titlePane" alignment="CENTER_LEFT"
               prefHeight="68.0" spacing="14.0">
             <padding><Insets top="0" right="28" bottom="0" left="28"/></padding>
-
             <Label text="Auction House" styleClass="titleLabel">
                 <font><Font name="Georgia" size="22.0"/></font>
             </Label>
-
             <Region HBox.hgrow="ALWAYS"/>
-
             <MFXButton fx:id="themeButton"
                        styleClass="outlineButton"
                        text="Light"
                        prefWidth="72.0" prefHeight="36.0"/>
-
             <Label text="Logged in as" styleClass="loggedInText"/>
             <Label fx:id="usernameLabel" text="---" styleClass="usernameLabel"/>
-
             <MFXButton fx:id="logoutButton"
                        styleClass="outlineButton"
                        text="Log Out"
@@ -136,11 +131,13 @@
                 <VBox.margin><Insets bottom="16" left="20" right="20"/></VBox.margin>
             </Separator>
 
+            <!-- visible="false" mặc định — controller bật lên nếu là Seller -->
             <MFXButton fx:id="sellButton"
                        styleClass="goldButton"
                        text="Sell Item"
                        onAction="#onSellButtonClick"
-                       prefWidth="180.0" prefHeight="44.0">
+                       prefWidth="180.0" prefHeight="44.0"
+                       visible="false" managed="false">
                 <VBox.margin><Insets left="30" right="30"/></VBox.margin>
             </MFXButton>
 
@@ -161,7 +158,6 @@
             <HBox fx:id="secondaryBar" styleClass="secondaryBar"
                   alignment="CENTER_LEFT" prefHeight="56.0" spacing="6.0">
                 <padding><Insets top="0" right="20" bottom="0" left="20"/></padding>
-
                 <Label fx:id="allCat" alignment="CENTER" prefHeight="34.0"
                        text="All" styleClass="categories catSelected"/>
                 <Label fx:id="jewelryCat" alignment="CENTER" prefHeight="34.0"
@@ -176,9 +172,7 @@
                        text="Cars" styleClass="categories"/>
                 <Label fx:id="othersCat" alignment="CENTER" prefHeight="34.0"
                        text="Others" styleClass="categories"/>
-
                 <Region HBox.hgrow="ALWAYS"/>
-
                 <MFXButton fx:id="sortButton"
                            styleClass="outlineButton"
                            text="Sort By"
