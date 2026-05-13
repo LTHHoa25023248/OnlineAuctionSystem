@@ -44,7 +44,10 @@ public class AuctionCardController {
         categoryLabel.setText(item.category);
 
         // Chỉ hiện "Popular Now" nếu có nhiều bid
-        popularNowLabel.setText(item.bids > 10 ? "Popular Now" : "");
+        boolean isPopular = item.bids > 10;
+        popularNowLabel.setText("Popular Now");
+        popularNowLabel.setVisible(isPopular);
+        popularNowLabel.setManaged(isPopular);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.model.Seller;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -23,7 +24,7 @@ public class AuctionListController {
     // ── FXML fields — Top bar ─────────────────────────────────────────────────
     @FXML private Label     usernameLabel;
     @FXML private MFXButton logoutButton;
-    @FXML private MFXButton themeButton;  // nút toggle Dark/Light mode
+    @FXML private MFXButton themeButton;
 
     // ── FXML fields — Sidebar ─────────────────────────────────────────────────
     @FXML private HBox      homeButton;
@@ -92,17 +93,23 @@ public class AuctionListController {
         sortButton.setOnAction(e   -> onSortByButtonClick());
         logoutButton.setOnAction(e -> onLogOutButtonClick());
 
-        // ── Theme toggle button ───────────────────────────────────────────────
+        // ── Theme toggle ──────────────────────────────────────────────────────
         if (themeButton != null) {
             updateThemeButtonText();
             themeButton.setOnAction(e -> {
-                // Toggle theme và áp dụng ngay lên Scene hiện tại
                 ThemeManager.getInstance().toggleTheme(themeButton.getScene());
-                updateThemeButtonText(); // cập nhật text nút sau khi đổi
+                updateThemeButtonText();
             });
         }
 
-        // ── Admin button ──────────────────────────────────────────────────────
+        // ── Sell button — chỉ hiện với Seller ────────────────────────────────
+        if (sellButton != null) {
+            boolean isSeller = SessionManager.getInstance().isSeller();
+            sellButton.setVisible(isSeller);
+            sellButton.setManaged(isSeller);
+        }
+
+        // ── Admin button — chỉ hiện với Admin ────────────────────────────────
         if (adminButton != null) {
             boolean isAdmin = SessionManager.getInstance().isAdmin();
             adminButton.setVisible(isAdmin);
@@ -126,20 +133,12 @@ public class AuctionListController {
         loadListings();
     }
 
-    /**
-     * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
-     *
-     * Cập nhật text nút theme theo trạng thái hiện tại.
-     * Hiển thị theme SẼ chuyển sang khi bấm (không phải theme đang dùng).
-     *   Đang Dark  → hiện "Light" (bấm để sang Light)
-     *   Đang Light → hiện "Dark"  (bấm để sang Dark)
-     */
     private void updateThemeButtonText() {
         if (themeButton == null) return;
         if (ThemeManager.getInstance().isDarkMode()) {
-            themeButton.setText("Light");  // đang dark → bấm chuyển sang light
+            themeButton.setText("Light");
         } else {
-            themeButton.setText("Dark");   // đang light → bấm chuyển sang dark
+            themeButton.setText("Dark");
         }
     }
 
