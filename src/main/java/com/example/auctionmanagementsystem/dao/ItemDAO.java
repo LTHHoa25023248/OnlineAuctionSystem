@@ -44,7 +44,7 @@ import static java.lang.Integer.parseInt;
               int itemId=-1;
               if(resultSet.next()){
                   itemId=resultSet.getInt(1);
-                  item.setId(String.valueOf(itemId));
+                  item.setId(Integer.valueOf(itemId));
               }
               //ko lay duoc id thi loi
             if(itemId==-1){
@@ -147,7 +147,7 @@ import static java.lang.Integer.parseInt;
                     ps1.setInt(1,itemId);
                     ResultSet rs2=ps1.executeQuery();
                     if(rs2.next()){
-                        return new Vehicle(id,resultSet.getString("name"),
+                        return new Vehicle(resultSet.getString("name"),
                                    resultSet.getString("description"),
                                    resultSet.getDouble("starting_price"),
                                    rs2.getInt("year"),
@@ -161,7 +161,6 @@ import static java.lang.Integer.parseInt;
                     ResultSet rs2 = ps2.executeQuery();
                     if (rs2.next()) {
                         return new Art(
-                                id,
                                 resultSet.getString("name"),
                                 resultSet.getString("description"),
                                 resultSet.getDouble("starting_price"),
@@ -177,7 +176,6 @@ import static java.lang.Integer.parseInt;
                     ResultSet rs3 = ps3.executeQuery();
                     if (rs3.next()) {
                         return new Electronics(
-                                id,
                                 resultSet.getString("name"),
                                 resultSet.getString("description"),
                                 resultSet.getDouble("starting_price"),
