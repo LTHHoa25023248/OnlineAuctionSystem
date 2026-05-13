@@ -695,3 +695,21 @@
     -fx-text-fill: rgba(168,164,156,0.75);
     -fx-font-size: 13px;
 }
+/* ── SORTING MENU ──────────────────────────────────────────── */
+.sortingRoot {
+    -fx-background-color: #0D1018;
+}
+
+.sortingTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-weight: bold;
+}
+
+.sortingOption {
+    -fx-text-fill: #F2F0EC;
+}
+
+.sortingOption .radio-button {
+    -fx-text-fill: #F2F0EC;
+}

@@ -1,5 +1,11 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.dao.UserDAO;
+import com.example.auctionmanagementsystem.model.Admin;
+import com.example.auctionmanagementsystem.model.Seller;
+import com.example.auctionmanagementsystem.model.User;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -8,97 +14,133 @@ import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 
-/**
- * LoginController — Điều khiển màn hình đăng nhập (auction_login.fxml).
- *
- * Luồng chính:
- *   User nhập username + password → bấm Login
- *   → handleLogin() xác thực → lưu session → chuyển sang AuctionList
- *
- * Chú ý: Hiện tại chạy ở TEST MODE (isAdmin = true luôn).
- * Khi kết nối DB thật, thay phần handleLogin() bằng UserDAO.login().
- */
 public class LoginController {
 
-    // ── FXML fields — phải khớp fx:id trong auction_login.fxml ───────────────
     @FXML private MFXTextField     usernameField;
     @FXML private MFXPasswordField passwordField;
-    @FXML private Label            unValidLabel;    // hiển thị lỗi username
-    @FXML private Label            pwValidLabel;    // hiển thị lỗi password
+    @FXML private Label            unValidLabel;
+    @FXML private Label            pwValidLabel;
     @FXML private MFXButton        loginButton;
-    @FXML private MFXButton        signupButton;    // nút "Sign Up" trên top bar
+    @FXML private MFXButton        signupButton;
     @FXML private MFXButton        forgotPassButton;
 
     @FXML
     public void initialize() {
-        // Ẩn error labels lúc khởi động
-        if (unValidLabel     != null) unValidLabel.setVisible(false);
-        if (pwValidLabel     != null) pwValidLabel.setVisible(false);
+        hideError(unValidLabel);
+        hideError(pwValidLabel);
 
-        // Wire sự kiện bằng code (backup nếu FXML chưa khai báo onAction)
+        if (loginButton      != null) loginButton.setOnAction(e      -> handleLogin());
         if (signupButton     != null) signupButton.setOnAction(e     -> goToSignup());
         if (forgotPassButton != null) forgotPassButton.setOnAction(e -> openForgotPassword());
-        if (loginButton      != null) loginButton.setOnAction(e      -> handleLogin());
+
+        if (passwordField != null) {
+            passwordField.setOnKeyPressed(e -> {
+                if (e.getCode() == javafx.scene.input.KeyCode.ENTER) handleLogin();
+            });
+        }
     }
 
-    // ── Handlers gọi từ FXML (onAction / onMouseClicked) ─────────────────────
+    @FXML public void onLoginButtonClick()         { handleLogin(); }
+    @FXML public void onSignupButtonClick()        { goToSignup(); }
+    @FXML public void onSignupClick(MouseEvent e)  { goToSignup(); }
+    @FXML public void onForgotPassClick()          { openForgotPassword(); }
 
-    /** Gọi từ nút Sign Up trên top bar */
-    @FXML
-    public void onSignupButtonClick() { goToSignup(); }
-
-    /** Gọi từ Label "Sign Up" dạng link trong form (onMouseClicked) */
-    @FXML
-    public void onSignupClick(MouseEvent event) { goToSignup(); }
-
-    /** Gọi từ nút Login chính */
-    @FXML
-    public void onLoginButtonClick() { handleLogin(); }
-
-    /** Gọi từ nút "Forgot Password?" */
-    @FXML
-    public void onForgotPassClick() { openForgotPassword(); }
-
-    // ── Business logic ────────────────────────────────────────────────────────
-
-    /**
-     * Xử lý đăng nhập.
-     *
-     * TEST MODE: Mọi user đều là admin, không cần password đúng.
-     * PRODUCTION: Thay bằng:
-     *   User user = UserDAO.login(username, password);
-     *   if (user == null) { showError("Sai thông tin"); return; }
-     *   SessionManager.getInstance().login(user.getId(), user.getUsername(),
-     *       user.getEmail(), user.isAdmin());
-     */
     private void handleLogin() {
-        String username = (usernameField != null && !usernameField.getText().isBlank())
-                ? usernameField.getText().trim()
-                : "TestUser";
+        hideError(unValidLabel);
+        hideError(pwValidLabel);
 
-        // TODO: Đổi thành username.equalsIgnoreCase("admin") khi có DB
-        boolean isAdmin = true;
+        String username = usernameField != null ? usernameField.getText().trim() : "";
+        String password = passwordField != null ? passwordField.getText() : "";
 
-        SessionManager.getInstance().login(
-                isAdmin ? 0 : 1,
-                username,
-                username + "@demo.com",
-                isAdmin
-        );
+        if (username.isEmpty()) {
+            showError(unValidLabel, "Vui lòng nhập tên đăng nhập.");
+            return;
+        }
+        if (password.isEmpty()) {
+            showError(pwValidLabel, "Vui lòng nhập mật khẩu.");
+            return;
+        }
 
-        NavigationUtil.goTo(loginButton, NavigationUtil.AUCTION_LIST);
+        setLoginButtonState(false, "Đang đăng nhập...");
+
+        Task<User> loginTask = new Task<>() {
+            @Override
+            protected User call() {
+                return UserDAO.login(username, password);
+            }
+        };
+
+        loginTask.setOnSucceeded(e -> {
+            User user = loginTask.getValue();
+            if (user != null) {
+                String phone     = UserDAO.getStringField(user.getId(), "phone");
+                String firstName = UserDAO.getStringField(user.getId(), "first_name");
+                String lastName  = UserDAO.getStringField(user.getId(), "last_name");
+
+                // Xác định role từ kiểu object trả về bởi UserDAO.login()
+                String role = (user instanceof Admin)  ? "ADMIN"
+                        : (user instanceof Seller) ? "SELLER"
+                        : "BIDDER";
+
+                SessionManager.getInstance().login(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        phone,
+                        firstName,
+                        lastName,
+                        user instanceof Admin,
+                        role
+                );
+
+                NavigationUtil.goTo(loginButton, NavigationUtil.AUCTION_LIST);
+            } else {
+                showError(unValidLabel, "Sai tên đăng nhập hoặc mật khẩu.");
+                setLoginButtonState(true, "Login");
+            }
+        });
+
+        loginTask.setOnFailed(e -> {
+            showError(unValidLabel, "Lỗi kết nối. Vui lòng thử lại.");
+            setLoginButtonState(true, "Login");
+            loginTask.getException().printStackTrace();
+        });
+
+        new Thread(loginTask).start();
     }
 
-    /** Chuyển sang màn hình đăng ký */
     private void goToSignup() {
-        // Dùng signupButton nếu có, fallback sang loginButton nếu null
-        Node src = signupButton != null ? signupButton : loginButton;
+        Node src = (signupButton != null) ? signupButton : loginButton;
         NavigationUtil.goTo(src, NavigationUtil.SIGNUP);
     }
 
-    /** Mở popup đặt lại mật khẩu */
     private void openForgotPassword() {
-        Node src = forgotPassButton != null ? forgotPassButton : loginButton;
+        Node src = (forgotPassButton != null) ? forgotPassButton : loginButton;
         NavigationUtil.openPopup(src, NavigationUtil.FORGOT_PASS, "Reset Password");
+    }
+
+    private void showError(Label label, String message) {
+        if (label == null) return;
+        Platform.runLater(() -> {
+            label.setText(message);
+            label.setVisible(true);
+            label.setManaged(true);
+        });
+    }
+
+    private void hideError(Label label) {
+        if (label == null) return;
+        label.setText("");
+        label.setVisible(false);
+        label.setManaged(false);
+    }
+
+    private void setLoginButtonState(boolean enabled, String text) {
+        Platform.runLater(() -> {
+            if (loginButton != null) {
+                loginButton.setDisable(!enabled);
+                loginButton.setText(text);
+            }
+        });
     }
 }
