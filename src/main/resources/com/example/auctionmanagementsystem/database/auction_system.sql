@@ -1,4 +1,16 @@
-CREATE DATABASE auction_system;
+-- ═══════════════════════════════════════════════════════════════════════════
+-- auction_system.sql — Schema đầy đủ cho Auction Management System
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Chạy lần đầu:
+--   mysql -u root -p < auction_system.sql
+--
+-- Hoặc paste vào MySQL Workbench / DBeaver
+-- ═══════════════════════════════════════════════════════════════════════════
+
+CREATE DATABASE IF NOT EXISTS auction_system
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
 USE auction_system;
 
 CREATE TABLE users (

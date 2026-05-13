@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane
+        minWidth="820.0"
+        minHeight="580.0"
+        styleClass="root"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.LoginController">
+
+    <top>
+        <HBox styleClass="titlePane" alignment="CENTER_LEFT"
+              prefHeight="68.0" spacing="14.0">
+            <padding><Insets top="0" right="32" bottom="0" left="32"/></padding>
+            <Label text="Auction House" styleClass="titleLabel">
+                <font><Font name="Georgia" size="22.0"/></font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Don't have an account?" styleClass="loggedInText"/>
+            <MFXButton fx:id="signupButton"
+                       onAction="#onSignupButtonClick"
+                       styleClass="outlineButton"
+                       text="Sign Up"
+                       prefWidth="100.0" prefHeight="36.0"/>
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane styleClass="loginBackground">
+            <HBox styleClass="loginCard"
+                  alignment="CENTER"
+                  maxWidth="900.0" maxHeight="500.0"
+                  StackPane.alignment="CENTER">
+
+                <VBox styleClass="loginLeftPanel"
+                      alignment="CENTER" spacing="20" prefWidth="380.0">
+                    <padding><Insets top="48" right="40" bottom="48" left="40"/></padding>
+                    <Label text="Welcome Back" styleClass="loginWelcomeTitle">
+                        <font><Font name="Georgia" size="30.0"/></font>
+                    </Label>
+                    <Label text="Sign in to access your auctions, bids and watchlist."
+                           styleClass="loginWelcomeSub"
+                           wrapText="true" textAlignment="CENTER"/>
+                    <Region prefHeight="10"/>
+                    <HBox spacing="0" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
+                            <Label fx:id="statListings" text="1,200+" styleClass="statNumLabel">
+                                <font><Font name="Georgia" size="20.0"/></font>
+                            </Label>
+                            <Label text="Active Listings" styleClass="statTextLabel"/>
+                        </VBox>
+                        <Separator orientation="VERTICAL" styleClass="statDivider" prefHeight="40.0"/>
+                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
+                            <Label fx:id="statMembers" text="5,800+" styleClass="statNumLabel">
+                                <font><Font name="Georgia" size="20.0"/></font>
+                            </Label>
+                            <Label text="Members" styleClass="statTextLabel"/>
+                        </VBox>
+                        <Separator orientation="VERTICAL" styleClass="statDivider" prefHeight="40.0"/>
+                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
+                            <Label fx:id="statBids" text="2M+" styleClass="statNumLabel">
+                                <font><Font name="Georgia" size="20.0"/></font>
+                            </Label>
+                            <Label text="Total Bids" styleClass="statTextLabel"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <Separator orientation="VERTICAL" styleClass="panelDivider"/>
+
+                <VBox styleClass="loginRightPanel"
+                      alignment="CENTER" spacing="14" prefWidth="420.0">
+                    <padding><Insets top="44" right="44" bottom="44" left="44"/></padding>
+
+                    <Label text="Login" styleClass="loginFormTitle">
+                        <font><Font name="Georgia" size="26.0"/></font>
+                    </Label>
+                    <Label text="Enter your credentials to continue" styleClass="loginFormSub"/>
+                    <Region prefHeight="4"/>
+
+                    <VBox spacing="6" maxWidth="Infinity">
+                        <Label text="USERNAME" styleClass="fieldLabel"/>
+                        <MFXTextField fx:id="usernameField"
+                                      styleClass="signupField"
+                                      promptText="Enter your username"
+                                      prefHeight="46.0" maxWidth="Infinity"/>
+                        <Label fx:id="unValidLabel" styleClass="errorLabel"
+                               text="" visible="false" managed="false"/>
+                    </VBox>
+
+                    <VBox spacing="6" maxWidth="Infinity">
+                        <Label text="PASSWORD" styleClass="fieldLabel"/>
+                        <MFXPasswordField fx:id="passwordField"
+                                          styleClass="signupField"
+                                          promptText="Enter your password"
+                                          prefHeight="46.0" maxWidth="Infinity"/>
+                        <Label fx:id="pwValidLabel" styleClass="errorLabel"
+                               text="" visible="false" managed="false"/>
+                    </VBox>
+
+                    <HBox alignment="CENTER_RIGHT">
+                        <MFXButton fx:id="forgotPassButton"
+                                   onAction="#onForgotPassClick"
+                                   styleClass="forgotLink"
+                                   text="Forgot Password?"/>
+                    </HBox>
+
+                    <MFXButton fx:id="loginButton"
+                               onAction="#onLoginButtonClick"
+                               styleClass="goldButton signupSubmitBtn"
+                               text="Login"
+                               prefHeight="48.0" maxWidth="Infinity"/>
+
+                    <HBox alignment="CENTER" spacing="10">
+                        <Separator HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: rgba(255,255,255,0.08);"/>
+                        <Label text="or" styleClass="orLabel"/>
+                        <Separator HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: rgba(255,255,255,0.08);"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="5">
+                        <Label text="Don't have an account?" styleClass="loginFormSub"/>
+                        <Label text="Sign Up" styleClass="termsLink"
+                               onMouseClicked="#onSignupClick"/>
+                    </HBox>
+                </VBox>
+
+            </HBox>
+        </StackPane>
+    </center>
+
+</BorderPane>

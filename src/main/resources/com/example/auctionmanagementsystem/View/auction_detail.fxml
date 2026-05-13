@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane
+        prefWidth="900.0"
+        prefHeight="700.0"
+        styleClass="rootPane"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.AuctionDetailController">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox styleClass="detailTopBar" alignment="CENTER_LEFT" prefHeight="52.0">
+            <padding><Insets top="0" right="20" bottom="0" left="20"/></padding>
+            <Label text="Auction Detail" styleClass="detailTopBarTitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ImageView fx:id="closeButton"
+                       fitHeight="26.0" fitWidth="25.0"
+                       pickOnBounds="true"
+                       onMouseClicked="#handleClose">
+                <image><Image url="@../images/Icons/cross-circle.png"/></image>
+            </ImageView>
+        </HBox>
+    </top>
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="detailScrollPane">
+            <HBox spacing="0">
+
+                <!-- LEFT: ảnh + listed by + description -->
+                <VBox spacing="20" prefWidth="380.0" minWidth="340.0"
+                      styleClass="detailLeftPanel">
+                    <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+                    <StackPane styleClass="imagePane" prefHeight="300.0">
+                        <ImageView fx:id="image"
+                                   fitHeight="280.0" fitWidth="330.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <image><Image url="@../images/Icons/sample.png"/></image>
+                        </ImageView>
+                    </StackPane>
+
+                    <VBox spacing="4">
+                        <Label text="LISTED BY" styleClass="detailSectionLabel"/>
+                        <Label fx:id="userLabel" text="---" styleClass="detailBodyText"/>
+                    </VBox>
+
+                    <Separator styleClass="detailSeparator"/>
+
+                    <VBox spacing="6" VBox.vgrow="ALWAYS">
+                        <Label text="DESCRIPTION" styleClass="detailSectionLabel"/>
+                        <Label fx:id="descriptionLabel" wrapText="true"
+                               styleClass="detailBodyTextMuted"/>
+                    </VBox>
+                </VBox>
+
+                <!-- RIGHT: info + bid + comments -->
+                <VBox HBox.hgrow="ALWAYS">
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                styleClass="detailScrollPane">
+                        <VBox spacing="20">
+                            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+                            <!-- Title -->
+                            <Label fx:id="titleLabel" text="Item Title"
+                                   wrapText="true" styleClass="detailTitle"/>
+
+                            <!-- Badges -->
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <Label fx:id="activeLabel" text="Active"
+                                       styleClass="badgeActive"/>
+                                <Label fx:id="popularNowLabel" text="Popular Now"
+                                       styleClass="badgePending"/>
+                                <Label fx:id="categoryLabel" text="Category"
+                                       styleClass="badgeCategory"/>
+                            </HBox>
+
+                            <Separator styleClass="detailSeparator"/>
+
+                            <!-- Info box -->
+                            <VBox spacing="12" styleClass="detailInfoBox">
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Current Price"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="priceLabel" text="---"
+                                           styleClass="detailPriceValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Total Bids"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="totalBidsLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Started On"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="startLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Ends On"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="endLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <MFXButton fx:id="endnowButton" text="End Now"
+                                               styleClass="endNowButton"
+                                               prefHeight="32.0" prefWidth="88.0"/>
+                                </HBox>
+                            </VBox>
+
+                            <Label fx:id="winnerLabel" text=""
+                                   styleClass="winnerLabel" wrapText="true"/>
+
+                            <Separator styleClass="detailSeparator"/>
+
+                            <!-- Place Bid -->
+                            <VBox spacing="8">
+                                <Label text="PLACE BID" styleClass="detailSectionLabel"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <MFXTextField fx:id="bidField" styleClass="fields"
+                                                  promptText="Enter bid amount (USD)"
+                                                  prefHeight="48.0"
+                                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    <MFXButton fx:id="placeBidButton" styleClass="goldButton"
+                                               text="Place Bid"
+                                               prefHeight="48.0" prefWidth="100.0"/>
+                                </HBox>
+                                <Label fx:id="bidValidationLabel" styleClass="errorLabel"
+                                       text="" wrapText="true"/>
+                            </VBox>
+
+                            <Separator styleClass="detailSeparator"/>
+
+                            <!-- Comments -->
+                            <VBox spacing="10">
+                                <Label text="COMMENTS" styleClass="detailSectionLabel"/>
+                                <MFXScrollPane fx:id="commentsPane" styleClass="scrollPane"
+                                               prefHeight="180.0" maxWidth="Infinity"/>
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <MFXTextField fx:id="commentField" styleClass="fields"
+                                                  promptText="Write a comment..."
+                                                  prefHeight="44.0"
+                                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    <MFXButton fx:id="commentPostButton" styleClass="goldButton"
+                                               text="Post"
+                                               prefHeight="44.0" prefWidth="70.0"/>
+                                </HBox>
+                            </VBox>
+
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+            </HBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

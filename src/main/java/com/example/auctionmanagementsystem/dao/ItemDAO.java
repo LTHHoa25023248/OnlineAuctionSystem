@@ -10,6 +10,7 @@ import java.sql.*;
 
 import static java.lang.Integer.parseInt;
 
+
  public class ItemDAO implements DAOInterface <Item> {
      public int insert(Item item) {
          //Su dung commit, rollback. Commit de luu du lieu neu da insert thanh cong, neu khong thi rollback de tra ve trang thai ban dau luc chua insert
@@ -87,12 +88,13 @@ import static java.lang.Integer.parseInt;
              connect.commit();
              return affectedRows;
          } catch (Exception e) {
-            try{
-                if (connect!= null)
-                    connect.rollback();
-            }catch(Exception ex){
+             try{
+                 if (connect!= null)
+                     connect.rollback();
+
+         }catch(Exception ex){
                 ex.printStackTrace();
-            }
+             }
             throw new RuntimeException("Update failed");
          }finally{
              try{
@@ -103,6 +105,7 @@ import static java.lang.Integer.parseInt;
              }
          }
      }
+
 
      public int delete(int id) {
          try (Connection connect = new DatabaseConnection().getConnection()) {
@@ -164,3 +167,5 @@ import static java.lang.Integer.parseInt;
          }
      }
  }
+
+

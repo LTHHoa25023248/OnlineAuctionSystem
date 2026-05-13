@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<HBox onMouseClicked="#onCardClick"
+      styleClass="auctionCard"
+      prefWidth="490.0"
+      prefHeight="240.0"
+      spacing="0"
+      xmlns="http://javafx.com/javafx/19"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.auctionmanagementsystem.controller.AuctionCardController">
+
+    <!-- Ảnh trái -->
+    <StackPane styleClass="imagePane" prefWidth="220.0" prefHeight="240.0">
+        <ImageView fx:id="image" fitHeight="220.0" fitWidth="210.0"
+                   pickOnBounds="true" preserveRatio="true">
+            <image><Image url="@../../images/Icons/sample.png"/></image>
+        </ImageView>
+    </StackPane>
+
+    <!-- Thông tin phải — dùng styleClass để dark/light CSS override được -->
+    <VBox spacing="10" prefWidth="270.0" styleClass="cardContent">
+
+        <!-- Popular + Category badges -->
+        <HBox spacing="8">
+            <Label fx:id="popularNowLabel" text="Popular Now" styleClass="popularLabel"/>
+            <Label fx:id="categoryLabel"   text="Category"   styleClass="categoryLabel"/>
+        </HBox>
+
+        <!-- Title -->
+        <Label fx:id="title" text="Item Title" wrapText="true"
+               prefWidth="240.0" styleClass="itemTitle">
+            <font><Font name="Berlin Sans FB" size="24.0"/></font>
+        </Label>
+
+        <!-- Price -->
+        <Label fx:id="price" text="0 USD" styleClass="bidLabel"/>
+
+        <!-- Bids -->
+        <Label fx:id="totalBids" text="0 bids" styleClass="timerLabel"/>
+
+        <!-- Time -->
+        <Label fx:id="timeLeft" text="Ending In : -- D -- Hrs" styleClass="timerLabel"/>
+
+    </VBox>
+
+</HBox>
