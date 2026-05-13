@@ -1,5 +1,9 @@
 package com.example.auctionmanagementsystem.model;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Vehicle extends Item {
     private int year;
     private double mileage;
@@ -19,5 +23,16 @@ public class Vehicle extends Item {
     @Override 
     public String getCategoryDetails() {
         return String.format("Manufacture Year: %d | Mileage: %.1f km", year, mileage);
+    }
+
+    @Override
+    public void insertSubData(Connection conn, int itemId) throws SQLException {
+        String sql = "INSERT INTO vehicle_items(item_id, year, mileage) VALUES (?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, itemId);
+            ps.setInt(2, this.year);
+            ps.setDouble(3, this.mileage);
+            ps.executeUpdate();
+        }
     }
 }

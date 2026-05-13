@@ -1,5 +1,8 @@
 package com.example.auctionmanagementsystem.model;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public abstract class Item extends Entity{
     private String name, description;
     private double startingPrice;
@@ -21,7 +24,6 @@ public abstract class Item extends Entity{
         this.startingPrice = startingPrice;
     }
 
-    //Setters and Getters
     public String getName() {return name;}
     public String getDescription() {return description;}
     public double getStartingPrice() {return startingPrice;}
@@ -29,6 +31,12 @@ public abstract class Item extends Entity{
     public void setName(String newName) {this.name = newName;}
     public void setDescription(String description) {this.description = description;}
     
-    //Abstract method
-    public abstract String getCategoryDetails();          
+    public abstract String getCategoryDetails();
+    /**
+     * Lớp con tự định nghĩa ở trong lớp cụ thể
+     * @param conn
+     * @param itemId Id của bảng items
+     * @throws SQLException
+     */
+    public abstract void insertSubData(Connection conn, int itemId) throws SQLException;        
 }
