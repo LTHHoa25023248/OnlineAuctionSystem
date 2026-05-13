@@ -1,0 +1,390 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — LOGIN · SIGNUP · FORGOT PASSWORD
+   loginsignupstyles.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ROOT ──────────────────────────────────────────────────── */
+.root {
+    -fx-background-color: #0D1018;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+/* ── TOP BAR ───────────────────────────────────────────────── */
+.titlePane {
+    -fx-background-color: #080A0F;
+    -fx-border-color: transparent transparent rgba(212,168,58,0.35) transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.70), 16, 0, 0, 5);
+    -fx-min-height: 68px;
+    -fx-max-height: 68px;
+}
+
+.titleLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.45), 8, 0, 0, 0);
+}
+
+.loggedInText {
+    -fx-text-fill: rgba(168,164,156,0.60);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.usernameLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ── GOLD BUTTON ───────────────────────────────────────────── */
+.goldButton {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 10, 0, 0, 2);
+    -fx-padding: 0 18px;
+}
+
+.goldButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.55), 14, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.goldButton:pressed {
+    -fx-background-color: linear-gradient(to bottom, #C89830, #A07828);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: none;
+}
+
+/* ── OUTLINE BUTTON ────────────────────────────────────────── */
+.outlineButton {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(212,168,58,0.45);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 0 18px;
+}
+
+.outlineButton:hover {
+    -fx-background-color: rgba(212,168,58,0.10);
+    -fx-border-color: #F0C060;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 8, 0, 0, 0);
+}
+
+.outlineButton:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+/* ── LOGIN BACKGROUND (StackPane fill) ─────────────────────── */
+.loginBackground {
+    -fx-background-color: #0D1018;
+}
+
+/* ── LOGIN CARD (HBox container) ───────────────────────────── */
+.loginCard {
+    -fx-background-color: #131720;
+    -fx-background-radius: 18px;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 18px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 40, 0, 0, 10);
+}
+
+/* ── LEFT PANEL (brand/stats) ──────────────────────────────── */
+.loginLeftPanel {
+    -fx-background-color: linear-gradient(to bottom, #1A1F2E, #0F1320);
+    -fx-background-radius: 18px 0 0 18px;
+}
+
+.loginWelcomeTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 30px;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 8, 0, 0, 0);
+}
+
+.loginWelcomeSub {
+    -fx-text-fill: rgba(168,164,156,0.65);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+}
+
+.statNumLabel {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.statTextLabel {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+.statDivider {
+    -fx-background-color: rgba(255,255,255,0.10);
+}
+
+/* ── DIVIDER between panels ────────────────────────────────── */
+.panelDivider {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-pref-width: 1px;
+}
+
+/* ── RIGHT PANEL (form) ────────────────────────────────────── */
+.loginRightPanel {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 18px 18px 0;
+}
+
+.loginFormTitle {
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 28px;
+}
+
+.loginFormSub {
+    -fx-text-fill: rgba(168,164,156,0.60);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+}
+
+/* ── FORM FIELDS ───────────────────────────────────────────── */
+.fieldLabel {
+    -fx-text-fill: rgba(168,164,156,0.80);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.signupField {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
+}
+
+.signupField:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.20), 8, 0, 0, 0);
+}
+
+.signupField .floating-text {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 13px;
+}
+
+/* Legacy .fields compat */
+.fields {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
+}
+
+.fields:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+}
+
+.fields .floating-text {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 13px;
+}
+
+.errorLabel {
+    -fx-text-fill: #E05454;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+.validationLabel {
+    -fx-text-fill: #E05454;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+/* ── FORGOT PASSWORD LINK ──────────────────────────────────── */
+.forgotLink {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(212,168,58,0.70);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-underline: false;
+    -fx-padding: 0;
+}
+
+.forgotLink:hover {
+    -fx-text-fill: #F0C060;
+    -fx-underline: true;
+}
+
+/* ── OR DIVIDER ────────────────────────────────────────────── */
+.orLabel {
+    -fx-text-fill: rgba(168,164,156,0.35);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* ── TERMS LINK ────────────────────────────────────────────── */
+.termsLink {
+    -fx-text-fill: #D4A83A;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-underline: true;
+}
+
+.termsText {
+    -fx-text-fill: rgba(168,164,156,0.65);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+}
+
+/* ── SIGNUP SUBMIT BUTTON ──────────────────────────────────── */
+.signupSubmitBtn {
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-pref-height: 48px;
+    -fx-font-weight: bold;
+}
+
+/* ── SIGNUP CARD (used in auction_signup.fxml) ─────────────── */
+.formScrollPane {
+    -fx-background-color: #0D1018;
+    -fx-background: #0D1018;
+    -fx-border-color: transparent;
+}
+
+.formScrollPane .viewport {
+    -fx-background-color: #0D1018;
+}
+
+.formOuter {
+    -fx-background-color: #0D1018;
+    -fx-alignment: CENTER;
+}
+
+.signupCard {
+    -fx-background-color: #131720;
+    -fx-background-radius: 16px;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.65), 28, 0, 0, 8);
+}
+
+.signupCardHeader {
+    -fx-background-color: linear-gradient(to right, #1A1F2E, #0D1018);
+    -fx-background-radius: 16px 16px 0 0;
+    -fx-border-color: transparent transparent rgba(212,168,58,0.22) transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.signupTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 24px;
+}
+
+.signupSubtitle {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+}
+
+.signupFormBody {
+    -fx-background-color: transparent;
+}
+
+.cardDivider {
+    -fx-background-color: rgba(255,255,255,0.07);
+}
+
+.signupCheckBox {
+    -fx-cursor: hand;
+}
+
+.signupCheckBox:selected .box {
+    -fx-background-color: #D4A83A;
+    -fx-border-color: #D4A83A;
+}
+
+/* ── FORGOT PASSWORD PAGE SPECIFIC ─────────────────────────── */
+.backgroudPane {
+    -fx-background-color: #0D1018;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.header {
+    -fx-font-family: 'Georgia', serif;
+    -fx-font-size: 22px;
+    -fx-fill: #F0C060;
+}
+
+.myButtons {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 8, 0, 0, 2);
+}
+
+.myButtons:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.myButtons:pressed {
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+}
+
+.outline-button {
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(212,168,58,0.45);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.outline-button:hover {
+    -fx-background-color: rgba(212,168,58,0.10);
+    -fx-border-color: #F0C060;
+}
