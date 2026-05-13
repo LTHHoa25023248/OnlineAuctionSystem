@@ -2,7 +2,11 @@ package com.example.auctionmanagementsystem.model;
 
 public class Bidder extends User {
     private double balance;
-
+    
+     // constructor rỗng cho DAO/JDBC
+    public Bidder() {
+        super();
+    }
     public Bidder(String username, String password, String email, double initialBalance) {
         super(username, password, email);
         this.balance = initialBalance;

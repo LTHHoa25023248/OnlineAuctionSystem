@@ -31,4 +31,7 @@ public class Seller extends User {
         System.out.printf("[Seller] ID: %d | Username: %s | Store: %s | Rating: %.1f/5.0%n", 
                 getId(), username, storeName, rating);
     }
+    public Seller() {
+        super();
+}
 }

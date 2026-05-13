@@ -51,4 +51,7 @@ public abstract class User extends Entity {
 
     // Các lớp con bắt buộc phải ghi đè phương thức này
     public abstract void printInfo();
+    protected User() {
+        super();
+}
 }
