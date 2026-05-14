@@ -11,6 +11,6 @@ public interface DAOInterface <T> {
     int delete(T obj);
 
     //tim theo id
-    T selectById(String id);
+    T selectById(int id);
 
 }
