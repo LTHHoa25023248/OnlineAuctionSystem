@@ -8,7 +8,7 @@ public interface DAOInterface <T> {
     //Cap nhat du lieu
     int update(T obj);
     //Xoa du lieu
-    int delete(T obj);
+    int delete(int id);
 
     //tim theo id
     T selectById(int id);
