@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Auction {
+
     private String idAuction;
     private Item item;
     private double currentPrice;
@@ -13,6 +14,7 @@ public class Auction {
     private AuctionStatus status;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private Seller seller;
     private List<BidTransaction> historyBid=new ArrayList<>();
     private List<AutoBid> hisAutoBid=new ArrayList<>();
     private final ReentrantLock lock=new ReentrantLock();
@@ -48,6 +50,18 @@ public class Auction {
     public ReentrantLock getLock() {
         return lock;
     }
+    public Seller getSeller(){return seller;}
+
+    public void setIdAuction(final String idAuction) {
+        this.idAuction = idAuction;
+    }
+    public void setSeller(Seller seller){
+        this.seller=seller;
+    }
+    public void setItem(final Item item) {
+        this.item = item;
+    }
+
     public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
     }
@@ -77,6 +91,25 @@ public class Auction {
 
     public void addAutoBid(AutoBid autoBid) {
         hisAutoBid.add(autoBid);
+    }
+
+    //Tao constructor rong de phan DAO set duoc
+    public Auction() {
+    }
+    public Auction(
+            Item item,
+            Seller seller,
+            double currentPrice,
+            AuctionStatus status,
+            LocalDateTime startTime,
+            LocalDateTime endTime
+    ) {
+        this.item = item;
+        this.seller = seller;
+        this.currentPrice = currentPrice;
+        this.status = status;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
 }
