@@ -32,11 +32,20 @@ public abstract class Item extends Entity{
     public void setDescription(String description) {this.description = description;}
     
     public abstract String getCategoryDetails();
+
     /**
-     * Lớp con tự định nghĩa ở trong lớp cụ thể
+     * Truyền attributes của các lớp con,
+     * được định nghĩa trong từng lớp con cụ thể
      * @param conn
      * @param itemId Id của bảng items
      * @throws SQLException
      */
-    public abstract void insertSubData(Connection conn, int itemId) throws SQLException;        
+    public abstract void insertSubData(Connection conn, int itemId) throws SQLException;      
+    
+    /**
+     * Cập nhật các thông tin của từng loại hàng, 
+     * được định nghĩa trong từng lớp con cụ thể
+     * @param conn
+     */
+    public abstract void updateSubData(Connection conn) throws SQLException;
 }

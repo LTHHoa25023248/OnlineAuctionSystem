@@ -35,5 +35,15 @@ public class Electronics extends Item {
             ps.executeUpdate();
         }
     }
+
+    @Override
+    public void updateSubData(Connection conn) throws SQLException {
+        String sql = "UPDATE items SET brand=?, warrantyMonths =? WHERE id=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, this.brand);
+            ps.setInt(2, this.warrantyMonths);
+            ps.executeUpdate();
+        }
+    }
 }
 

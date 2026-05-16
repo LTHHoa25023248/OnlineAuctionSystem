@@ -38,5 +38,16 @@ public class Art extends Item {
             ps.executeUpdate();
         }
     }
+
+    @Override
+    public void updateSubData(Connection conn) throws SQLException {
+        String sql = "UPDATE items SET artist=?, theme =?, material =? WHERE id=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, this.artist);
+            ps.setString(2, this.theme);
+            ps.setString(3, this.material);
+            ps.executeUpdate();
+        }
+    }
 }
 
