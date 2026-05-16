@@ -3,7 +3,7 @@ package com.example.auctionmanagementsystem.model;
 import java.util.Map;
 
 public class ItemFactory {
-    public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
+  public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
         //Dùng 'type' để xác định danh mục sản phẩm
         //Không được để trống mục 'type' khi tạo sản phẩm
         if (type == null || type.trim().isEmpty()) {
