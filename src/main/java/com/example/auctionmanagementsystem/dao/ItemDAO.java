@@ -11,6 +11,7 @@ import java.util.Map;
 import static java.lang.Integer.parseInt;
 
 
+
 public class ItemDAO implements DAOInterface <Item> {
      public int insert(Item item) {
          //Su dung commit, rollback. Commit de luu du lieu neu da insert thanh cong, neu khong thi rollback de tra ve trang thai ban dau luc chua insert
@@ -64,8 +65,8 @@ public class ItemDAO implements DAOInterface <Item> {
              close( connect);
 
          }
-
      }
+
 
      @Override
      public int update(final Item item) {
@@ -102,7 +103,9 @@ public class ItemDAO implements DAOInterface <Item> {
      }
 
 
-     public int delete(int id) {
+
+
+    public int delete(int id) {
          Connection connect=null;
          PreparedStatement ps=null;
          try  {
@@ -192,5 +195,4 @@ public class ItemDAO implements DAOInterface <Item> {
          }
     }
  }
-
 
