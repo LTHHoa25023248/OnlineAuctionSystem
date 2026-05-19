@@ -41,7 +41,7 @@ public class AuctionDAO implements DAOInterface<Auction>{
             int idAuction;
             if(rs.next()){
                 idAuction=rs.getInt(1);
-                auction.setIdAuction(String.valueOf(idAuction));
+                auction.setId((idAuction));
             }else{
                 throw new RuntimeException("Cannot get generated auction ID");
             }
@@ -104,7 +104,7 @@ public class AuctionDAO implements DAOInterface<Auction>{
                 ps.setDouble(1,auction.getCurrentPrice());
                 ps.setString(2,auction.getStatus().name());
                 ps.setTimestamp(3,Timestamp.valueOf(auction.getEndTime()));
-                ps.setInt(4, Integer.parseInt(auction.getIdAuction()));
+                ps.setInt(4, auction.getId());
                 //Thuc thi update, tra ve so dong bi anh huong
                 int affectedRows=ps.executeUpdate();
                 connect.commit();
@@ -207,7 +207,7 @@ public class AuctionDAO implements DAOInterface<Auction>{
                           close(connect);
                       }
                   }
-              public void close(AutoCloseable c){
+              private void close(AutoCloseable c){
                      if(c!= null){
                        try{
                          c.close();

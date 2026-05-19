@@ -7,7 +7,7 @@ public class AuctionMapper {
 
    public static Auction mapRow(ResultSet rs) throws SQLException{
     Auction auction=new Auction();
-                  auction.setIdAuction(String.valueOf(rs.getInt("id")));
+                  auction.setId(rs.getInt("id"));
                   auction.setCurrentPrice(rs.getDouble("current_price"));
                   auction.setStatus(AuctionStatus.valueOf(rs.getString("status")));
                   auction.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());

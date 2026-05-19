@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Auction {
+public class Auction extends Entity{
 
-    private String idAuction;
     private Item item;
     private double currentPrice;
     private User highestBidder;
@@ -31,9 +30,6 @@ public class Auction {
     public List<BidTransaction> getHistoryBid() {
         return historyBid;
     }
-    public String getIdAuction(){
-        return idAuction;
-    }
     public Item getItem(){
         return item;
     }
@@ -52,9 +48,6 @@ public class Auction {
     }
     public Seller getSeller(){return seller;}
 
-    public void setIdAuction(final String idAuction) {
-        this.idAuction = idAuction;
-    }
     public void setSeller(Seller seller){
         this.seller=seller;
     }
