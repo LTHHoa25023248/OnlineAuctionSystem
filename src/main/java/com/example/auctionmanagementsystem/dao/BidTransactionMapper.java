@@ -19,9 +19,11 @@ public class BidTransactionMapper {
         auction.setId(rs.getInt("auction_id"));
         bid.setAuction(auction);
         //bidder cung chi setId
-        User bidder = new Bidder();
-        bidder.setId(rs.getInt("bidder_id"));
-        bid.setBidder(bidder);
+        if(!rs.wasNull()) {
+            Bidder bidder = new Bidder();
+            bidder.setId(rs.getInt("bidder_id"));
+            bid.setBidder(bidder);
+        }
         return bid;
     }
 }
