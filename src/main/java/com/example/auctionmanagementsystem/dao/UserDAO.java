@@ -2,287 +2,518 @@ package com.example.auctionmanagementsystem.dao;
 
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
-
 import java.sql.*;
 
-/**
- * UserDAO — Tất cả thao tác database liên quan đến User.
- *
- * Các chức năng chính: - login() : Xác thực đăng nhập - register() : Đăng ký tài khoản Bidder mới -
- * registerSeller() : Đăng ký tài khoản Seller mới (thêm storeName) - emailExists() : Kiểm tra email
- * đã tồn tại chưa - usernameExists() : Kiểm tra username đã tồn tại chưa - saveResetCode() : Lưu mã
- * OTP reset password vào DB - verifyResetCode() : Kiểm tra mã OTP còn hợp lệ không -
- * resetPassword() : Cập nhật mật khẩu mới sau khi xác thực OTP - selectById() : Lấy User theo ID -
- * update() : Cập nhật thông tin User - delete() : Soft-delete User
- */
-public class UserDAO {
+public class UserDAO implements DAOInterface<User> {
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // AUTH
-  // ══════════════════════════════════════════════════════════════════════════
+    // =====================================================
+    // INSERT USER
+    // =====================================================
+    @Override
+    public int insert(User user) {
 
-  /**
-   * Đăng nhập — so sánh username + password.
-   * 
-   * @return User đúng loại (Bidder / Seller / Admin) nếu thành công, null nếu sai.
-   */
-  public static User login(String username, String password) {
-    String sql = "SELECT * FROM users WHERE username = ? AND password = ? AND is_active = TRUE";
+        String sql = """
+                INSERT INTO users
+                (
+                    username,
+                    user_password,
+                    email,
+                    is_active,
+                    role,
+                    balance,
+                    store_name,
+                    rating,
+                    access_level
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
 
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
 
-      pstmt.setString(1, username.trim());
-      pstmt.setString(2, password);
+                PreparedStatement pstmt =
+                        conn.prepareStatement(
+                                sql,
+                                Statement.RETURN_GENERATED_KEYS
+                        )
+        ) {
 
-      ResultSet rs = pstmt.executeQuery();
-      if (rs.next())
-        return mapRowToUser(rs);
+            // ===== COMMON FIELDS =====
+            pstmt.setString(1, user.getUsername());
 
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.login] SQL Error: " + e.getMessage());
-      e.printStackTrace();
+            // NOTE:
+            // Nên hash password trước khi lưu DB
+            pstmt.setString(2, user.getPassword());
+
+            pstmt.setString(3, user.getEmail());
+
+            pstmt.setBoolean(4, user.isActive());
+
+            // ===== ROLE-SPECIFIC =====
+            if (user instanceof Bidder bidder) {
+
+                pstmt.setString(5, "BIDDER");
+
+                pstmt.setDouble(
+                        6,
+                        bidder.getBalance()
+                );
+
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.DOUBLE);
+                pstmt.setNull(9, Types.VARCHAR);
+
+            } else if (user instanceof Seller seller) {
+
+                pstmt.setString(5, "SELLER");
+
+                pstmt.setNull(6, Types.DOUBLE);
+
+                pstmt.setString(
+                        7,
+                        seller.getStoreName()
+                );
+
+                pstmt.setDouble(
+                        8,
+                        seller.getRating()
+                );
+
+                pstmt.setNull(9, Types.VARCHAR);
+
+            } else if (user instanceof Admin admin) {
+
+                pstmt.setString(5, "ADMIN");
+
+                pstmt.setNull(6, Types.DOUBLE);
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setNull(8, Types.DOUBLE);
+
+                pstmt.setString(
+                        9,
+                        admin.getAccessLevel()
+                );
+
+            } else {
+
+                throw new SQLException(
+                        "Unsupported user type."
+                );
+            }
+
+            int affectedRows =
+                    pstmt.executeUpdate();
+
+            // ===== GET GENERATED ID =====
+            if (affectedRows > 0) {
+
+                try (
+                        ResultSet rs =
+                                pstmt.getGeneratedKeys()
+                ) {
+
+                    if (rs.next()) {
+
+                        user.setId(rs.getInt(1));
+                    }
+                }
+            }
+
+            return affectedRows;
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO.insert] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
-    return null;
-  }
+    // =====================================================
+    // UPDATE USER
+    // =====================================================
+    @Override
+    public int update(User user) {
 
-  /**
-   * Đăng ký tài khoản Bidder mới (role = BIDDER, balance = 0).
-   * 
-   * @return true nếu insert thành công.
-   */
-  public static boolean register(String firstName, String lastName, String username, String email,
-      String phone, String password, String address) {
-    if (usernameExists(username))
-      return false;
-    if (emailExists(email))
-      return false;
+        String sql = """
+                UPDATE users
+                SET
+                    username = ?,
+                    user_password = ?,
+                    email = ?,
+                    is_active = ?,
+                    balance = ?,
+                    store_name = ?,
+                    rating = ?,
+                    access_level = ?
+                WHERE id = ?
+                """;
 
-    String sql = """
-        INSERT INTO users
-        (first_name, last_name, username, email, phone, password, address,
-         role, balance, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'BIDDER', 0.0, TRUE)
-        """;
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
 
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-      pstmt.setString(1, firstName.trim());
-      pstmt.setString(2, lastName.trim());
-      pstmt.setString(3, username.trim());
-      pstmt.setString(4, email.trim());
-      pstmt.setString(5, phone.trim());
-      pstmt.setString(6, password);
-      pstmt.setString(7, address != null ? address.trim() : "");
+            // ===== COMMON =====
+            pstmt.setString(1, user.getUsername());
 
-      return pstmt.executeUpdate() > 0;
+            pstmt.setString(2, user.getPassword());
 
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.register] SQL Error: " + e.getMessage());
-      e.printStackTrace();
+            pstmt.setString(3, user.getEmail());
+
+            pstmt.setBoolean(4, user.isActive());
+
+            // ===== BIDDER =====
+            if (user instanceof Bidder bidder) {
+
+                pstmt.setDouble(
+                        5,
+                        bidder.getBalance()
+                );
+
+                pstmt.setNull(6, Types.VARCHAR);
+                pstmt.setNull(7, Types.DOUBLE);
+                pstmt.setNull(8, Types.VARCHAR);
+            }
+
+            // ===== SELLER =====
+            else if (user instanceof Seller seller) {
+
+                pstmt.setNull(5, Types.DOUBLE);
+
+                pstmt.setString(
+                        6,
+                        seller.getStoreName()
+                );
+
+                pstmt.setDouble(
+                        7,
+                        seller.getRating()
+                );
+
+                pstmt.setNull(8, Types.VARCHAR);
+            }
+
+            // ===== ADMIN =====
+            else if (user instanceof Admin admin) {
+
+                pstmt.setNull(5, Types.DOUBLE);
+                pstmt.setNull(6, Types.VARCHAR);
+                pstmt.setNull(7, Types.DOUBLE);
+
+                pstmt.setString(
+                        8,
+                        admin.getAccessLevel()
+                );
+            }
+
+            pstmt.setInt(9, user.getId());
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO.update] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
-    return false;
-  }
+    // =====================================================
+    // DELETE USER
+    // =====================================================
+    @Override
+    public int delete(int id) {
 
+        String sql =
+                "DELETE FROM users WHERE id = ?";
 
-  public static boolean registerSeller(String firstName, String lastName, String username,
-      String email, String phone, String password, String address) {
-    if (usernameExists(username))
-      return false;
-    if (emailExists(email))
-      return false;
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
 
-    String sql = """
-        INSERT INTO users
-        (first_name, last_name, username, email, phone, password, address,
-         role, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'SELLER', TRUE)
-        """;
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, id);
 
-      pstmt.setString(1, firstName.trim());
-      pstmt.setString(2, lastName.trim());
-      pstmt.setString(3, username.trim());
-      pstmt.setString(4, email.trim());
-      pstmt.setString(5, phone.trim());
-      pstmt.setString(6, password);
-      pstmt.setString(7, address != null ? address.trim() : "");
+            return pstmt.executeUpdate();
 
-      return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
 
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.registerSeller] SQL Error: " + e.getMessage());
-      e.printStackTrace();
+            System.err.println(
+                    "[UserDAO.delete] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
-    return false;
-  }
+    // =====================================================
+    // SELECT USER BY ID
+    // =====================================================
+    @Override
+    public User selectById(int id) {
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // FORGOT PASSWORD — OTP FLOW
-  // ══════════════════════════════════════════════════════════════════════════
+        String sql =
+                "SELECT * FROM users WHERE id = ?";
 
-  public static boolean emailExistsForReset(String email) {
-    String sql = "SELECT 1 FROM users WHERE email = ? AND is_active = TRUE";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setString(1, email.trim());
-      return pstmt.executeQuery().next();
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.emailExistsForReset] SQL Error: " + e.getMessage());
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
+
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql)
+        ) {
+
+            pstmt.setInt(1, id);
+
+            try (
+                    ResultSet rs =
+                            pstmt.executeQuery()
+            ) {
+
+                if (rs.next()) {
+
+                    return mapResultSetToUser(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO.selectById] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return null;
     }
-    return false;
-  }
 
-  public static String getStringField(int userId, String column) {
-    String sql = "SELECT " + column + " FROM users WHERE id = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setInt(1, userId);
-      ResultSet rs = pstmt.executeQuery();
-      if (rs.next())
-        return rs.getString(1);
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.getStringField] Error: " + e.getMessage());
+    // =====================================================
+    // CHECK USERNAME EXISTS
+    // =====================================================
+    public boolean usernameExists(String username) {
+
+        String sql =
+                "SELECT id FROM users WHERE username = ?";
+
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
+
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql)
+        ) {
+
+            pstmt.setString(1, username);
+
+            try (
+                    ResultSet rs =
+                            pstmt.executeQuery()
+            ) {
+
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO.usernameExists] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return false;
     }
-    return "";
-  }
 
-  public static boolean saveResetCode(String email, String code, long expiresAt) {
-    String deleteSql = "DELETE FROM password_resets WHERE email = ?";
-    String insertSql = "INSERT INTO password_resets (email, code, expires_at) VALUES (?, ?, ?)";
-    try (Connection conn = DatabaseConnection.getConnection()) {
-      try (PreparedStatement del = conn.prepareStatement(deleteSql)) {
-        del.setString(1, email.trim());
-        del.executeUpdate();
-      }
-      try (PreparedStatement ins = conn.prepareStatement(insertSql)) {
-        ins.setString(1, email.trim());
-        ins.setString(2, code);
-        ins.setLong(3, expiresAt);
-        return ins.executeUpdate() > 0;
-      }
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.saveResetCode] SQL Error: " + e.getMessage());
+    // =====================================================
+    // CHECK EMAIL EXISTS
+    // =====================================================
+    public boolean emailExists(String email) {
+
+        String sql =
+                "SELECT id FROM users WHERE email = ?";
+
+        try (
+                Connection conn =
+                        DatabaseConnection.getConnection();
+
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql)
+        ) {
+
+            pstmt.setString(1, email);
+
+            try (
+                    ResultSet rs =
+                            pstmt.executeQuery()
+            ) {
+
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+
+            System.err.println(
+                    "[UserDAO.emailExists] SQL Error: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+        }
+
+        return false;
     }
-    return false;
-  }
 
-  public static boolean verifyResetCode(String email, String code) {
-    String sql = """
-        SELECT 1 FROM password_resets
-        WHERE email = ? AND code = ? AND expires_at > ?
-        """;
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setString(1, email.trim());
-      pstmt.setString(2, code.trim());
-      pstmt.setLong(3, System.currentTimeMillis());
-      return pstmt.executeQuery().next();
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.verifyResetCode] SQL Error: " + e.getMessage());
+    // =====================================================
+    // REGISTER BIDDER
+    // =====================================================
+    public int register(
+            String username,
+            String email,
+            String password
+    ) {
+
+        if (usernameExists(username)) {
+
+            System.out.println(
+                    "Username already exists."
+            );
+
+            return 0;
+        }
+
+        if (emailExists(email)) {
+
+            System.out.println(
+                    "Email already exists."
+            );
+
+            return 0;
+        }
+
+        Bidder bidder = new Bidder();
+
+        bidder.setUsername(username);
+        bidder.setEmail(email);
+
+        // NOTE:
+        // Nên hash password bằng BCrypt
+        bidder.setPassword(password);
+
+        bidder.setActive(true);
+
+        bidder.setBalance(0.0);
+
+        return insert(bidder);
     }
-    return false;
-  }
 
-  public static boolean resetPassword(String email, String code, String newPassword) {
-    if (!verifyResetCode(email, code))
-      return false;
+    // =====================================================
+    // MAP RESULTSET TO USER OBJECT
+    // =====================================================
+    private User mapResultSetToUser(ResultSet rs)
+            throws SQLException {
 
-    String updateSql = "UPDATE users SET password = ? WHERE email = ?";
-    String deleteSql = "DELETE FROM password_resets WHERE email = ?";
+        String role =
+                rs.getString("role");
 
-    try (Connection conn = DatabaseConnection.getConnection()) {
-      conn.setAutoCommit(false);
-      try (PreparedStatement upd = conn.prepareStatement(updateSql);
-          PreparedStatement del = conn.prepareStatement(deleteSql)) {
-        upd.setString(1, newPassword);
-        upd.setString(2, email.trim());
-        int rows = upd.executeUpdate();
-        del.setString(1, email.trim());
-        del.executeUpdate();
-        conn.commit();
-        return rows > 0;
-      } catch (SQLException e) {
-        conn.rollback();
-        System.err.println("[UserDAO.resetPassword] Rollback: " + e.getMessage());
-      }
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.resetPassword] SQL Error: " + e.getMessage());
-    }
-    return false;
-  }
+        User user;
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // CRUD
-  // ══════════════════════════════════════════════════════════════════════════
+        // ===== BIDDER =====
+        if ("BIDDER".equals(role)) {
 
-  public static User selectById(int id) {
-    String sql = "SELECT * FROM users WHERE id = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setInt(1, id);
-      ResultSet rs = pstmt.executeQuery();
-      if (rs.next())
-        return mapRowToUser(rs);
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.selectById] SQL Error: " + e.getMessage());
-    }
-    return null;
-  }
+            Bidder bidder =
+                    new Bidder();
 
-  public static boolean update(User user) {
-    String sql = "UPDATE users SET username = ?, email = ? WHERE id = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setString(1, user.getUsername());
-      pstmt.setString(2, user.getEmail());
-      pstmt.setInt(3, user.getId());
-      return pstmt.executeUpdate() > 0;
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.update] SQL Error: " + e.getMessage());
-    }
-    return false;
-  }
+            bidder.setBalance(
+                    rs.getDouble("balance")
+            );
 
-  /** Soft delete — set is_active = FALSE, không xóa dữ liệu thật */
-  public static boolean delete(int id) {
-    String sql = "UPDATE users SET is_active = FALSE WHERE id = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setInt(1, id);
-      return pstmt.executeUpdate() > 0;
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.delete] SQL Error: " + e.getMessage());
-    }
-    return false;
-  }
+            user = bidder;
+        }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // VALIDATION HELPERS
-  // ══════════════════════════════════════════════════════════════════════════
+        // ===== SELLER =====
+        else if ("SELLER".equals(role)) {
 
-  public static boolean usernameExists(String username) {
-    return fieldExists("username", username);
-  }
+            Seller seller =
+                    new Seller();
 
-  public static boolean emailExists(String email) {
-    return fieldExists("email", email);
-  }
+            seller.setStoreName(
+                    rs.getString("store_name")
+            );
 
-  private static boolean fieldExists(String column, String value) {
-    String sql = "SELECT 1 FROM users WHERE " + column + " = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-      pstmt.setString(1, value.trim());
-      return pstmt.executeQuery().next();
-    } catch (SQLException e) {
-      System.err.println("[UserDAO.fieldExists] SQL Error: " + e.getMessage());
+            seller.setRating(
+                    rs.getDouble("rating")
+            );
+
+            user = seller;
+        }
+
+        // ===== ADMIN =====
+        else if ("ADMIN".equals(role)) {
+
+            Admin admin =
+                    new Admin();
+
+            admin.setAccessLevel(
+                    rs.getString("access_level")
+            );
+
+            user = admin;
+        }
+
+        else {
+
+            throw new SQLException(
+                    "Invalid role: " + role
+            );
+        }
+
+        // ===== COMMON FIELDS =====
+        user.setId(
+                rs.getInt("id")
+        );
+
+        user.setUsername(
+                rs.getString("username")
+        );
+
+        user.setPassword(
+                rs.getString("user_password")
+        );
+
+        user.setEmail(
+                rs.getString("email")
+        );
+
+        user.setActive(
+                rs.getBoolean("is_active")
+        );
+
+        return user;
     }
     return false;
   }
