@@ -2,7 +2,7 @@ package com.example.auctionmanagementsystem.model;
 
 import java.time.LocalDateTime;
 
-public class AutoBid extends Entity{
+public class AutoBid extends Entity {
   private Auction auction;
   // Ai dang dat gia
   private Bidder bidder;
@@ -13,17 +13,20 @@ public class AutoBid extends Entity{
   // Thoi gian autobid
   // Cho biet thoi gian de uu tien thu tu nguoi dat gia
   private LocalDateTime createdAt;
-  public AutoBid(){
-    this.createdAt=LocalDateTime.now();
+
+  public AutoBid() {
+    this.createdAt = LocalDateTime.now();
   }
-  public AutoBid(Auction auction, Bidder bidder , double maxBid, double increment) {
-    this.auction=auction;
+
+  public AutoBid(Auction auction, Bidder bidder, double maxBid, double increment) {
+    this.auction = auction;
     this.bidder = bidder;
     this.maxBid = maxBid;
     this.increment = increment;
     this.createdAt = LocalDateTime.now();
   }
-  public Auction getAuction(){
+
+  public Auction getAuction() {
     return auction;
   }
 
@@ -48,7 +51,7 @@ public class AutoBid extends Entity{
     this.auction = auction;
   }
 
-  public void setBidder( Bidder bidder) {
+  public void setBidder(Bidder bidder) {
     this.bidder = bidder;
   }
 
@@ -56,11 +59,11 @@ public class AutoBid extends Entity{
     this.maxBid = maxBid;
   }
 
-  public void setIncrement( double increment) {
+  public void setIncrement(double increment) {
     this.increment = increment;
   }
 
-  public void setCreatedAt( LocalDateTime createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 }
