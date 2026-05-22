@@ -1,5 +1,5 @@
 CREATE TABLE vehicle_items (
-    item_id VARCHAR(50) PRIMARY KEY,
+    item_id INT PRIMARY KEY,
     year INT,
     mileage DOUBLE,
 
