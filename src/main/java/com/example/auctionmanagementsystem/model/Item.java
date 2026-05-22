@@ -7,20 +7,18 @@ public abstract class Item extends Entity {
   private String name, description;
   private double startingPrice;
 
-  // Default Constructor
   public Item() {}
 
-  // Constructor with full parameters
+  // Hàm khởi tạo với các tham số đầy đủ, tất cả các Item đều yêu cầu những tham số này
+  // bất kể loại Item nào
   public Item(String name, String description, double startingPrice) {
     this.name = name;
     this.description = description;
 
     if (startingPrice < 0) {
-      // Throwing com.example.auctionmanagementsystem.exception for negative value of starting price
+      // Ném ngoại lệ khi giá khởi điểm âm
       throw new IllegalArgumentException("Starting price must greater than 0!");
     }
-    // Valiadation when initialize a item. Current price is
-    // equal to starting price
     this.startingPrice = startingPrice;
   }
 

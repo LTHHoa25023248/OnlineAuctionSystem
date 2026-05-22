@@ -2,28 +2,66 @@ package com.example.auctionmanagementsystem.model;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ItemTest {
-
-  // Kịch bản 1: Kiểm tra bẫy lỗi "Giá khởi điểm bị âm" (Nằm ở dòng 16 file Item.java)
   @Test
-  public void testItemConstructor_NegativePrice_ShouldThrowException() {
-    // Cố tình truyền giá trị -500.0
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      new Electronics("Laptop", "Cũ", -500.0, "Dell", 6);
-    });
+  public void testItemConstructor_ValidData_Success() {
+    Item item = new Item("Laptop", "Core i7", 1000.0) {
+      @Override
+      public String getCategoryDetails() {
+        return "";
+      }
 
-    assertTrue(exception.getMessage().contains("Starting price must greater than 0!"));
+      @Override
+      public void insertSubData(Connection conn, int itemId) throws SQLException {}
+
+      @Override
+      public void updateSubData(Connection conn) throws SQLException {}
+    };
+
+    assertEquals("Laptop", item.getName());
+    assertEquals("Core i7", item.getDescription());
+    assertEquals(1000.0, item.getStartingPrice());
   }
 
-  // Kịch bản 2: Kiểm tra hàm in thông tin đặc thù của đồ Điện tử (Override)
   @Test
-  public void testElectronics_GetCategoryDetails_ShouldReturnCorrectFormat() {
-    Electronics phone = new Electronics("iPhone 15", "Mới", 1000.0, "Apple", 12);
+  public void testItemConstructor_ZeroPrice_Success() {
+    Item item = new Item("Móc khóa", "Đồ lưu niệm", 0.0) {
+      @Override
+      public String getCategoryDetails() {
+        return "";
+      }
 
-    String details = phone.getCategoryDetails();
+      @Override
+      public void insertSubData(Connection conn, int itemId) throws SQLException {}
 
-    // So sánh với định dạng chuỗi String.format() mà bạn đã viết trong file Electronics.java
-    assertEquals("Brand: Apple | Warranty: 12", details);
+      @Override
+      public void updateSubData(Connection conn) throws SQLException {}
+    };
+
+    assertEquals(0.0, item.getStartingPrice());
+  }
+
+  // TC3: Khởi tạo với giá âm (BVA) - Ném ngoại lệ
+  @Test
+  public void testItemConstructor_NegativePrice_ThrowsException() {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      new Item("Điện thoại hỏng", "Không lên nguồn", -1.0) {
+        @Override
+        public String getCategoryDetails() {
+          return "";
+        }
+
+        @Override
+        public void insertSubData(Connection conn, int itemId) throws SQLException {}
+
+        @Override
+        public void updateSubData(Connection conn) throws SQLException {}
+      };
+    });
+
+    assertEquals("Starting price must greater than 0!", exception.getMessage());
   }
 }
