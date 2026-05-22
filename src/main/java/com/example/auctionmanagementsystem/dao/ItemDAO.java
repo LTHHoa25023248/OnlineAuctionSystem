@@ -13,110 +13,77 @@ import static java.lang.Integer.parseInt;
 
 
 public class ItemDAO {
-    public int insert(Connection connect, Item item) throws SQLException {
-        String sqlItem = "INSERT INTO items( name, description, starting_price, item_type) VALUES(?,?,?,?)";
-        try (PreparedStatement ps = connect.prepareStatement(sqlItem, Statement.RETURN_GENERATED_KEYS)) {
-            //Bang luu du lieu
-            ps.setString(1, item.getName());
-            ps.setString(2, item.getDescription());
-            ps.setDouble(3, item.getStartingPrice());
-            ps.setString(4, item.getClass().getSimpleName().toUpperCase());
-            //Thuc thi insert
-            ps.executeUpdate();
-            //lay id tu tang tu database
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    int itemId = rs.getInt(1);
-                    item.setId(itemId);
-                    //Insert bang con
-                    //item tu biet no thuoc loai nao va tu insert
-                    item.insertSubData(connect, itemId);
-                    return itemId;
-                }
-            }
-
-            throw new RuntimeException("Cannot get generated item ID");
+  public int insert(Connection connect, Item item) throws SQLException {
+    String sqlItem =
+        "INSERT INTO items( name, description, starting_price, item_type) VALUES(?,?,?,?)";
+    try (
+        PreparedStatement ps = connect.prepareStatement(sqlItem, Statement.RETURN_GENERATED_KEYS)) {
+      // Bang luu du lieu
+      ps.setString(1, item.getName());
+      ps.setString(2, item.getDescription());
+      ps.setDouble(3, item.getStartingPrice());
+      ps.setString(4, item.getClass().getSimpleName().toUpperCase());
+      // Thuc thi insert
+      ps.executeUpdate();
+      // lay id tu tang tu database
+      try (ResultSet rs = ps.getGeneratedKeys()) {
+        if (rs.next()) {
+          int itemId = rs.getInt(1);
+          item.setId(itemId);
+          // Insert bang con
+          // item tu biet no thuoc loai nao va tu insert
+          item.insertSubData(connect, itemId);
+          return itemId;
         }
+      }
+
+      throw new RuntimeException("Cannot get generated item ID");
+    }
+  }
+
+
+  public int update(Connection connect, Item item) throws SQLException {
+    String sql = "UPDATE items SET name=?, description =? WHERE id=?";
+    try (PreparedStatement ps = connect.prepareStatement(sql)) {
+      ps.setString(1, item.getName());
+      ps.setString(2, item.getDescription());
+      ps.setInt(3, item.getId());
+      // so dong bi anh huong
+      int affectedRows = ps.executeUpdate();
+      // update bang con
+      item.updateSubData(connect);
+      return affectedRows;
     }
 
+  }
 
-    public int update(Connection connect, Item item) throws SQLException {
-        String sql = "UPDATE items SET name=?, description =? WHERE id=?";
-        try (PreparedStatement ps = connect.prepareStatement(sql)) {
-            ps.setString(1, item.getName());
-            ps.setString(2, item.getDescription());
-            ps.setInt(3, item.getId());
-            //so dong bi anh huong
-            int affectedRows = ps.executeUpdate();
-            //update bang con
-            item.updateSubData(connect);
-            return affectedRows;
-        }
+
+  public int delete(Connection connect, int id) throws SQLException {
+    String sql = "DELETE FROM items WHERE id =?";
+    try (PreparedStatement ps = connect.prepareStatement(sql)) {
+      // chi can xoa bang cha (CASCADE lo phan con)
+      ps.setInt(1, id);
+      // return lai so dong bi xoa
+      int affectedRows = ps.executeUpdate();
+      return affectedRows;
+    }
+  }
+
+
+  public Item selectById(Connection connect, int id) throws SQLException {
+    String sql="SELECT * FROM items WHERE id =?";try(PreparedStatement ps=connect.prepareStatement(sql)){ps.setInt(1,id);try(ResultSet rs=ps.executeQuery()){if(!rs.next())return null;String type=rs.getString("item_type");String name=rs.getString("name");String description=rs.getString("description");double starting_price=rs.getDouble("starting_price");
+    // Dung Map de chua thuoc tinh dac thu cua tung loai
+    Map<String,String>attributes=new HashMap<>();
+    // Truy van bang con dua tren loai
+    String subTableSql=switch(type){case"VEHICLE"->"SELECT * FROM vehicle_items WHERE item_id=?";case"ART"->"SELECT * FROM art_items WHERE item_id=?";case"ELECTRONICS"->"SELECT * FROM electronics_items where item_id=?";default->null;};if(subTableSql!=null){try(PreparedStatement psSub=connect.prepareStatement(subTableSql)){psSub.setInt(1,id);try(ResultSet rsSub=psSub.executeQuery()){if(rsSub.next()){
+    // tuy theo loai ma boc du lieu vao map
+    if("VEHICLE".equals(type)){attributes.put("year",String.valueOf(rsSub.getInt("year")));attributes.put("mileage",String.valueOf(rsSub.getDouble("mileage")));}else if("ART".equals(type)){attributes.put("artist",rsSub.getString("artist"));attributes.put("theme",rsSub.getString("theme"));attributes.put("material",rsSub.getString("material"));}else if("ELECTRONICS".equals(type)){attributes.put("brand",rsSub.getString("brand"));attributes.put("warranty",String.valueOf(rsSub.getInt("warranty_months")));}}}}}
+    // goi factoryItem de tao doi tuong
+    Item item=ItemFactory.createItem(type,name,description,starting_price,attributes);item.setId(id);return item;
 
     }
 
-
-    public int delete(Connection connect, int id) throws SQLException {
-        String sql = "DELETE FROM items WHERE id =?";
-        try (PreparedStatement ps = connect.prepareStatement(sql)) {
-            //chi can xoa bang cha (CASCADE lo phan con)
-            ps.setInt(1, id);
-            //return lai so dong bi xoa
-            int affectedRows = ps.executeUpdate();
-            return affectedRows;
-        }
     }
-
-
-    public Item selectById(Connection connect, int id) throws SQLException {
-        String sql = "SELECT * FROM items WHERE id =?";
-        try (PreparedStatement ps = connect.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next())
-                    return null;
-                String type = rs.getString("item_type");
-                String name = rs.getString("name");
-                String description = rs.getString("description");
-                double starting_price = rs.getDouble("starting_price");
-                //Dung Map de chua thuoc tinh dac thu cua tung loai
-                Map<String, String> attributes = new HashMap<>();
-                //Truy van bang con dua tren loai
-                String subTableSql = switch (type) {
-                    case "VEHICLE" -> "SELECT * FROM vehicle_items WHERE item_id=?";
-                    case "ART" -> "SELECT * FROM art_items WHERE item_id=?";
-                    case "ELECTRONICS" -> "SELECT * FROM electronics_items where item_id=?";
-                    default -> null;
-                };
-                if (subTableSql != null) {
-                    try (PreparedStatement psSub = connect.prepareStatement(subTableSql)) {
-                        psSub.setInt(1, id);
-                        try (ResultSet rsSub = psSub.executeQuery()) {
-                            if (rsSub.next()) {
-                                // tuy theo loai ma boc du lieu vao map
-                                if ("VEHICLE".equals(type)) {
-                                    attributes.put("year", String.valueOf(rsSub.getInt("year")));
-                                    attributes.put("mileage", String.valueOf(rsSub.getDouble("mileage")));
-                                } else if ("ART".equals(type)) {
-                                    attributes.put("artist", rsSub.getString("artist"));
-                                    attributes.put("theme", rsSub.getString("theme"));
-                                    attributes.put("material", rsSub.getString("material"));
-                                } else if ("ELECTRONICS".equals(type)) {
-                                    attributes.put("brand", rsSub.getString("brand"));
-                                    attributes.put("warranty", String.valueOf(rsSub.getInt("warranty_months")));
-                                }
-                            }
-                        }
-                    }
-                }
-                //goi factoryItem de tao doi tuong
-                Item item = ItemFactory.createItem(type, name, description, starting_price, attributes);
-                item.setId(id);
-                return item;
-
-            }
-
-        }
-    }
+  }
 }
 
