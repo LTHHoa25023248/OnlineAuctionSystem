@@ -7,7 +7,7 @@ public interface DAOInterface<T> {
   int insert(T obj);
 
 
-  // tim theo id
+    //tim theo id
   T selectById(int id);
 
   // Cap nhat du lieu
@@ -15,6 +15,8 @@ public interface DAOInterface<T> {
 
   // Xoa du lieu
   int delete(int id);
+
+
 
 
 

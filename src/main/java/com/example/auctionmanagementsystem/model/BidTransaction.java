@@ -5,29 +5,25 @@ import java.time.format.DateTimeFormatter;
 
 public class BidTransaction extends Entity {
   private User bidder;
-  // auction nao
+  //auction nao
   private Auction auction;
-  // so tien bid
+  //so tien bid
   private double amount;
   private LocalDateTime time;
 
-  public BidTransaction(Auction auction, User bidder, double amount) {
-    this.auction = auction;
-    this.bidder = bidder;
+  public BidTransaction(Auction auction,User bidder, double amount) {
+    this.auction=auction;
+    this.bidder= bidder;
     this.amount = amount;
     this.time = LocalDateTime.now();
   }
-
-  public BidTransaction() {};
+  public BidTransaction(){};
 
   // sort,compare,.. time
   public LocalDateTime getTime() {
     return time;
   }
-
-  public Auction getAuction() {
-    return auction;
-  }
+  public Auction getAuction(){return auction;}
 
   public User getBidder() {
     return bidder;
