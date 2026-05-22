@@ -30,7 +30,7 @@ public class AuctionService {
     public void startAuction(Connection connect, Auction auction) {
         try {
             if (auction.getStatus() != AuctionStatus.OPEN) {
-                throw new IllegalStateException("Auction must be PENDING to start");
+                throw new IllegalStateException("Auction must be OPEN to start");
             }
             auction.setStatus(AuctionStatus.RUNNING);
             auction.setStartTime(LocalDateTime.now());
@@ -103,7 +103,7 @@ public class AuctionService {
     }
     public void deleteAuction(Connection connect, int id) {
         try {
-            auctionDAO.delete(connect, id);
+            auctionDao.delete(connect, id);
         } catch (Exception e) {
             throw new RuntimeException("Delete auction failed", e);
         }
