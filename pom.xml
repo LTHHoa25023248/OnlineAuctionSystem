@@ -48,13 +48,6 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.1.0</version>
-        </dependency>
-=======
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -74,16 +67,6 @@
             <version>11.13.5</version>
         </dependency>
 
-        <!-- MySQL JDBC Driver — kết nối database -->
->>>>>>> c10a6f13aa16d5c04702510fe79ee59dd84c6c1d
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.3.0</version>
-        </dependency>
-<<<<<<< HEAD
-=======
-
         <!-- JavaMail — gửi email OTP cho ForgotPassword -->
         <dependency>
             <groupId>com.sun.mail</groupId>
@@ -91,7 +74,6 @@
             <version>2.0.1</version>
         </dependency>
 
->>>>>>> c10a6f13aa16d5c04702510fe79ee59dd84c6c1d
     </dependencies>
 
     <build>
