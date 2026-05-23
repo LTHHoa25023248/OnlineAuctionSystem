@@ -1,12 +1,8 @@
 package com.example.auctionmanagementsystem.model;
 
-//Enumeration-const
+// Enumeration-const
 public enum AuctionStatus {
-    OPEN,
-    RUNNING,
-    FINISHED,
-    PAID,
-    CANCELED
+  OPEN, RUNNING, FINISHED, PAID, CANCELED
 
 
 

@@ -1,5 +1,5 @@
 CREATE TABLE art_items (
-    item_id VARCHAR(50) PRIMARY KEY,
+    item_id INT PRIMARY KEY,
     artist VARCHAR(255),
     theme VARCHAR(255),
     material VARCHAR(255),

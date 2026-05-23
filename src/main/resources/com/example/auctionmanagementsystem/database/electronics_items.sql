@@ -1,5 +1,5 @@
 CREATE TABLE electronics_items (
-    item_id VARCHAR(50) PRIMARY KEY,
+    item_id INT PRIMARY KEY,
     brand VARCHAR(255),
     warranty_months INT,
 
