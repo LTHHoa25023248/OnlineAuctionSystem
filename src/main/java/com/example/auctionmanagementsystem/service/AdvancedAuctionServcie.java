@@ -62,12 +62,9 @@ public class AdvancedAuctionServcie {
                 bid.setTime(LocalDateTime.now());
                 bidDao.insert(connect,bid);
                 //update du lieu cua auction trong DB
-                try{
-                    auctionDao.update(auction,connect);
-                } catch (SQLException e){
-                    throw new RuntimeException(e);
-                }
-                updated=true;
+                
+                 throw new RuntimeException(e);
+               
             }
         }
 
@@ -79,11 +76,9 @@ public class AdvancedAuctionServcie {
         if(secondsLeft<=10){
             auction.setEndTime(auction.getEndTime().plusSeconds(60));
             //update du lieu auction
-            try{
+           
                 auctionDao.update(auction,connect);
-            } catch (SQLException e){
-                throw new RuntimeException(e);
-            }
+
         }
     }
 }
