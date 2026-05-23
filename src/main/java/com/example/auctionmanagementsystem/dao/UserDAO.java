@@ -247,7 +247,7 @@ public class UserDAO implements DAOInterface<User> {
   // =====================================================
   // CHECK USERNAME EXISTS
   // =====================================================
-  public boolean usernameExists(String username) {
+  public static boolean usernameExists(String username) {
 
     String sql = "SELECT id FROM users WHERE username = ?";
 
@@ -275,7 +275,7 @@ public class UserDAO implements DAOInterface<User> {
   // =====================================================
   // CHECK EMAIL EXISTS
   // =====================================================
-  public boolean emailExists(String email) {
+  public static boolean emailExists(String email) {
 
     String sql = "SELECT id FROM users WHERE email = ?";
 
@@ -299,40 +299,184 @@ public class UserDAO implements DAOInterface<User> {
 
     return false;
   }
-
   // =====================================================
+// CHECK EMAIL EXISTS FOR RESET PASSWORD
+// =====================================================
+  public static boolean emailExistsForReset(String email) {
+
+    String sql = "SELECT id FROM users WHERE email = ?";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, email);
+
+      try (ResultSet rs = pstmt.executeQuery()) {
+        return rs.next();
+      }
+
+    } catch (SQLException e) {
+
+      System.err.println("[UserDAO.emailExistsForReset] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+  // =====================================================
+// SAVE RESET CODE
+// =====================================================
+  public static boolean saveResetCode(String email,
+                                      String code,
+                                      long expiresAt) {
+
+    String sql = """
+        UPDATE users
+        SET reset_code = ?,
+            reset_code_expiry = ?
+        WHERE email = ?
+        """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, code);
+
+      pstmt.setTimestamp(
+              2,
+              new Timestamp(expiresAt)
+      );
+
+      pstmt.setString(3, email);
+
+      return pstmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+
+      System.err.println("[UserDAO.saveResetCode] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+  // =====================================================
+// VERIFY RESET CODE
+// =====================================================
+  public static boolean verifyResetCode(String email,
+                                        String code) {
+
+    String sql = """
+        SELECT id
+        FROM users
+        WHERE email = ?
+          AND reset_code = ?
+          AND reset_code_expiry > CURRENT_TIMESTAMP
+        """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, email);
+      pstmt.setString(2, code);
+
+      try (ResultSet rs = pstmt.executeQuery()) {
+
+        return rs.next();
+      }
+
+    } catch (SQLException e) {
+
+      System.err.println("[UserDAO.verifyResetCode] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+  // =====================================================
+// RESET PASSWORD
+// =====================================================
+  public static boolean resetPassword(String email,
+                                      String code,
+                                      String newPassword) {
+
+    // Kiểm tra OTP trước
+    if (!verifyResetCode(email, code)) {
+      return false;
+    }
+
+    String sql = """
+        UPDATE users
+        SET user_password = ?,
+            reset_code = NULL,
+            reset_code_expiry = NULL
+        WHERE email = ?
+        """;
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, newPassword);
+
+      pstmt.setString(2, email);
+
+      return pstmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+
+      System.err.println("[UserDAO.resetPassword] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    return false;
+  }
+
+  // ================
   // REGISTER BIDDER
-  // =====================================================
-  public int register(String username, String email, String password) {
+  // ================
+  public static boolean register(String firstName, String lastName, String username,
+                                 String email, String phone, String password, String address) {
+    String sql = """
+        INSERT INTO users 
+        (first_name, last_name, username, email, phone, user_password, address, role, is_active, balance) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'BIDDER', true, 0.0)
+        """;
+    return executeRegister(sql, firstName, lastName, username, email, phone, password, address);
+  }
 
-    if (usernameExists(username)) {
+  // ================
+  // REGISTER SELLER
+  // ================
+  public static boolean registerSeller(String firstName, String lastName, String username,
+                                       String email, String phone, String password, String address) {
+    String sql = """
+        INSERT INTO users 
+        (first_name, last_name, username, email, phone, user_password, address, role, is_active, rating) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'SELLER', true, 0.0)
+        """;
+    return executeRegister(sql, firstName, lastName, username, email, phone, password, address);
+  }
 
-      System.out.println("Username already exists.");
+  // Hàm helper dùng chung cho cả 2 loại đăng ký
+  private static boolean executeRegister(String sql, String firstName, String lastName,
+                                         String username, String email, String phone,
+                                         String password, String address) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-      return 0;
+      pstmt.setString(1, firstName);
+      pstmt.setString(2, lastName);
+      pstmt.setString(3, username);
+      pstmt.setString(4, email);
+      pstmt.setString(5, phone);
+      pstmt.setString(6, password); // Hãy hash password trước khi lưu thực tế
+      pstmt.setString(7, address);
+
+      return pstmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+      System.err.println("[UserDAO.executeRegister] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+      return false;
     }
-
-    if (emailExists(email)) {
-
-      System.out.println("Email already exists.");
-
-      return 0;
-    }
-
-    Bidder bidder = new Bidder();
-
-    bidder.setUsername(username);
-    bidder.setEmail(email);
-
-    // NOTE:
-    // Nên hash password bằng BCrypt
-    bidder.setPassword(password);
-
-    bidder.setActive(true);
-
-    bidder.setBalance(0.0);
-
-    return insert(bidder);
   }
 
   // =====================================================
@@ -437,8 +581,58 @@ public class UserDAO implements DAOInterface<User> {
     Bidder bidder=new Bidder();bidder.setBalance(rs.getDouble("balance"));user=bidder;}}
 
     // Gán các field chung
-    user.setId(rs.getInt("id"));user.setUsername(rs.getString("username"));user.setPassword(rs.getString("password"));user.setEmail(rs.getString("email"));user.setActive(rs.getBoolean("is_active"));
+    user.setId(rs.getInt("id"));user.setUsername(rs.getString("username"));user.setPassword(rs.getString("user_password"));user.setEmail(rs.getString("email"));user.setActive(rs.getBoolean("is_active"));
 
     return user;
   }
+  // =====================================================
+  // LOGIN (Thêm mới cho LoginController)
+  // =====================================================
+  public static User login(String username, String password) {
+    String sql = "SELECT * FROM users WHERE username = ? AND user_password = ? AND is_active = true";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, username);
+      pstmt.setString(2, password); // Lưu ý: Cần xử lý Hash Password ở đây nếu lúc đăng ký đã hash
+
+      try (ResultSet rs = pstmt.executeQuery()) {
+        if (rs.next()) {
+          // Khởi tạo UserDAO để gọi hàm map (vì mapResultSetToUser không phải static)
+          return new UserDAO().mapResultSetToUser(rs);
+        }
+      }
+    } catch (SQLException e) {
+      System.err.println("[UserDAO.login] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  // =====================================================
+  // GET STRING FIELD (Thêm mới cho LoginController)
+  // =====================================================
+  public static String getStringField(int userId, String fieldName) {
+    // Chỉ cho phép các cột an toàn để tránh SQL Injection
+    if (!fieldName.matches("^[a-zA-Z_]+$")) return "";
+
+    String sql = "SELECT " + fieldName + " FROM users WHERE id = ?";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setInt(1, userId);
+      try (ResultSet rs = pstmt.executeQuery()) {
+        if (rs.next()) {
+          return rs.getString(1);
+        }
+      }
+    } catch (SQLException e) {
+      System.err.println("[UserDAO.getStringField] SQL Error: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return "";
+  }
+
 }
