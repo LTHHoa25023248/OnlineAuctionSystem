@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 public class ItemDAO implements DAOInterface<Item> {
 
-  // =====================================================================
-  // 1. IMPLEMENT DAOInterface (Core Logic - Dùng Connection từ bên ngoài truyền vào)
-  // =====================================================================
+  
+  // Implements DAOInterface. Dùng Connection từ bên ngoài truyền vào
+ 
 
   @Override
   public int insert(Item item, Connection connect) {
@@ -120,13 +120,13 @@ public class ItemDAO implements DAOInterface<Item> {
 
   @Override
   public List<Item> selectAll(Connection conn) {
-    // TODO: Cài đặt logic lấy tất cả danh sách item tại đây nếu cần
+    // Cài đặt logic lấy tất cả danh sách item tại đây nếu cần
     return new ArrayList<>();
   }
 
-  // =====================================================================
-  // 2. HÀM TIỆN ÍCH (Tự động quản lý Connection - KHÔNG CÓ @Override)
-  // =====================================================================
+ 
+  //  HÀM TIỆN ÍCH-Tự động quản lý Connection 
+  
 
   public int insert(Item item) {
     Connection connect = null;
