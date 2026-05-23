@@ -84,7 +84,7 @@ public class ItemService {
         try {
             connect = new DatabaseConnection().getConnection();
             connect.setAutoCommit(false);
-            itemDAO.delete(item,connect);
+           itemDAO.delete(item,connect);
             connect.commit();
 
         } catch (Exception e) {
