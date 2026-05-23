@@ -16,7 +16,7 @@ public class ItemService {
             //luu du lieu tam thoi, chua ghi xuong vao DB
             connect.setAutoCommit(false);
             // insert du lieu bang item
-            int itemId = itemDAO.insert(connect, item);
+            int itemId = itemDAO.insert(item,connect);
             connect.commit();
             return itemId;
 
@@ -49,7 +49,7 @@ public class ItemService {
         try {
             connect = new DatabaseConnection().getConnection();
             connect.setAutoCommit(false);
-            itemDAO.update(connect, item);
+            itemDAO.update( item,connect);
             connect.commit();
 
         } catch (Exception e) {
@@ -79,12 +79,12 @@ public class ItemService {
     }
 
 
-    public void deleteItem(int id) {
+    public void deleteItem(Item item) {
         Connection connect = null;
         try {
             connect = new DatabaseConnection().getConnection();
             connect.setAutoCommit(false);
-            itemDAO.delete(connect, id);
+            itemDAO.delete(item,connect);
             connect.commit();
 
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class ItemService {
 
     public Item getItemById(int id) {
         try (Connection connect = new DatabaseConnection().getConnection()) {
-            return itemDAO.selectById(connect, id);
+            return itemDAO.selectById( id,connect);
         } catch (Exception e) {
             throw new RuntimeException(
                     "Get item failed",

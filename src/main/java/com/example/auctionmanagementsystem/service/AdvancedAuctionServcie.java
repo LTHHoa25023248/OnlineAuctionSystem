@@ -63,7 +63,8 @@ public class AdvancedAuctionServcie {
                 bidDao.insert(connect,bid);
                 //update du lieu cua auction trong DB
                 
-                 throw new RuntimeException(e);
+                auctionDao.update(auction,connect);
+                updated=true;
                
             }
         }
