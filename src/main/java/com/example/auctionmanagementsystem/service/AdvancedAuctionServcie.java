@@ -7,10 +7,8 @@ import com.example.auctionmanagementsystem.model.Bidder;
 import com.example.auctionmanagementsystem.dao.AutoBidDAO;
 import com.example.auctionmanagementsystem.dao.AuctionDAO;
 import com.example.auctionmanagementsystem.dao.BidTransactionDAO;
-
 import java.sql.Connection;
 import java.time.Duration;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -77,8 +75,7 @@ public class AdvancedAuctionServcie {
         if(secondsLeft<=10){
             auction.setEndTime(auction.getEndTime().plusSeconds(60));
             //update du lieu auction
-           
-                auctionDao.update(auction,connect);
+             auctionDao.update(auction,connect);
 
         }
     }

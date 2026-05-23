@@ -41,6 +41,13 @@ public class AuctionMapper {
       bidder.setId(bidderId);
       auction.setHighestBidder(bidder);
     }
+    //// doc ly do admin tu choi
+    String rejectReason = rs.getString("reject_reason");
+    if (!rs.wasNull()) {
+      // set neu cot khong null
+      auction.setRejectReason(rejectReason);
+    }
+   
 
     return auction;
   }

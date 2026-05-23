@@ -17,6 +17,7 @@ public class Auction extends Entity {
   private List<BidTransaction> historyBid = new ArrayList<>();
   private List<AutoBid> hisAutoBid = new ArrayList<>();
   private final ReentrantLock lock = new ReentrantLock();
+  private String rejectReason;
 
   public double getCurrentPrice() {
     return currentPrice;
@@ -96,6 +97,14 @@ public class Auction extends Entity {
 
   public void addAutoBid(AutoBid autoBid) {
     hisAutoBid.add(autoBid);
+  }
+
+  public String getRejectReason() {
+    return rejectReason;
+  }
+
+  public void setRejectReason(String rejectReason) {
+    this.rejectReason = rejectReason;
   }
 
   // Tao constructor rong de phan DAO set duoc

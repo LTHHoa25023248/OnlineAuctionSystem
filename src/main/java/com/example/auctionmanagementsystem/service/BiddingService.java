@@ -2,8 +2,9 @@ package com.example.auctionmanagementsystem.service;
 
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.exception.AuctionClosedException;
-
 import com.example.auctionmanagementsystem.exception.InvalidBidException;
+// ===== THÊM MỚI [Tính năng 5]: import exception seller tự đặt giá =====
+import com.example.auctionmanagementsystem.exception.SellerBiddingOwnItemException;
 import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.Bidder;
@@ -29,6 +30,12 @@ public class BiddingService {
             connect=new DatabaseConnection().getConnection();
             //gom lai +luu du lieu tam thoi, chua ghi xuong database
             connect.setAutoCommit(false);
+           //kiem tra xem seller co dang co tinh tu dat gia nham day gia tang len hay khong 
+           //so sanh id cua bidder xem co trung voi id cua seller khong
+            if (auction.getSeller() != null && auction.getSeller().getId() == bidder.getId()) {
+                throw new SellerBiddingOwnItemException();
+            }
+          
             //kiem tra trang thai xem phien dau gia co mo khong
             if(!auction.isOpen()){
                 throw new AuctionClosedException();

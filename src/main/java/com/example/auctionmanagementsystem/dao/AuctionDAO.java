@@ -46,7 +46,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   @Override
   public int update(Auction auction, Connection conn) {
-    String sql = "UPDATE auction SET current_price=?, status=?, end_time=?, highest_bidder_id=? WHERE id=?";
+    // ===== SỬA: thêm cột reject_reason vào câu UPDATE =====
+    String sql = "UPDATE auction SET current_price=?, status=?, end_time=?, highest_bidder_id=?, reject_reason=? WHERE id=?";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
       ps.setDouble(1, auction.getCurrentPrice());
       ps.setString(2, auction.getStatus().name());
@@ -57,8 +58,16 @@ public class AuctionDAO implements DAOInterface<Auction> {
       } else {
         ps.setNull(4, Types.INTEGER);
       }
-      ps.setInt(5, auction.getId());
 
+      // ===== THÊM MỚI: lưu lý do từ chối nếu có, ngược lại set NULL =====
+      if (auction.getRejectReason() != null) {
+        ps.setString(5, auction.getRejectReason());
+      } else {
+        ps.setNull(5, Types.VARCHAR);
+      }
+      // ===== END THÊM MỚI =====
+
+      ps.setInt(6, auction.getId()); // index tăng từ 5 lên 6 do thêm tham số
       return ps.executeUpdate();
     } catch (SQLException e) {
       throw new RuntimeException("Update Auction failed for ID: " + auction.getId(), e);
@@ -105,6 +114,23 @@ public class AuctionDAO implements DAOInterface<Auction> {
       throw new RuntimeException("SelectAll Auction failed", e);
     }
   }
+
+  // ===== THÊM MỚI: lấy danh sách phiên đấu giá đang chờ admin duyệt =====
+  public List<Auction> selectPendingAuctions(Connection conn) {
+    List<Auction> list = new ArrayList<>();
+    // Chỉ lấy các auction có status = PENDING, sắp xếp theo id tăng dần (ai tạo trước xét trước)
+    String sql = "SELECT * FROM auction WHERE status='PENDING' ORDER BY id ASC";
+    try (PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+      while (rs.next()) {
+        list.add(AuctionMapper.mapRow(rs));
+      }
+      return list;
+    } catch (SQLException e) {
+      throw new RuntimeException("SelectPendingAuctions failed", e);
+    }
+  }
+  // ===== END THÊM MỚI =====
 
   // Không cần Override nếu Interface không yêu cầu hàm đặc thù này
   public List<Auction> selectOpenAuctions(Connection conn) {

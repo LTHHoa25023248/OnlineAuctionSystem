@@ -20,8 +20,7 @@ public class AuctionService {
             if(auction.getSeller()==null){
                 throw new IllegalArgumentException("Seller cannot be null");
             }
-            //set trang thai ban dau
-            auction.setStatus(AuctionStatus.OPEN);
+            auction.setStatus(AuctionStatus.PENDING);
             auctionDao.insert(auction,connect);
           
         }catch(Exception e){
@@ -110,5 +109,50 @@ public class AuctionService {
             throw new RuntimeException("Delete auction failed", e);
         }
     }
+
+   
+     //lay danh sach tat ca cac phien dau gia dang cho admin duyet
+    public List<Auction> getPendingAuctions(Connection connect) {
+        try {
+            return auctionDao.selectPendingAuctions(connect);
+        } catch (Exception e) {
+            throw new RuntimeException("Get pending auctions failed", e);
+        }
+    }
+    //admin duyet dau gia, tu cho duyet chuyen sang trang thai mo phien dau gia
+    public void approveAuction(Connection connect, Auction auction) {
+        try {
+            // Chi duyet neu dang o trang thai PENDING
+            if (auction.getStatus() != AuctionStatus.PENDING) {
+                throw new IllegalStateException("Can only approve auctions in PENDING status");
+            }
+            auction.setStatus(AuctionStatus.OPEN);
+            // xoa ly do tu choi neu truoc do da tung b admin tu choiii
+            auction.setRejectReason(null); 
+            auctionDao.update(auction, connect);
+        } catch (Exception e) {
+            throw new RuntimeException("Approve auction failed", e);
+        }
+    }
+
+    // Admin tu choi phien dau gia, chuyen sang trang thai REJECTED ( chac ban hang cam) va luu ly do tu choi
+    public void rejectAuction(Connection connect, Auction auction, String reason) {
+        try {
+            //chi duoc tu choi item dang o trang thai cho admin phe duyet -PENDING
+            if (auction.getStatus() != AuctionStatus.PENDING) {
+                throw new IllegalStateException("Can only reject auctions in PENDING status");
+            }
+            // bat buoc dua ra ly do tu choi
+            if (reason == null || reason.trim().isEmpty()) {
+                throw new IllegalArgumentException("Reject reason cannot be empty");
+            }
+            auction.setStatus(AuctionStatus.REJECTED);
+            auction.setRejectReason(reason.trim());
+            auctionDao.update(auction, connect);
+        } catch (Exception e) {
+            throw new RuntimeException("Reject auction failed", e);
+        }
+    }
+
 
 }
