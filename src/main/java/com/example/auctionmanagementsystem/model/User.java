@@ -1,4 +1,4 @@
-package com.example.auctionmanagementsystem.model;
+ package com.example.auctionmanagementsystem.model;
 
 
 public abstract class User extends Entity {
@@ -8,13 +8,14 @@ public abstract class User extends Entity {
   protected String email;
   protected boolean isActive;
 
-  public User(String username, String password, String email) {
-    super(); // Gọi constructor của Entity để sinh tự động id
-    this.username = username;
-    this.password = password;
-    this.email = email;
-    this.isActive = true; // Mặc định tài khoản được kích hoạt
-  }
+
+    public User(String username, String password, String email) {
+        super(); // Gọi constructor của Entity để sinh tự động id
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.isActive = true; // Mặc định tài khoản được kích hoạt
+    }
 
   // Getters và Setters
   public String getUsername() {

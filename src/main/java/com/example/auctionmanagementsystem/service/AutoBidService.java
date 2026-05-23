@@ -12,13 +12,13 @@ public class AutoBidService {
     // lay danh sach autobid trong phien dau gia
     List<AutoBid> autoBids = auction.getHisAutoBid();
     // Sap xep thoi gian dang ky-> ai dang ky truoc thi duoc uu tien dat truoc
-    autoBids.sort((a, b) -> a.getCreatedAt().compareTo((b.getCreatedAt())));
+    autoBids.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
     boolean updated = true;
     // thuc hien lap den khi dat gia toi da, autobid ko tang gia duoc nua
     while (updated) {
       updated = false;
       for (AutoBid auto : autoBids) {
-        User user = auto.getUser();
+        User user = auto.getBidder();
         // Neu nguoi nay dang la nguoi dan dau thi bo qua
         if (user.equals(auction.getHighestBidder()))
           continue;
@@ -31,7 +31,7 @@ public class AutoBidService {
           // cap nhat nguoi dan dau
           auction.setHighestBidder(user);
           // ls dau gia
-          auction.addBid(new BidTransaction(user, nextBid));
+          auction.addBid(new BidTransaction(auction, user, nextBid));
           updated = true;
 
         }
