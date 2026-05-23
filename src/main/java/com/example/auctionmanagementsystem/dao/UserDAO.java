@@ -3,247 +3,161 @@ package com.example.auctionmanagementsystem.dao;
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
 import java.sql.*;
-
+import java.util.List;
+import java.util.ArrayList;
 public class UserDAO implements DAOInterface<User> {
 
   // =====================================================
   // INSERT USER
   // =====================================================
+  // =====================================================
+  // INSERT USER
+  // =====================================================
   @Override
-  public int insert(User user) {
-
+  public int insert(User user, Connection conn) {
     String sql = """
-        INSERT INTO users
-        (
-            username,
-            user_password,
-            email,
-            is_active,
-            role,
-            balance,
-            store_name,
-            rating,
-            access_level
-        )
+        INSERT INTO users (username, user_password, email, is_active, role, balance, store_name, rating, access_level)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
-    try (Connection conn = DatabaseConnection.getConnection();
-
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-      // ===== COMMON FIELDS =====
+    // KHÔNG TỰ MỞ CONNECTION NỮA, DÙNG conn ĐƯỢC TRUYỀN VÀO
+    try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       pstmt.setString(1, user.getUsername());
-
-      // NOTE:
-      // Nên hash password trước khi lưu DB
-      pstmt.setString(2, user.getPassword());
-
+      pstmt.setString(2, user.getPassword()); // Nên hash
       pstmt.setString(3, user.getEmail());
-
       pstmt.setBoolean(4, user.isActive());
 
-      // ===== ROLE-SPECIFIC =====
       if (user instanceof Bidder bidder) {
-
         pstmt.setString(5, "BIDDER");
-
         pstmt.setDouble(6, bidder.getBalance());
-
         pstmt.setNull(7, Types.VARCHAR);
         pstmt.setNull(8, Types.DOUBLE);
         pstmt.setNull(9, Types.VARCHAR);
-
       } else if (user instanceof Seller seller) {
-
         pstmt.setString(5, "SELLER");
-
         pstmt.setNull(6, Types.DOUBLE);
-
         pstmt.setString(7, seller.getStoreName());
-
         pstmt.setDouble(8, seller.getRating());
-
         pstmt.setNull(9, Types.VARCHAR);
-
       } else if (user instanceof Admin admin) {
-
         pstmt.setString(5, "ADMIN");
-
         pstmt.setNull(6, Types.DOUBLE);
         pstmt.setNull(7, Types.VARCHAR);
         pstmt.setNull(8, Types.DOUBLE);
-
         pstmt.setString(9, admin.getAccessLevel());
-
       } else {
-
         throw new SQLException("Unsupported user type.");
       }
 
       int affectedRows = pstmt.executeUpdate();
 
-      // ===== GET GENERATED ID =====
       if (affectedRows > 0) {
-
         try (ResultSet rs = pstmt.getGeneratedKeys()) {
-
           if (rs.next()) {
-
             user.setId(rs.getInt(1));
           }
         }
       }
-
       return affectedRows;
-
     } catch (SQLException e) {
-
-      System.err.println("[UserDAO.insert] SQL Error: " + e.getMessage());
-
-      e.printStackTrace();
+      // Tốt nhất nên ném RuntimeException như AuctionDAO thay vì in ra rồi trả về 0
+      throw new RuntimeException("[UserDAO.insert] SQL Error: " + e.getMessage(), e);
     }
-
-    return 0;
   }
 
   // =====================================================
   // UPDATE USER
   // =====================================================
   @Override
-  public int update(User user) {
-
+  public int update(User user, Connection conn) {
     String sql = """
-        UPDATE users
-        SET
-            username = ?,
-            user_password = ?,
-            email = ?,
-            is_active = ?,
-            balance = ?,
-            store_name = ?,
-            rating = ?,
-            access_level = ?
+        UPDATE users SET username = ?, user_password = ?, email = ?, is_active = ?, 
+                         balance = ?, store_name = ?, rating = ?, access_level = ?
         WHERE id = ?
         """;
 
-    try (Connection conn = DatabaseConnection.getConnection();
-
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-      // ===== COMMON =====
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setString(1, user.getUsername());
-
       pstmt.setString(2, user.getPassword());
-
       pstmt.setString(3, user.getEmail());
-
       pstmt.setBoolean(4, user.isActive());
 
-      // ===== BIDDER =====
       if (user instanceof Bidder bidder) {
-
         pstmt.setDouble(5, bidder.getBalance());
-
         pstmt.setNull(6, Types.VARCHAR);
         pstmt.setNull(7, Types.DOUBLE);
         pstmt.setNull(8, Types.VARCHAR);
-      }
-
-      // ===== SELLER =====
-      else if (user instanceof Seller seller) {
-
+      } else if (user instanceof Seller seller) {
         pstmt.setNull(5, Types.DOUBLE);
-
         pstmt.setString(6, seller.getStoreName());
-
         pstmt.setDouble(7, seller.getRating());
-
         pstmt.setNull(8, Types.VARCHAR);
-      }
-
-      // ===== ADMIN =====
-      else if (user instanceof Admin admin) {
-
+      } else if (user instanceof Admin admin) {
         pstmt.setNull(5, Types.DOUBLE);
         pstmt.setNull(6, Types.VARCHAR);
         pstmt.setNull(7, Types.DOUBLE);
-
         pstmt.setString(8, admin.getAccessLevel());
       }
 
       pstmt.setInt(9, user.getId());
-
       return pstmt.executeUpdate();
-
     } catch (SQLException e) {
-
-      System.err.println("[UserDAO.update] SQL Error: " + e.getMessage());
-
-      e.printStackTrace();
+      throw new RuntimeException("[UserDAO.update] SQL Error", e);
     }
-
-    return 0;
   }
 
   // =====================================================
   // DELETE USER
   // =====================================================
   @Override
-  public int delete(int id) {
-
+  public int delete(int id, Connection conn) {
     String sql = "DELETE FROM users WHERE id = ?";
-
-    try (Connection conn = DatabaseConnection.getConnection();
-
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, id);
-
       return pstmt.executeUpdate();
-
     } catch (SQLException e) {
-
-      System.err.println("[UserDAO.delete] SQL Error: " + e.getMessage());
-
-      e.printStackTrace();
+      throw new RuntimeException("[UserDAO.delete] SQL Error", e);
     }
-
-    return 0;
   }
 
   // =====================================================
   // SELECT USER BY ID
   // =====================================================
   @Override
-  public User selectById(int id) {
-
+  public User selectById(int id, Connection conn) {
     String sql = "SELECT * FROM users WHERE id = ?";
-
-    try (Connection conn = DatabaseConnection.getConnection();
-
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
       pstmt.setInt(1, id);
-
       try (ResultSet rs = pstmt.executeQuery()) {
-
         if (rs.next()) {
-
           return mapResultSetToUser(rs);
         }
       }
-
     } catch (SQLException e) {
-
-      System.err.println("[UserDAO.selectById] SQL Error: " + e.getMessage());
-
-      e.printStackTrace();
+      throw new RuntimeException("[UserDAO.selectById] SQL Error", e);
     }
-
     return null;
   }
 
+  // =====================================================
+  // SELECT ALL USERS (Bắt buộc phải thêm để khớp Interface)
+  // =====================================================
+  @Override
+  public List<User> selectAll(Connection conn) {
+    List<User> userList = new ArrayList<>();
+    String sql = "SELECT * FROM users ORDER BY id DESC";
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+      while (rs.next()) {
+        userList.add(mapResultSetToUser(rs));
+      }
+      return userList;
+    } catch (SQLException e) {
+      throw new RuntimeException("[UserDAO.selectAll] SQL Error", e);
+    }
+  }
   // =====================================================
   // CHECK USERNAME EXISTS
   // =====================================================
