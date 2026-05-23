@@ -4,10 +4,15 @@ import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.model.AutoBid;
 import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.Bidder;
+import com.example.auctionmanagementsystem.dao.AutoBidDAO;
+import com.example.auctionmanagementsystem.dao.AuctionDAO;
+import com.example.auctionmanagementsystem.dao.BidTransactionDAO;
 
 import java.sql.Connection;
 import java.time.Duration;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -18,8 +23,8 @@ public class AdvancedAuctionServcie {
     //dang ky dau gia tu dong
     public void registerAutoBid(Connection connect, Auction auction, Bidder bidder, double maxBid, double increment ){
         // tao cac doi tuong dau gia tu dong
-        AutoBid autoBid=new AutoBid(bidder, auction,maxBid,increment);
-        //luu du lieu
+        AutoBid autoBid = new AutoBid(auction,bidder,maxBid,increment);
+       //luu du lieu
         autoBidDao.insert(connect,autoBid);
     }
 
@@ -28,7 +33,7 @@ public class AdvancedAuctionServcie {
         // load het tat ca cac autoBid
         List<AutoBid> autoBids=autoBidDao.selectByAuctionId(connect, auction.getId());
         // ai dang ky truoc thi uu tien truoc, sap xep theo thoi gian dang ky
-        PriorityQueue<AutoBid> queue=new PriorityQueue<>(Comparator.comparing(AutoBid::getCreateAt));
+        PriorityQueue<AutoBid> queue=new PriorityQueue<>(Comparator.comparing(AutoBid::getCreatedAt));
         queue.addAll(autoBids);
         boolean updated=true;
         //lap cho dne khi ko ai bid duoc nua
@@ -53,11 +58,15 @@ public class AdvancedAuctionServcie {
                 BidTransaction bid =new BidTransaction();
                 bid.setAuction(auction);
                 bid.setBidder(bidder);
-                bid.setAmount(amount);
+                bid.setAmount(nextBid);
                 bid.setTime(LocalDateTime.now());
                 bidDao.insert(connect,bid);
                 //update du lieu cua auction trong DB
-                auctionDao.update(connect, auction);
+                try{
+                    auctionDao.update(auction,connect);
+                } catch (SQLException e){
+                    throw new RuntimeException(e);
+                }
                 updated=true;
             }
         }
@@ -65,12 +74,16 @@ public class AdvancedAuctionServcie {
     }
     //gia han thoi gian
     public void applyAntiSniping(Connection connect, Auction auction){
-        long secondsLeft= Duration.between(LocalDateTime.now(),acution.getEndTime()).getSeconds();
+        long secondsLeft= Duration.between(LocalDateTime.now(),auction.getEndTime()).getSeconds();
         //con 10s cuoi, gia han them 60s
         if(secondsLeft<=10){
             auction.setEndTime(auction.getEndTime().plusSeconds(60));
             //update du lieu auction
-            auctionDao.update(connect,auction);
+            try{
+                auctionDao.update(auction,connect);
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ package com.example.auctionmanagementsystem.model;
 import java.util.Map;
 
 public class ItemFactory {
-    public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
+  public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
         //Dùng 'type' để xác định danh mục sản phẩm
         //Không được để trống mục 'type' khi tạo sản phẩm
         if (type == null || type.trim().isEmpty()) {
@@ -40,10 +40,8 @@ public class ItemFactory {
             //Thông báo không tìm thấy loại sản phẩm phù hợp khi tạo sản phẩm (chưa có trong danh sách loại sản phẩm)
             default -> throw new IllegalArgumentException("Your product has not supported by our system yet!");
             };
-        } catch (Exception e) {
-            System.err.println("ERROR: Found error in ItemFactory.java!" + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to create item", e);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number formatted!", e);
         }
 
     }

@@ -2,12 +2,13 @@ package com.example.auctionmanagementsystem.service;
 
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.exception.AuctionClosedException;
-import com.example.auctionmanagementsystem.exception.AuctionStatusException;
+
 import com.example.auctionmanagementsystem.exception.InvalidBidException;
-import com.example.auctionmanagementsystem.exception.SellerBiddingOwnItemException;
 import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.Bidder;
+import com.example.auctionmanagementsystem.dao.AuctionDAO;
+import com.example.auctionmanagementsystem.dao.BidTransactionDAO;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -53,7 +54,7 @@ public class BiddingService {
             bid.setTime(LocalDateTime.now());
             bidDao.insert(connect,bid);
             //update Auction trong DB
-            auctionDao.update(connect,auction);
+            auctionDao.update(auction,connect);
             //qua trinh tu dau gia
             advancedServcie.processAutoBids(connect,auction);
             //gia han thoi gian

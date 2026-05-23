@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 
 public class MainLayoutController {
 
-    @FXML
-    public void initialize() {
-        // no-op placeholder
-    }
+  @FXML
+  public void initialize() {
+    // no-op placeholder
+  }
 }

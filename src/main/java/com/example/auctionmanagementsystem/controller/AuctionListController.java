@@ -21,208 +21,244 @@ import java.util.Random;
 
 public class AuctionListController {
 
-    // ── FXML fields — Top bar ─────────────────────────────────────────────────
-    @FXML private Label     usernameLabel;
-    @FXML private MFXButton logoutButton;
-    @FXML private MFXButton themeButton;
+  // ── FXML fields — Top bar ─────────────────────────────────────────────────
+  @FXML
+  private Label usernameLabel;
+  @FXML
+  private MFXButton logoutButton;
+  @FXML
+  private MFXButton themeButton;
 
-    // ── FXML fields — Sidebar ─────────────────────────────────────────────────
-    @FXML private HBox      homeButton;
-    @FXML private HBox      activeListingButton;
-    @FXML private HBox      trendingButton;
-    @FXML private HBox      yourListingButton;
-    @FXML private HBox      watchListButton;
-    @FXML private HBox      profileButton;
-    @FXML private MFXButton sellButton;
-    @FXML private MFXButton adminButton;
+  // ── FXML fields — Sidebar ─────────────────────────────────────────────────
+  @FXML
+  private HBox homeButton;
+  @FXML
+  private HBox activeListingButton;
+  @FXML
+  private HBox trendingButton;
+  @FXML
+  private HBox yourListingButton;
+  @FXML
+  private HBox watchListButton;
+  @FXML
+  private HBox profileButton;
+  @FXML
+  private MFXButton sellButton;
+  @FXML
+  private MFXButton adminButton;
 
-    // ── FXML fields — Category filter ────────────────────────────────────────
-    @FXML private Label allCat;
-    @FXML private Label jewelryCat;
-    @FXML private Label watchesCat;
-    @FXML private Label bagsCat;
-    @FXML private Label fineArtCat;
-    @FXML private Label carsCat;
-    @FXML private Label othersCat;
+  // ── FXML fields — Category filter ────────────────────────────────────────
+  @FXML
+  private Label allCat;
+  @FXML
+  private Label jewelryCat;
+  @FXML
+  private Label watchesCat;
+  @FXML
+  private Label bagsCat;
+  @FXML
+  private Label fineArtCat;
+  @FXML
+  private Label carsCat;
+  @FXML
+  private Label othersCat;
 
-    // ── FXML fields — Content ────────────────────────────────────────────────
-    @FXML private MFXButton     sortButton;
-    @FXML private MFXScrollPane scrollPane;
+  // ── FXML fields — Content ────────────────────────────────────────────────
+  @FXML
+  private MFXButton sortButton;
+  @FXML
+  private MFXScrollPane scrollPane;
 
-    // ── State ─────────────────────────────────────────────────────────────────
-    private String currentCategory = "ALL";
-    private String currentSort     = "NEWEST";
-    private final List<AuctionItem> userAddedItems = new ArrayList<>();
+  // ── State ─────────────────────────────────────────────────────────────────
+  private String currentCategory = "ALL";
+  private String currentSort = "NEWEST";
+  private final List<AuctionItem> userAddedItems = new ArrayList<>();
 
-    // ── Model ─────────────────────────────────────────────────────────────────
-    public static class AuctionItem {
-        public int    id;
-        public String name;
-        public String category;
-        public String imagePath;
-        public double price;
-        public int    bids;
-        public int    daysLeft;
+  // ── Model ─────────────────────────────────────────────────────────────────
+  public static class AuctionItem {
+    public int id;
+    public String name;
+    public String category;
+    public String imagePath;
+    public double price;
+    public int bids;
+    public int daysLeft;
 
-        public AuctionItem(int id, String name, String category,
-                           double price, int bids, int daysLeft, String imagePath) {
-            this.id        = id;
-            this.name      = name;
-            this.category  = category;
-            this.price     = price;
-            this.bids      = bids;
-            this.daysLeft  = daysLeft;
-            this.imagePath = imagePath;
-        }
+    public AuctionItem(int id, String name, String category, double price, int bids, int daysLeft,
+        String imagePath) {
+      this.id = id;
+      this.name = name;
+      this.category = category;
+      this.price = price;
+      this.bids = bids;
+      this.daysLeft = daysLeft;
+      this.imagePath = imagePath;
+    }
+  }
+
+  @FXML
+  public void initialize() {
+    usernameLabel.setText(SessionManager.getInstance().getUsername());
+
+    // ── Wire sidebar ──────────────────────────────────────────────────────
+    homeButton.setOnMouseClicked(e -> {
+      currentCategory = "ALL";
+      loadListings();
+    });
+    activeListingButton.setOnMouseClicked(e -> {
+      currentCategory = "ACTIVE";
+      loadListings();
+    });
+    trendingButton.setOnMouseClicked(e -> {
+      currentCategory = "TRENDING";
+      loadListings();
+    });
+    yourListingButton.setOnMouseClicked(e -> {
+      currentCategory = "MINE";
+      loadListings();
+    });
+    watchListButton.setOnMouseClicked(e -> {
+      currentCategory = "WATCHLIST";
+      loadListings();
+    });
+    profileButton.setOnMouseClicked(e -> openProfile());
+
+    // ── Wire buttons ──────────────────────────────────────────────────────
+    sellButton.setOnAction(e -> onSellButtonClick());
+    sortButton.setOnAction(e -> onSortByButtonClick());
+    logoutButton.setOnAction(e -> onLogOutButtonClick());
+
+    // ── Theme toggle ──────────────────────────────────────────────────────
+    if (themeButton != null) {
+      updateThemeButtonText();
+      themeButton.setOnAction(e -> {
+        ThemeManager.getInstance().toggleTheme(themeButton.getScene());
+        updateThemeButtonText();
+      });
     }
 
-    @FXML
-    public void initialize() {
-        usernameLabel.setText(SessionManager.getInstance().getUsername());
-
-        // ── Wire sidebar ──────────────────────────────────────────────────────
-        homeButton.setOnMouseClicked(e          -> { currentCategory = "ALL";       loadListings(); });
-        activeListingButton.setOnMouseClicked(e -> { currentCategory = "ACTIVE";    loadListings(); });
-        trendingButton.setOnMouseClicked(e      -> { currentCategory = "TRENDING";  loadListings(); });
-        yourListingButton.setOnMouseClicked(e   -> { currentCategory = "MINE";      loadListings(); });
-        watchListButton.setOnMouseClicked(e     -> { currentCategory = "WATCHLIST"; loadListings(); });
-        profileButton.setOnMouseClicked(e       -> openProfile());
-
-        // ── Wire buttons ──────────────────────────────────────────────────────
-        sellButton.setOnAction(e   -> onSellButtonClick());
-        sortButton.setOnAction(e   -> onSortByButtonClick());
-        logoutButton.setOnAction(e -> onLogOutButtonClick());
-
-        // ── Theme toggle ──────────────────────────────────────────────────────
-        if (themeButton != null) {
-            updateThemeButtonText();
-            themeButton.setOnAction(e -> {
-                ThemeManager.getInstance().toggleTheme(themeButton.getScene());
-                updateThemeButtonText();
-            });
-        }
-
-        // ── Sell button — chỉ hiện với Seller ────────────────────────────────
-        if (sellButton != null) {
-            boolean isSeller = SessionManager.getInstance().isSeller();
-            sellButton.setVisible(isSeller);
-            sellButton.setManaged(isSeller);
-        }
-
-        // ── Admin button — chỉ hiện với Admin ────────────────────────────────
-        if (adminButton != null) {
-            boolean isAdmin = SessionManager.getInstance().isAdmin();
-            adminButton.setVisible(isAdmin);
-            adminButton.setManaged(isAdmin);
-            adminButton.setOnAction(e -> onAdminButtonClick());
-        }
-
-        // ── Category labels ───────────────────────────────────────────────────
-        Label[]  cats    = {allCat, jewelryCat, watchesCat, bagsCat, fineArtCat, carsCat, othersCat};
-        String[] filters = {"ALL", "Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others"};
-        for (int i = 0; i < cats.length; i++) {
-            final String f = filters[i];
-            final Label  c = cats[i];
-            if (c != null) c.setOnMouseClicked(e -> {
-                selectCategory(cats, c);
-                currentCategory = f;
-                loadListings();
-            });
-        }
-
-        loadListings();
+    // ── Sell button — chỉ hiện với Seller ────────────────────────────────
+    if (sellButton != null) {
+      boolean isSeller = SessionManager.getInstance().isSeller();
+      sellButton.setVisible(isSeller);
+      sellButton.setManaged(isSeller);
     }
 
-    private void updateThemeButtonText() {
-        if (themeButton == null) return;
-        if (ThemeManager.getInstance().isDarkMode()) {
-            themeButton.setText("Light");
-        } else {
-            themeButton.setText("Dark");
-        }
+    // ── Admin button — chỉ hiện với Admin ────────────────────────────────
+    if (adminButton != null) {
+      boolean isAdmin = SessionManager.getInstance().isAdmin();
+      adminButton.setVisible(isAdmin);
+      adminButton.setManaged(isAdmin);
+      adminButton.setOnAction(e -> onAdminButtonClick());
     }
 
-    // ── Action handlers ───────────────────────────────────────────────────────
-
-    @FXML
-    private void onLogOutButtonClick() {
-        SessionManager.getInstance().logout();
-        NavigationUtil.goTo(logoutButton, NavigationUtil.LOGIN);
+    // ── Category labels ───────────────────────────────────────────────────
+    Label[] cats = {allCat, jewelryCat, watchesCat, bagsCat, fineArtCat, carsCat, othersCat};
+    String[] filters = {"ALL", "Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others"};
+    for (int i = 0; i < cats.length; i++) {
+      final String f = filters[i];
+      final Label c = cats[i];
+      if (c != null)
+        c.setOnMouseClicked(e -> {
+          selectCategory(cats, c);
+          currentCategory = f;
+          loadListings();
+        });
     }
 
-    @FXML
-    private void onSellButtonClick() {
-        AddListingController.lastAddedItem = null;
-        NavigationUtil.openPopup(sellButton, NavigationUtil.ADD_LISTING, "Add Listing");
-        AuctionItem newItem = AddListingController.lastAddedItem;
-        if (newItem != null) {
-            userAddedItems.add(0, newItem);
-        }
-        loadListings();
+    loadListings();
+  }
+
+  private void updateThemeButtonText() {
+    if (themeButton == null)
+      return;
+    if (ThemeManager.getInstance().isDarkMode()) {
+      themeButton.setText("Light");
+    } else {
+      themeButton.setText("Dark");
     }
+  }
 
-    @FXML
-    private void onSortByButtonClick() {
-        SortingMenuController ctrl =
-                NavigationUtil.openPopup(sortButton, NavigationUtil.SORTING_MENU, "Sort By");
-        if (ctrl != null) {
-            currentSort = ctrl.getSelectedSort();
-            loadListings();
-        }
+  // ── Action handlers ───────────────────────────────────────────────────────
+
+  @FXML
+  private void onLogOutButtonClick() {
+    SessionManager.getInstance().logout();
+    NavigationUtil.goTo(logoutButton, NavigationUtil.LOGIN);
+  }
+
+  @FXML
+  private void onSellButtonClick() {
+    AddListingController.lastAddedItem = null;
+    NavigationUtil.openPopup(sellButton, NavigationUtil.ADD_LISTING, "Add Listing");
+    AuctionItem newItem = AddListingController.lastAddedItem;
+    if (newItem != null) {
+      userAddedItems.add(0, newItem);
     }
+    loadListings();
+  }
 
-    @FXML
-    private void onAdminButtonClick() {
-        NavigationUtil.goTo(adminButton, NavigationUtil.ADMIN);
+  @FXML
+  private void onSortByButtonClick() {
+    SortingMenuController ctrl =
+        NavigationUtil.openPopup(sortButton, NavigationUtil.SORTING_MENU, "Sort By");
+    if (ctrl != null) {
+      currentSort = ctrl.getSelectedSort();
+      loadListings();
     }
+  }
 
-    private void openProfile() {
-        NavigationUtil.openPopup(profileButton, NavigationUtil.PROFILE, "My Profile");
+  @FXML
+  private void onAdminButtonClick() {
+    NavigationUtil.goTo(adminButton, NavigationUtil.ADMIN);
+  }
+
+  private void openProfile() {
+    NavigationUtil.openPopup(profileButton, NavigationUtil.PROFILE, "My Profile");
+  }
+
+  public void openAuctionDetail(int auctionId) {
+    AuctionDetailController ctrl =
+        NavigationUtil.openPopup(scrollPane, NavigationUtil.AUCTION_DETAIL, "Auction Detail");
+    if (ctrl != null)
+      ctrl.loadAuction(auctionId);
+  }
+
+  // ── Data ──────────────────────────────────────────────────────────────────
+
+  private List<AuctionItem> getAllItems() {
+    List<AuctionItem> list = new ArrayList<>();
+    list.addAll(userAddedItems);
+
+    String[] categories = {"Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others"};
+    String[][] names = {
+        {"Rolex Daytona", "Diamond Ring", "Pearl Necklace", "Gold Bracelet", "Ruby Earrings",
+            "Sapphire Pendant", "Emerald Ring", "Platinum Chain"},
+        {"Patek Philippe", "Omega Seamaster", "Audemars Piguet", "TAG Heuer Monaco",
+            "IWC Portugieser", "Cartier Santos", "Hublot Big Bang", "Richard Mille"},
+        {"Hermes Birkin", "Louis Vuitton Neverfull", "Chanel Flap", "Gucci Dionysus",
+            "Prada Galleria", "Dior Lady", "Bottega Veneta", "Balenciaga City"},
+        {"Mona Lisa Print", "Starry Night", "The Scream", "Water Lilies", "Girl with Pearl",
+            "The Birth of Venus", "Guernica Print", "Sunflowers"},
+        {"Porsche 911", "Ferrari 488", "Lamborghini Huracan", "McLaren 720S", "Aston Martin DB11",
+            "Rolls Royce Ghost", "Bentley Continental", "BMW M8"},
+        {"Vintage Guitar", "Antique Clock", "Rare Coin", "Vintage Camera", "Antique Vase",
+            "Rare Stamp", "Ancient Sword", "Rare Book"}};
+
+    Random random = new Random(42);
+    for (int id = 1; id <= 100; id++) {
+      int catIdx = random.nextInt(6);
+      String cat = categories[catIdx];
+      String itemName = names[catIdx][random.nextInt(names[catIdx].length)];
+      double price = (random.nextInt(990) + 10) * 100.0;
+      int bids = random.nextInt(20);
+      int daysLeft = random.nextInt(30) + 1;
+      list.add(new AuctionItem(id, itemName, cat, price, bids, daysLeft, null));
     }
+    return list;
+  }
 
-    public void openAuctionDetail(int auctionId) {
-        AuctionDetailController ctrl =
-                NavigationUtil.openPopup(scrollPane,
-                        NavigationUtil.AUCTION_DETAIL, "Auction Detail");
-        if (ctrl != null) ctrl.loadAuction(auctionId);
-    }
-
-    // ── Data ──────────────────────────────────────────────────────────────────
-
-    private List<AuctionItem> getAllItems() {
-        List<AuctionItem> list = new ArrayList<>();
-        list.addAll(userAddedItems);
-
-        String[] categories = {"Jewelry","Watches","Bags","Fine Art","Cars","Others"};
-        String[][] names = {
-                {"Rolex Daytona","Diamond Ring","Pearl Necklace","Gold Bracelet",
-                        "Ruby Earrings","Sapphire Pendant","Emerald Ring","Platinum Chain"},
-                {"Patek Philippe","Omega Seamaster","Audemars Piguet","TAG Heuer Monaco",
-                        "IWC Portugieser","Cartier Santos","Hublot Big Bang","Richard Mille"},
-                {"Hermes Birkin","Louis Vuitton Neverfull","Chanel Flap","Gucci Dionysus",
-                        "Prada Galleria","Dior Lady","Bottega Veneta","Balenciaga City"},
-                {"Mona Lisa Print","Starry Night","The Scream","Water Lilies",
-                        "Girl with Pearl","The Birth of Venus","Guernica Print","Sunflowers"},
-                {"Porsche 911","Ferrari 488","Lamborghini Huracan","McLaren 720S",
-                        "Aston Martin DB11","Rolls Royce Ghost","Bentley Continental","BMW M8"},
-                {"Vintage Guitar","Antique Clock","Rare Coin","Vintage Camera",
-                        "Antique Vase","Rare Stamp","Ancient Sword","Rare Book"}
-        };
-
-        Random random = new Random(42);
-        for (int id = 1; id <= 100; id++) {
-            int    catIdx   = random.nextInt(6);
-            String cat      = categories[catIdx];
-            String itemName = names[catIdx][random.nextInt(names[catIdx].length)];
-            double price    = (random.nextInt(990) + 10) * 100.0;
-            int    bids     = random.nextInt(20);
-            int    daysLeft = random.nextInt(30) + 1;
-            list.add(new AuctionItem(id, itemName, cat, price, bids, daysLeft, null));
-        }
-        return list;
-    }
-
-    private void loadListings() {
+  private void loadListings() {
         List<AuctionItem> list = getAllItems();
 
         list.removeIf(item -> {
@@ -277,11 +313,12 @@ public class AuctionListController {
         scrollPane.setContent(grid);
     }
 
-    private void selectCategory(Label[] all, Label selected) {
-        for (Label l : all) {
-            if (l != null) l.getStyleClass().remove("catSelected");
-        }
-        if (!selected.getStyleClass().contains("catSelected"))
-            selected.getStyleClass().add("catSelected");
+  private void selectCategory(Label[] all, Label selected) {
+    for (Label l : all) {
+      if (l != null)
+        l.getStyleClass().remove("catSelected");
     }
+    if (!selected.getStyleClass().contains("catSelected"))
+      selected.getStyleClass().add("catSelected");
+  }
 }

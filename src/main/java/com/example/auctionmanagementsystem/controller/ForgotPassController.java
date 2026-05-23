@@ -16,57 +16,64 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
  *
  * Luồng đầy đủ:
  *
- *   Bước 1 — Nhập email → bấm "Send Code"
- *     • Validate email hợp lệ
- *     • Kiểm tra email có trong DB không (UserDAO.emailExistsForReset)
- *     • Tạo OTP 6 chữ số (EmailService.generateCode)
- *     • Lưu OTP vào DB với thời gian hết hạn (UserDAO.saveResetCode)
- *     • Gửi email chứa OTP (EmailService.sendResetCode) — trên background thread
- *     • Vô hiệu hoá nút Send để tránh spam
+ * Bước 1 — Nhập email → bấm "Send Code" • Validate email hợp lệ • Kiểm tra email có trong DB không
+ * (UserDAO.emailExistsForReset) • Tạo OTP 6 chữ số (EmailService.generateCode) • Lưu OTP vào DB với
+ * thời gian hết hạn (UserDAO.saveResetCode) • Gửi email chứa OTP (EmailService.sendResetCode) —
+ * trên background thread • Vô hiệu hoá nút Send để tránh spam
  *
- *   Bước 2 — Nhập mã OTP từ email vào codeField
+ * Bước 2 — Nhập mã OTP từ email vào codeField
  *
- *   Bước 3 — Nhập mật khẩu mới → bấm "Save New Password"
- *     • Validate mật khẩu ≥ 8 ký tự, chứa chữ+số, hai trường khớp
- *     • Xác thực OTP với DB (UserDAO.verifyResetCode)
- *     • Cập nhật mật khẩu + xóa OTP (UserDAO.resetPassword)
- *     • Thông báo thành công → tự đóng popup sau 2 giây
+ * Bước 3 — Nhập mật khẩu mới → bấm "Save New Password" • Validate mật khẩu ≥ 8 ký tự, chứa chữ+số,
+ * hai trường khớp • Xác thực OTP với DB (UserDAO.verifyResetCode) • Cập nhật mật khẩu + xóa OTP
+ * (UserDAO.resetPassword) • Thông báo thành công → tự đóng popup sau 2 giây
  */
 public class ForgotPassController {
 
-    // ── FXML fields ───────────────────────────────────────────────────────────
-    @FXML private MFXTextField     emailField;
-    @FXML private MFXTextField     codeField;
-    @FXML private MFXPasswordField passwordField;
-    @FXML private MFXPasswordField confirmPasswordField;
-    @FXML private MFXButton        sendCodeButton;
-    @FXML private MFXButton        okButton;
-    @FXML private MFXButton        closeButton;
-    @FXML private Label            unValidLabel;  // lỗi email / OTP
-    @FXML private Label            pwValidLabel;  // lỗi password
-    @FXML private Label            label;         // thông báo chung (xanh = OK, đỏ = lỗi)
+  // ── FXML fields ───────────────────────────────────────────────────────────
+  @FXML
+  private MFXTextField emailField;
+  @FXML
+  private MFXTextField codeField;
+  @FXML
+  private MFXPasswordField passwordField;
+  @FXML
+  private MFXPasswordField confirmPasswordField;
+  @FXML
+  private MFXButton sendCodeButton;
+  @FXML
+  private MFXButton okButton;
+  @FXML
+  private MFXButton closeButton;
+  @FXML
+  private Label unValidLabel; // lỗi email / OTP
+  @FXML
+  private Label pwValidLabel; // lỗi password
+  @FXML
+  private Label label; // thông báo chung (xanh = OK, đỏ = lỗi)
 
-    /** Email đã được xác nhận tồn tại trong DB — lưu để dùng ở bước 3 */
-    private String verifiedEmail = null;
+  /** Email đã được xác nhận tồn tại trong DB — lưu để dùng ở bước 3 */
+  private String verifiedEmail = null;
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
 
-    @FXML
-    public void initialize() {
-        hideError(unValidLabel);
-        hideError(pwValidLabel);
-        clearStatus();
+  @FXML
+  public void initialize() {
+    hideError(unValidLabel);
+    hideError(pwValidLabel);
+    clearStatus();
 
-        // Wire backup (phòng khi FXML không khai báo onAction)
-        if (sendCodeButton != null) sendCodeButton.setOnAction(e -> handleSendCode());
-        if (okButton       != null) okButton.setOnAction(e       -> handleSave());
-    }
+    // Wire backup (phòng khi FXML không khai báo onAction)
+    if (sendCodeButton != null)
+      sendCodeButton.setOnAction(e -> handleSendCode());
+    if (okButton != null)
+      okButton.setOnAction(e -> handleSave());
+  }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // BƯỚC 1: Gửi OTP
-    // ══════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
+  // BƯỚC 1: Gửi OTP
+  // ══════════════════════════════════════════════════════════════════════════
 
-    /**
+  /**
      * Validate email → kiểm tra DB → tạo và gửi OTP.
      * Chạy IO trên background thread.
      */
@@ -147,11 +154,11 @@ public class ForgotPassController {
         new Thread(task).start();
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    // BƯỚC 3: Lưu mật khẩu mới
-    // ══════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
+  // BƯỚC 3: Lưu mật khẩu mới
+  // ══════════════════════════════════════════════════════════════════════════
 
-    /**
+  /**
      * Validate OTP + mật khẩu → cập nhật DB → thông báo + đóng popup.
      */
     @FXML
@@ -235,105 +242,115 @@ public class ForgotPassController {
         new Thread(task).start();
     }
 
-    // ── Đóng popup ────────────────────────────────────────────────────────────
+  // ── Đóng popup ────────────────────────────────────────────────────────────
 
-    @FXML
-    private void handleClose() {
-        closePopup();
+  @FXML
+  private void handleClose() {
+    closePopup();
+  }
+
+  private void closePopup() {
+    if (closeButton != null && closeButton.getScene() != null) {
+      Stage stage = (Stage) closeButton.getScene().getWindow();
+      stage.close();
     }
+  }
 
-    private void closePopup() {
-        if (closeButton != null && closeButton.getScene() != null) {
-            Stage stage = (Stage) closeButton.getScene().getWindow();
-            stage.close();
+  // ── Countdown chống spam gửi email ───────────────────────────────────────
+
+  /**
+   * Disable nút Send Code trong 60 giây, đếm ngược hiển thị trên button.
+   */
+  private void startResendCountdown() {
+    new Thread(() -> {
+      for (int i = 60; i >= 1; i--) {
+        final int sec = i;
+        Platform.runLater(() -> setSendCodeButtonText("Gửi lại sau " + sec + "s"));
+        try {
+          Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+          break;
         }
-    }
+      }
+      Platform.runLater(() -> setSendCodeButtonState(true, "Send Code"));
+    }).start();
+  }
 
-    // ── Countdown chống spam gửi email ───────────────────────────────────────
+  // ── Validation Helpers ────────────────────────────────────────────────────
 
-    /**
-     * Disable nút Send Code trong 60 giây, đếm ngược hiển thị trên button.
-     */
-    private void startResendCountdown() {
-        new Thread(() -> {
-            for (int i = 60; i >= 1; i--) {
-                final int sec = i;
-                Platform.runLater(() ->
-                        setSendCodeButtonText("Gửi lại sau " + sec + "s"));
-                try { Thread.sleep(1000); } catch (InterruptedException ignored) { break; }
-            }
-            Platform.runLater(() -> setSendCodeButtonState(true, "Send Code"));
-        }).start();
-    }
+  private boolean isValidEmail(String email) {
+    return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+  }
 
-    // ── Validation Helpers ────────────────────────────────────────────────────
+  // ── UI Helpers ────────────────────────────────────────────────────────────
 
-    private boolean isValidEmail(String email) {
-        return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    }
+  private void showError(Label lbl, String msg) {
+    if (lbl == null)
+      return;
+    Platform.runLater(() -> {
+      lbl.setText(msg);
+      lbl.setStyle("-fx-text-fill: #FF6B6B;");
+      lbl.setVisible(true);
+      lbl.setManaged(true);
+    });
+  }
 
-    // ── UI Helpers ────────────────────────────────────────────────────────────
+  private void hideError(Label lbl) {
+    if (lbl == null)
+      return;
+    lbl.setText("");
+    lbl.setVisible(false);
+    lbl.setManaged(false);
+  }
 
-    private void showError(Label lbl, String msg) {
-        if (lbl == null) return;
-        Platform.runLater(() -> {
-            lbl.setText(msg);
-            lbl.setStyle("-fx-text-fill: #FF6B6B;");
-            lbl.setVisible(true);
-            lbl.setManaged(true);
-        });
-    }
+  private void showStatus(String msg, boolean isSuccess) {
+    if (label == null)
+      return;
+    Platform.runLater(() -> {
+      label.setText(msg);
+      label.setStyle(isSuccess ? "-fx-text-fill: #3DBA7F;" : "-fx-text-fill: #FF6B6B;");
+      label.setVisible(true);
+      label.setManaged(true);
+    });
+  }
 
-    private void hideError(Label lbl) {
-        if (lbl == null) return;
-        lbl.setText("");
-        lbl.setVisible(false);
-        lbl.setManaged(false);
-    }
+  private void clearStatus() {
+    if (label == null)
+      return;
+    label.setText("");
+    label.setVisible(false);
+    label.setManaged(false);
+  }
 
-    private void showStatus(String msg, boolean isSuccess) {
-        if (label == null) return;
-        Platform.runLater(() -> {
-            label.setText(msg);
-            label.setStyle(isSuccess
-                    ? "-fx-text-fill: #3DBA7F;"
-                    : "-fx-text-fill: #FF6B6B;");
-            label.setVisible(true);
-            label.setManaged(true);
-        });
-    }
+  private void setSendCodeButtonState(boolean enabled, String text) {
+    Platform.runLater(() -> {
+      if (sendCodeButton != null) {
+        sendCodeButton.setDisable(!enabled);
+        sendCodeButton.setText(text);
+      }
+    });
+  }
 
-    private void clearStatus() {
-        if (label == null) return;
-        label.setText("");
-        label.setVisible(false);
-        label.setManaged(false);
-    }
+  private void setSendCodeButtonText(String text) {
+    if (sendCodeButton != null)
+      sendCodeButton.setText(text);
+  }
 
-    private void setSendCodeButtonState(boolean enabled, String text) {
-        Platform.runLater(() -> {
-            if (sendCodeButton != null) {
-                sendCodeButton.setDisable(!enabled);
-                sendCodeButton.setText(text);
-            }
-        });
-    }
+  private void setOkButtonState(boolean enabled, String text) {
+    Platform.runLater(() -> {
+      if (okButton != null) {
+        okButton.setDisable(!enabled);
+        okButton.setText(text);
+      }
+    });
+  }
 
-    private void setSendCodeButtonText(String text) {
-        if (sendCodeButton != null) sendCodeButton.setText(text);
-    }
+  // ── Inner enums ───────────────────────────────────────────────────────────
 
-    private void setOkButtonState(boolean enabled, String text) {
-        Platform.runLater(() -> {
-            if (okButton != null) {
-                okButton.setDisable(!enabled);
-                okButton.setText(text);
-            }
-        });
-    }
-
-    // ── Inner enums ───────────────────────────────────────────────────────────
-
-    private enum SendCodeResult { SUCCESS, EMAIL_NOT_FOUND, DB_ERROR, EMAIL_SEND_FAIL }
-    private enum ResetResult    { SUCCESS, INVALID_CODE, DB_ERROR }
+  private enum SendCodeResult {
+    SUCCESS, EMAIL_NOT_FOUND, DB_ERROR, EMAIL_SEND_FAIL
+  }
+  private enum ResetResult {
+    SUCCESS, INVALID_CODE, DB_ERROR
+  }
 }

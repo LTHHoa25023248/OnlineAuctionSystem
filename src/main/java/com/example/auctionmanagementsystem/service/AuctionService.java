@@ -2,6 +2,7 @@ package com.example.auctionmanagementsystem.service;
 
 import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.model.AuctionStatus;
+import com.example.auctionmanagementsystem.dao.AuctionDAO;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.List;
 public class AuctionService {
     private final AuctionDAO auctionDao=new AuctionDAO();
     //tao phien dau gia
-    public class creatAuction(Connection connect, Auction auction){
+    public void creatAuction(Connection connect, Auction auction){
         try{
             //kiem tra du lieu
             if(auction.getItem()==null){
@@ -21,7 +22,8 @@ public class AuctionService {
             }
             //set trang thai ban dau
             auction.setStatus(AuctionStatus.OPEN);
-            return auctionDao.insert(connect,auction);
+            auctionDao.insert(auction,connect);
+          
         }catch(Exception e){
             throw new RuntimeException("Create auction failed",e);
         }
@@ -34,7 +36,7 @@ public class AuctionService {
             }
             auction.setStatus(AuctionStatus.RUNNING);
             auction.setStartTime(LocalDateTime.now());
-            auctionDao.update(connect, auction);
+            auctionDao.update(auction, connect);
 
         } catch (Exception e) {
             throw new RuntimeException("Start auction failed", e);
@@ -48,7 +50,7 @@ public class AuctionService {
             }
             auction.setStatus(AuctionStatus.FINISHED);
             auction.setEndTime(LocalDateTime.now());
-            auctionDao.update(connect, auction);
+            auctionDao.update(auction, connect);
 
         } catch (Exception e) {
             throw new RuntimeException("End auction failed", e);
@@ -57,13 +59,13 @@ public class AuctionService {
 
     public void cancelAuction(Connection connect, Auction auction) {
 
-        try {
+    try {
             if (auction.getStatus() == AuctionStatus.FINISHED) {
                 throw new IllegalStateException("Cannot cancel finished auction");
             }
 
             auction.setStatus(AuctionStatus.CANCELED);
-            auctionDao.update(connect, auction);
+            auctionDao.update(auction, connect);
 
         } catch (Exception e) {
             throw new RuntimeException("Cancel auction failed", e);
@@ -71,7 +73,7 @@ public class AuctionService {
     }
     public Auction getById(Connection connect, int id) {
         try {
-            return auctionDao.selectById(connect, id);
+            return auctionDao.selectById(id, connect);
 
         } catch (Exception e) {
             throw new RuntimeException("Get auction failed", e);
@@ -96,14 +98,14 @@ public class AuctionService {
 
     public void updateAuction(Connection connect, Auction auction) {
         try {
-            auctionDao.update(connect, auction);
+            auctionDao.update(auction, connect);
         } catch (Exception e) {
             throw new RuntimeException("Update auction failed", e);
         }
     }
     public void deleteAuction(Connection connect, int id) {
         try {
-            auctionDao.delete(connect, id);
+            auctionDao.delete(id, connect);
         } catch (Exception e) {
             throw new RuntimeException("Delete auction failed", e);
         }
