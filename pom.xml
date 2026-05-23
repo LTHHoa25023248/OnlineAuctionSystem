@@ -67,7 +67,10 @@
             <version>11.13.5</version>
         </dependency>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/base-model
         <!-- JavaMail — gửi email OTP cho ForgotPassword -->
         <dependency>
             <groupId>com.sun.mail</groupId>
