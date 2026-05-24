@@ -12,9 +12,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
-public class AdvancedAuctionServcie {
+public class AdvancedAuctionService {
     private final AutoBidDAO autoBidDao=new AutoBidDAO();
     private final AuctionDAO auctionDao=new AuctionDAO();
     private final BidTransactionDAO bidDao=new BidTransactionDAO();
@@ -26,18 +25,18 @@ public class AdvancedAuctionServcie {
         autoBidDao.insert(connect,autoBid);
     }
 
-    //Qua trinh luu tu dong
+    //Qua trinh dau gia tu dong
     public void processAutoBids(Connection connect, Auction auction){
         // load het tat ca cac autoBid
         List<AutoBid> autoBids=autoBidDao.selectByAuctionId(connect, auction.getId());
-        // ai dang ky truoc thi uu tien truoc, sap xep theo thoi gian dang ky
-        PriorityQueue<AutoBid> queue=new PriorityQueue<>(Comparator.comparing(AutoBid::getCreatedAt));
-        queue.addAll(autoBids);
+        // Sort 1 lan truoc khi xu ly, ai dang ky truoc (createdAt nho hon) thi duoc uu tien truoc.
+        autoBids.sort(Comparator.comparing(AutoBid::getCreatedAt));
         boolean updated=true;
-        //lap cho dne khi ko ai bid duoc nua
+        // [FIX] while loop bi mat — them lai de autobid chay nhieu vong
+        // Moi vong: A dat -> B vuot A -> A vuot lai B... cho den khi khong ai dat them duoc
         while (updated){
             updated=false;
-            for (AutoBid autoBid: queue){
+            for (AutoBid autoBid: autoBids){
                 Bidder bidder=autoBid.getBidder();
                 //bo qua neu dang la nguoi dan dau
                 if(auction.getHighestBidder()!=null && auction.getHighestBidder().getId()==bidder.getId()){
@@ -60,14 +59,12 @@ public class AdvancedAuctionServcie {
                 bid.setTime(LocalDateTime.now());
                 bidDao.insert(connect,bid);
                 //update du lieu cua auction trong DB
-                
                 auctionDao.update(auction,connect);
                 updated=true;
-               
             }
         }
-
     }
+
     //gia han thoi gian
     public void applyAntiSniping(Connection connect, Auction auction){
         long secondsLeft= Duration.between(LocalDateTime.now(),auction.getEndTime()).getSeconds();

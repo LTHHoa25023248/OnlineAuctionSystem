@@ -11,7 +11,7 @@ import java.util.List;
 public class AuctionService {
     private final AuctionDAO auctionDao=new AuctionDAO();
     //tao phien dau gia
-    public void creatAuction(Connection connect, Auction auction){
+    public void createAuction(Connection connect, Auction auction){
         try{
             //kiem tra du lieu
             if(auction.getItem()==null){
@@ -20,6 +20,7 @@ public class AuctionService {
             if(auction.getSeller()==null){
                 throw new IllegalArgumentException("Seller cannot be null");
             }
+            // set trang thoi cho admin duyet
             auction.setStatus(AuctionStatus.PENDING);
             auctionDao.insert(auction,connect);
           
@@ -30,9 +31,11 @@ public class AuctionService {
     // mo phien dau gia
     public void startAuction(Connection connect, Auction auction) {
         try {
-            if (auction.getStatus() != AuctionStatus.OPEN) {
-                throw new IllegalStateException("Auction must be OPEN to start");
+            //set trang thai duyet da  moi cho mo
+            if (auction.getStatus() != AuctionStatus.PENDING) {
+                throw new IllegalStateException("Auction must be PENDING to start");
             }
+            //set trang thai, time, update data
             auction.setStatus(AuctionStatus.RUNNING);
             auction.setStartTime(LocalDateTime.now());
             auctionDao.update(auction, connect);

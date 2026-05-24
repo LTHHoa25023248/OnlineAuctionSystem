@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 //chay ngam cu moi 30sde kiem tra va dong cac phien dau gia da het gio
 public class AuctionScheduler {
-     //singleton: chi tao 1 instance duy nhat trong toan app
+     //singleton chi tao 1 instance duy nhat trong toan app
     private static AuctionScheduler instance;
     private final AuctionDAO auctionDao = new AuctionDAO();
     private final AuctionService auctionService = new AuctionService();

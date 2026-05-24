@@ -117,10 +117,6 @@ public class AuctionListController {
       currentCategory = "MINE";
       loadListings();
     });
-    watchListButton.setOnMouseClicked(e -> {
-      currentCategory = "WATCHLIST";
-      loadListings();
-    });
     profileButton.setOnMouseClicked(e -> openProfile());
 
     // ── Wire buttons ──────────────────────────────────────────────────────
@@ -265,8 +261,7 @@ public class AuctionListController {
             boolean isSpecial = currentCategory.equals("ALL")
                     || currentCategory.equals("ACTIVE")
                     || currentCategory.equals("TRENDING")
-                    || currentCategory.equals("MINE")
-                    || currentCategory.equals("WATCHLIST");
+                    || currentCategory.equals("MINE");
             return !isSpecial && !item.category.equalsIgnoreCase(currentCategory);
         });
 

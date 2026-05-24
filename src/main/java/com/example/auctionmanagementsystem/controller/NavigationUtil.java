@@ -30,13 +30,10 @@ public class NavigationUtil {
   public static final String PROFILE = "View/auction_profile.fxml";
   public static final String ADMIN = "View/AdminDashboard.fxml";
   public static final String MAIN_LAYOUT = "View/main_layout.fxml";
-  public static final String DEPOSIT = "View/deposit.fxml";
 
   public static final String AUCTION_CARD = "View/components/auction_card.fxml";
   public static final String ADD_LISTING = "View/components/add_listing.fxml";
   public static final String SORTING_MENU = "View/components/sortingmenu.fxml";
-  public static final String CHART = "View/components/chart.fxml";
-  public static final String COMMENT = "View/components/comment.fxml";
 
   // ── Scene switcher ────────────────────────────────────────────────────────
 

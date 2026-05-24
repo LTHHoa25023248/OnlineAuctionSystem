@@ -1,32 +1,16 @@
 package com.example.auctionmanagementsystem.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXScrollPane;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * AuctionDetailController — Popup chi tiết đấu giá (auction_detail.fxml).
- *
- * Mở từ AuctionListController.openAuctionDetail(id). Sau khi popup load xong, caller gọi
- * loadAuction(id) để điền dữ liệu.
- *
- * Tính năng: - Hiển thị thông tin đầy đủ của auction (ảnh, giá, thời gian, mô tả) - Đặt giá (Place
- * Bid) - Kết thúc đấu giá sớm (End Now — chỉ admin) - Đăng comment
- *
- * TODO: Thay dữ liệu mẫu trong loadAuction() bằng AuctionDAO.getById(id). Kết nối BidDAO.placeBid()
- * và CommentDAO.post().
+ * Mở từ AuctionListController. Caller gọi loadAuction(id) sau khi popup load.
  */
 public class AuctionDetailController {
 
@@ -66,14 +50,6 @@ public class AuctionDetailController {
   @FXML
   private MFXButton endnowButton; // chỉ hiện với admin
 
-  // ── FXML fields — comment section ────────────────────────────────────────
-  @FXML
-  private MFXTextField commentField;
-  @FXML
-  private MFXButton commentPostButton;
-  @FXML
-  private MFXScrollPane commentsPane; // chứa danh sách comment
-
   // closeButton là ImageView (không phải MFXButton) — dùng onMouseClicked
   @FXML
   private ImageView closeButton;
@@ -81,20 +57,14 @@ public class AuctionDetailController {
   /** ID auction đang xem */
   private int currentAuctionId;
 
-  /** Danh sách comment trong session (chưa lưu DB) */
-  private final List<String[]> commentList = new ArrayList<>();
-
   @FXML
   public void initialize() {
-    // Khởi tạo trạng thái ban đầu
     bidValidationLabel.setText("");
     winnerLabel.setText("");
-    endnowButton.setVisible(false); // ẩn mặc định, chỉ hiện nếu admin
+    endnowButton.setVisible(false);
 
-    // Wire sự kiện
     placeBidButton.setOnAction(e -> handlePlaceBid());
     endnowButton.setOnAction(e -> handleEndNow());
-    commentPostButton.setOnAction(e -> handlePostComment());
     closeButton.setOnMouseClicked(this::handleClose);
   }
 
@@ -121,8 +91,6 @@ public class AuctionDetailController {
 
     // Nút "End Now" chỉ hiện với admin
     endnowButton.setVisible(SessionManager.getInstance().isAdmin());
-
-    loadComments();
   }
 
   // ── Bid handling ──────────────────────────────────────────────────────────
@@ -162,45 +130,6 @@ public class AuctionDetailController {
     winnerLabel.setText("Auction ended. The winner has been determined!");
     endnowButton.setDisable(true); // không cho end lần 2
     // TODO: AuctionDAO.endNow(currentAuctionId);
-  }
-
-  // ── Comment handling ──────────────────────────────────────────────────────
-
-  /**
-   * Đăng comment mới. Thêm vào list tạm và reload danh sách comment. TODO: Gọi CommentDAO.post()
-   * thay vì lưu trong memory.
-   */
-  private void handlePostComment() {
-    String text = commentField.getText().trim();
-    if (text.isEmpty())
-      return;
-
-    String username = SessionManager.getInstance().getUsername();
-    // Lưu tạm: [username, text, timeAgo]
-    commentList.add(new String[] {username, text, "Just now"});
-    commentField.setText("");
-    loadComments();
-  }
-
-  /**
-   * Render lại danh sách comment vào commentsPane. Load comment_card.fxml cho mỗi comment và set
-   * vào VBox.
-   */
-  private void loadComments() {
-    VBox commentBox = new VBox(8);
-    for (String[] c : commentList) {
-      try {
-        FXMLLoader loader =
-            new FXMLLoader(NavigationUtil.class.getResource("../" + NavigationUtil.COMMENT));
-        Node node = loader.load();
-        CommentController ctrl = loader.getController();
-        ctrl.setComment(c[0], c[1], c[2]);
-        commentBox.getChildren().add(node);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    commentsPane.setContent(commentBox);
   }
 
   /** Đóng popup chi tiết */

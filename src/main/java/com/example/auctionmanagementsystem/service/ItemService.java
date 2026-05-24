@@ -9,10 +9,10 @@ import java.sql.Connection;
 public class ItemService {
     private final ItemDAO itemDAO = new ItemDAO();
 
-    public int creatItem(Item item) {
+    public int createItem(Item item) {
         Connection connect = null;
         try {
-            connect = new DatabaseConnection().getConnection();
+            connect = DatabaseConnection.getConnection();
             //luu du lieu tam thoi, chua ghi xuong vao DB
             connect.setAutoCommit(false);
             // insert du lieu bang item
@@ -47,7 +47,9 @@ public class ItemService {
     public void updateItem(Item item) {
         Connection connect = null;
         try {
-            connect = new DatabaseConnection().getConnection();
+            // [FIX] xoa dong thua new DatabaseConnection(), dung static method dung cach
+            connect = DatabaseConnection.getConnection();
+            // luu du lieu tam thoi, chua vao DB
             connect.setAutoCommit(false);
             itemDAO.update( item,connect);
             connect.commit();
@@ -55,6 +57,7 @@ public class ItemService {
         } catch (Exception e) {
             try {
                 if (connect != null) {
+                    //tra ve trang thai cu neu loi
                     connect.rollback();
                 }
 
@@ -62,9 +65,7 @@ public class ItemService {
                 ex.printStackTrace();
             }
             throw new RuntimeException(
-                    "Update item failed",
-                    e
-            );
+                    "Update item failed",e );
 
         } finally {
             try {
@@ -82,14 +83,16 @@ public class ItemService {
     public void deleteItem(Item item) {
         Connection connect = null;
         try {
-            connect = new DatabaseConnection().getConnection();
+            connect = DatabaseConnection.getConnection();
+            //luu du lieu tam thoi, chua luu xuong DB
             connect.setAutoCommit(false);
-           itemDAO.delete(item,connect);
+           itemDAO.delete(item.getId(),connect);
             connect.commit();
 
         } catch (Exception e) {
             try {
                 if (connect != null) {
+                    //rollback neu sai
                     connect.rollback();
                 }
             } catch (Exception ex) {
@@ -111,13 +114,10 @@ public class ItemService {
 
 
     public Item getItemById(int id) {
-        try (Connection connect = new DatabaseConnection().getConnection()) {
+        try (Connection connect = DatabaseConnection.getConnection()) {
             return itemDAO.selectById( id,connect);
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Get item failed",
-                    e
-            );
+            throw new RuntimeException("Get item failed",e);
         }
     }
 }

@@ -14,34 +14,28 @@ public class AuctionMapper {
     auction.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
     auction.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
 
-    // 1. Map Item (Chỉ set ID bằng một đối tượng giả/proxy)
-    // Lưu ý: Không khởi tạo ItemDAO ở đây. Để Factory hoặc subclass tạo đối tượng nếu cần,
-    // hoặc tạm thời dùng một concrete class nếu Item là abstract (ví dụ: tạo một phương thức tĩnh trong ItemFactory để trả về stub).
-    // Dưới đây giả định bạn có một cách tạo stub hoặc sử dụng subclass mặc định.
     int itemId = rs.getInt("item_id");
     if (!rs.wasNull()) {
-      // Nếu Item là Abstract, bạn nên có cơ chế tạo Dummy Object (VD: ItemFactory.createDummyItem(itemId))
-      // Ở đây tôi ví dụ tạo qua Factory để giữ ID.
+     //tao item qua ItemFactory
       Item item = ItemFactory.createDummyItem(itemId);
       auction.setItem(item);
     }
 
-    // 2. Map Seller (Chỉ set ID)
+    //chi set id
     int sellerId = rs.getInt("seller_id");
     if (!rs.wasNull()) {
       Seller seller = new Seller();
       seller.setId(sellerId);
       auction.setSeller(seller);
     }
-
-    // 3. Map Highest Bidder (Chỉ set ID)
+   //chi set id 
     int bidderId = rs.getInt("highest_bidder_id");
     if (!rs.wasNull()) {
       Bidder bidder = new Bidder();
       bidder.setId(bidderId);
       auction.setHighestBidder(bidder);
     }
-    //// doc ly do admin tu choi
+    // doc ly do admin tu choi
     String rejectReason = rs.getString("reject_reason");
     if (!rs.wasNull()) {
       // set neu cot khong null

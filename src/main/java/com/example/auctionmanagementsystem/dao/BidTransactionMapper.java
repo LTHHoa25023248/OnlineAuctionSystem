@@ -3,7 +3,6 @@ package com.example.auctionmanagementsystem.dao;
 import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.Bidder;
-import com.example.auctionmanagementsystem.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
