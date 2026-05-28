@@ -13,26 +13,35 @@ public class AuctionMapper {
     auction.setStatus(AuctionStatus.valueOf(rs.getString("status")));
     auction.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
     auction.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
-    // Set item-> chi set id, khong join vao full ohject. tranh viec query nang
+
+    // 1. Map Item (Chỉ set ID bằng một đối tượng giả/proxy)
+    // Lưu ý: Không khởi tạo ItemDAO ở đây. Để Factory hoặc subclass tạo đối tượng nếu cần,
+    // hoặc tạm thời dùng một concrete class nếu Item là abstract (ví dụ: tạo một phương thức tĩnh trong ItemFactory để trả về stub).
+    // Dưới đây giả định bạn có một cách tạo stub hoặc sử dụng subclass mặc định.
     int itemId = rs.getInt("item_id");
-    // Item dang de abstract, nho ItemDao tao doi tuong-> boi trong itemDao co selectById co
-    // factory, return ve item
-    ItemDAO itemDao = new ItemDAO();
-    Item item = itemDao.selectById(rs.getStatement().getConnection(), itemId);
-    auction.setItem(item);
-    // set Seller cung chi set id
+    if (!rs.wasNull()) {
+      // Nếu Item là Abstract, bạn nên có cơ chế tạo Dummy Object (VD: ItemFactory.createDummyItem(itemId))
+      // Ở đây tôi ví dụ tạo qua Factory để giữ ID.
+      Item item = ItemFactory.createDummyItem(itemId);
+      auction.setItem(item);
+    }
+
+    // 2. Map Seller (Chỉ set ID)
     int sellerId = rs.getInt("seller_id");
-    Seller seller = new Seller();
-    seller.setId(sellerId);
-    auction.setSeller(seller);
-    // set highest bidder
+    if (!rs.wasNull()) {
+      Seller seller = new Seller();
+      seller.setId(sellerId);
+      auction.setSeller(seller);
+    }
+
+    // 3. Map Highest Bidder (Chỉ set ID)
     int bidderId = rs.getInt("highest_bidder_id");
-    // rs.wasNull() kiem tra neu DB tra ve Null
     if (!rs.wasNull()) {
       Bidder bidder = new Bidder();
       bidder.setId(bidderId);
       auction.setHighestBidder(bidder);
     }
+
     return auction;
   }
 }
