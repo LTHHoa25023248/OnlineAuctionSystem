@@ -44,7 +44,7 @@ public class ItemTest {
     assertEquals(0.0, item.getStartingPrice());
   }
 
-  // TC3: Khởi tạo với giá âm (BVA) - Ném ngoại lệ
+  // Khởi tạo với giá âm (BVA) - Ném ngoại lệ
   @Test
   public void testItemConstructor_NegativePrice_ThrowsException() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {

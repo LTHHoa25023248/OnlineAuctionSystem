@@ -18,8 +18,8 @@ public class ItemFactoryTest {
 
     // Sử dụng assertTrue(item instanceof Electronics) để xác minh tính Đa hình (Polymorphism) và
     // Factory Method Pattern
-    assertNotNull(item, "Đối tượng không được để rỗng");
-    assertTrue(item instanceof Electronics, "Thể hiện của loại Electronics");
+    assertNotNull(item);
+    assertTrue(item instanceof Electronics);
     assertEquals("Laptop Dell", item.getName());
     assertEquals(150.0, item.getStartingPrice());
 
