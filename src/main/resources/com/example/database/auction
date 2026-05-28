@@ -1,0 +1,11 @@
+CREATE TABLE auction (
+    id INT NOT NULL AUTO_INCREMENT,
+    item_id INT NOT NULL,
+    seller_id INT NOT NULL,
+    current_price DOUBLE NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    highest_bidder_id INT DEFAULT NULL,
+    reject_reason VARCHAR(300) DEFAULT NULL,
+    PRIMARY KEY (id)

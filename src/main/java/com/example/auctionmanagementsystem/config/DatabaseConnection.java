@@ -1,28 +1,53 @@
 package com.example.auctionmanagementsystem.config;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * DatabaseConnection — Quản lý kết nối MySQL.
  *
- * Pattern: Mỗi lần gọi getConnection() tạo một Connection mới. Sử dụng try-with-resources trong DAO
- * để đảm bảo Connection luôn được đóng.
- *
- * Cấu hình: - URL : jdbc:mysql://localhost:3306/auction_system - USER : auction_system - PASSWORD :
- * Huy2605@@
- *
- * Nếu muốn thay đổi thông tin kết nối, chỉnh sửa các hằng số bên dưới.
+ * Cấu hình qua file: src/main/resources/database.properties
+ * Để chuyển sang cloud DB: chỉnh sửa database.properties, không cần sửa file này.
  */
 public class DatabaseConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/auction_system";
-    private static final String USER = "auction_system"; 
-    private static final String PASSWORD = "password"; 
+    private static final String URL;
+    private static final String USER;
+    private static final String PASSWORD;
 
-  // ── Load MySQL Driver một lần khi class được nạp ─────────────────────────
   static {
+    // Đọc cấu hình từ database.properties
+    Properties props = new Properties();
+    String url      = "jdbc:mysql://localhost:3306/auction_system?serverTimezone=Asia/Ho_Chi_Minh";
+    String user     = "auction_system";
+    String password = "Huy2605@@";
+
+    try (InputStream in = DatabaseConnection.class
+            .getClassLoader().getResourceAsStream("database.properties")) {
+      if (in != null) {
+        props.load(in);
+        String cfgUrl  = props.getProperty("db.url");
+        String cfgUser = props.getProperty("db.user");
+        String cfgPass = props.getProperty("db.password");
+        // Chỉ dùng giá trị từ file nếu chưa còn placeholder
+        if (cfgUrl  != null && !cfgUrl.contains("YOUR_"))  url      = cfgUrl;
+        if (cfgUser != null && !cfgUser.contains("YOUR_")) user     = cfgUser;
+        if (cfgPass != null && !cfgPass.contains("YOUR_")) password = cfgPass;
+        System.out.println("[DatabaseConnection] Config loaded: " + url.replaceAll("password=[^&]*", "password=***"));
+      } else {
+        System.out.println("[DatabaseConnection] database.properties not found, using default.");
+      }
+    } catch (Exception e) {
+      System.err.println("[DatabaseConnection] Failed to load properties: " + e.getMessage());
+    }
+
+    URL      = url;
+    USER     = user;
+    PASSWORD = password;
+
     try {
       Class.forName("com.mysql.cj.jdbc.Driver");
     } catch (ClassNotFoundException e) {
