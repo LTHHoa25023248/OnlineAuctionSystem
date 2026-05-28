@@ -48,13 +48,6 @@
                         </ImageView>
                     </StackPane>
 
-                    <VBox spacing="4">
-                        <Label text="LISTED BY" styleClass="detailSectionLabel"/>
-                        <Label fx:id="userLabel" text="---" styleClass="detailBodyText"/>
-                    </VBox>
-
-                    <Separator styleClass="detailSeparator"/>
-
                     <VBox spacing="6" VBox.vgrow="ALWAYS">
                         <Label text="DESCRIPTION" styleClass="detailSectionLabel"/>
                         <Label fx:id="descriptionLabel" wrapText="true"
@@ -115,10 +108,40 @@
                                                styleClass="endNowButton"
                                                prefHeight="32.0" prefWidth="88.0"/>
                                 </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <Label text="Time Left"
+                                           styleClass="detailInfoKey" prefWidth="110.0"/>
+                                    <Label fx:id="countdownLabel" text="---"
+                                           styleClass="detailInfoValue"/>
+                                </HBox>
                             </VBox>
+
+                            <!-- Seller: Edit / Delete buttons -->
+                            <HBox fx:id="sellerActionsDetailBox" spacing="10"
+                                  alignment="CENTER_LEFT" visible="false" managed="false">
+                                <Button fx:id="detailEditButton" text="Edit Item"
+                                        onAction="#handleDetailEdit"
+                                        style="-fx-background-color:#1565C0;-fx-text-fill:white;-fx-font-size:12px;-fx-padding:6 16;-fx-cursor:hand;"/>
+                                <Button fx:id="detailDeleteButton" text="Delete Auction"
+                                        onAction="#handleDetailDelete"
+                                        style="-fx-background-color:#B71C1C;-fx-text-fill:white;-fx-font-size:12px;-fx-padding:6 16;-fx-cursor:hand;"/>
+                            </HBox>
 
                             <Label fx:id="winnerLabel" text=""
                                    styleClass="winnerLabel" wrapText="true"/>
+                            <Label fx:id="paymentInfoLabel" text=""
+                                   wrapText="true"
+                                   style="-fx-font-size: 13px; -fx-text-fill: #555555;"/>
+
+                            <Separator styleClass="detailSeparator"/>
+
+                            <!-- Bid History -->
+                            <VBox spacing="8">
+                                <Label text="BID HISTORY" styleClass="detailSectionLabel"/>
+                                <ListView fx:id="bidHistoryList"
+                                          prefHeight="160.0"
+                                          styleClass="bidHistoryList"/>
+                            </VBox>
 
                             <Separator styleClass="detailSeparator"/>
 
@@ -140,20 +163,24 @@
 
                             <Separator styleClass="detailSeparator"/>
 
-                            <!-- Comments -->
-                            <VBox spacing="10">
-                                <Label text="COMMENTS" styleClass="detailSectionLabel"/>
-                                <MFXScrollPane fx:id="commentsPane" styleClass="scrollPane"
-                                               prefHeight="180.0" maxWidth="Infinity"/>
+                            <!-- Auto Bid -->
+                            <VBox fx:id="autoBidSection" spacing="8">
+                                <Label text="AUTO BID" styleClass="detailSectionLabel"/>
                                 <HBox spacing="10" alignment="CENTER_LEFT">
-                                    <MFXTextField fx:id="commentField" styleClass="fields"
-                                                  promptText="Write a comment..."
-                                                  prefHeight="44.0"
+                                    <MFXTextField fx:id="maxBidField" styleClass="fields"
+                                                  promptText="Max bid (USD)"
+                                                  prefHeight="48.0"
                                                   HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                                    <MFXButton fx:id="commentPostButton" styleClass="goldButton"
-                                               text="Post"
-                                               prefHeight="44.0" prefWidth="70.0"/>
+                                    <MFXTextField fx:id="incrementField" styleClass="fields"
+                                                  promptText="Increment per bid (USD)"
+                                                  prefHeight="48.0"
+                                                  HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                                 </HBox>
+                                <MFXButton fx:id="autoBidButton" styleClass="outlineButton"
+                                           text="Register Auto Bid"
+                                           prefHeight="44.0" maxWidth="Infinity"/>
+                                <Label fx:id="autoBidStatusLabel" styleClass="errorLabel"
+                                       text="" wrapText="true"/>
                             </VBox>
 
                         </VBox>

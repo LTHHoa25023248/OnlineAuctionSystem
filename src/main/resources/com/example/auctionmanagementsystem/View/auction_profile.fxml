@@ -81,10 +81,6 @@
                     <Label fx:id="balanceLabel" text="0.00 USD"
                            style="-fx-text-fill: #F0C060; -fx-font-family: Georgia;
                                   -fx-font-size: 24px; -fx-font-weight: bold;"/>
-                    <MFXButton fx:id="depositButton" styleClass="myButtons"
-                               text="Deposit Funds"
-                               onAction="#onDepositButtonClick"
-                               prefHeight="40.0" maxWidth="Infinity"/>
                 </VBox>
 
                 <Region prefHeight="16.0"/>

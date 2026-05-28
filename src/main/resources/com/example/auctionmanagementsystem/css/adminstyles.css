@@ -67,14 +67,14 @@
 }
 
 .navActive {
-    -fx-background-color: rgba(212,168,58,0.12);
-    -fx-border-color: transparent transparent transparent #F0C060;
+    -fx-background-color: rgba(212,168,58,0.08);
+    -fx-border-color: transparent transparent transparent rgba(240,192,96,0.80);
     -fx-border-width: 0 0 0 2px;
 }
 
 .navActive .navLabel {
     -fx-text-fill: #F0C060;
-    -fx-font-weight: bold;
+    -fx-font-weight: normal;
 }
 
 /* ══════════════════════════════════════════════════════════════

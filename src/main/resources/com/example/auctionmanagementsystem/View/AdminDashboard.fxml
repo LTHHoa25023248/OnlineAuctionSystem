@@ -20,14 +20,11 @@
                 <HBox styleClass="navItem" onMouseClicked="#handleHome">
                     <Label text="Home" styleClass="navLabel"/>
                 </HBox>
-                <HBox styleClass="navItem navActive" onMouseClicked="#handleListings">
+                <HBox fx:id="navListings" styleClass="navItem" onMouseClicked="#handleListings">
                     <Label text="All Listings" styleClass="navLabel"/>
                 </HBox>
-                <HBox styleClass="navItem" onMouseClicked="#handleUsers">
+                <HBox fx:id="navUsers" styleClass="navItem" onMouseClicked="#handleUsers">
                     <Label text="Users" styleClass="navLabel"/>
-                </HBox>
-                <HBox styleClass="navItem" onMouseClicked="#handleAnalytics">
-                    <Label text="Analytics" styleClass="navLabel"/>
                 </HBox>
             </VBox>
         </VBox>
@@ -56,41 +53,37 @@
                         <Label fx:id="totalListingsLabel" text="---" styleClass="statValue">
                             <font><Font name="Georgia" size="24.0"/></font>
                         </Label>
-                        <Label text="+12 this week" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
                         <Label text="ACTIVE AUCTIONS" styleClass="statLabel"/>
                         <Label fx:id="activeAuctionsLabel" text="---" styleClass="statValue statValueGold">
                             <font><Font name="Georgia" size="24.0"/></font>
                         </Label>
-                        <Label text="Ends within 7 days" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
                         <Label text="TOTAL USERS" styleClass="statLabel"/>
                         <Label fx:id="totalUsersLabel" text="---" styleClass="statValue">
                             <font><Font name="Georgia" size="24.0"/></font>
                         </Label>
-                        <Label text="+48 this month" styleClass="statSub"/>
                     </VBox>
                     <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
                         <Label text="REVENUE" styleClass="statLabel"/>
                         <Label fx:id="revenueLabel" text="---" styleClass="statValue statValueGold">
                             <font><Font name="Georgia" size="24.0"/></font>
                         </Label>
-                        <Label text="Lifetime total" styleClass="statSub"/>
                     </VBox>
                 </HBox>
 
-                <VBox styleClass="tableCard">
+                <VBox fx:id="listingsCard" styleClass="tableCard">
                     <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
                         <Label text="Auction Listings" styleClass="tableHeaderTitle"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <HBox styleClass="filterTabs" spacing="6">
-                            <Button text="All"     styleClass="ftab ftabActive" onAction="#filterAll"/>
-                            <Button text="Jewelry" styleClass="ftab" onAction="#filterJewelry"/>
-                            <Button text="Watches" styleClass="ftab" onAction="#filterWatches"/>
-                            <Button text="Cars"    styleClass="ftab" onAction="#filterCars"/>
-                            <Button text="Others"  styleClass="ftab" onAction="#filterOthers"/>
+                            <Button text="All"         styleClass="ftab ftabActive" onAction="#filterAll"/>
+                            <Button text="Pending"     styleClass="ftab" onAction="#filterPending"/>
+                            <Button text="Electronics" styleClass="ftab" onAction="#filterElectronics"/>
+                            <Button text="Art"         styleClass="ftab" onAction="#filterArt"/>
+                            <Button text="Vehicle"     styleClass="ftab" onAction="#filterVehicle"/>
                         </HBox>
                     </HBox>
                     <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="320">
@@ -122,12 +115,13 @@
                     </HBox>
                     <TableView fx:id="usersTable" styleClass="listingsTable" prefHeight="280">
                         <columns>
-                            <TableColumn fx:id="colUserId"     text="ID"       prefWidth="60"/>
-                            <TableColumn fx:id="colUsername"   text="Username" prefWidth="150"/>
-                            <TableColumn fx:id="colEmail"      text="Email"    prefWidth="200"/>
-                            <TableColumn fx:id="colRole"       text="Role"     prefWidth="90"/>
-                            <TableColumn fx:id="colUserStatus" text="Status"   prefWidth="100"/>
-                            <TableColumn fx:id="colJoinDate"   text="Joined"   prefWidth="110"/>
+                            <TableColumn fx:id="colUserId"      text="ID"       prefWidth="50"/>
+                            <TableColumn fx:id="colUsername"    text="Username" prefWidth="130"/>
+                            <TableColumn fx:id="colEmail"       text="Email"    prefWidth="180"/>
+                            <TableColumn fx:id="colRole"        text="Role"     prefWidth="80"/>
+                            <TableColumn fx:id="colUserStatus"  text="Status"   prefWidth="80"/>
+                            <TableColumn fx:id="colJoinDate"    text="Joined"   prefWidth="100"/>
+                            <TableColumn fx:id="colUserActions" text="Actions"  prefWidth="110"/>
                         </columns>
                         <placeholder>
                             <Label text="No users found"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -38,6 +39,9 @@
             <font><Font name="Berlin Sans FB" size="24.0"/></font>
         </Label>
 
+        <!-- Attributes -->
+        <VBox fx:id="attributesBox" spacing="3" />
+
         <!-- Price -->
         <Label fx:id="price" text="0 USD" styleClass="bidLabel"/>
 
@@ -46,6 +50,17 @@
 
         <!-- Time -->
         <Label fx:id="timeLeft" text="Ending In : -- D -- Hrs" styleClass="timerLabel"/>
+
+        <!-- Seller actions — only visible when logged-in user is the seller -->
+        <HBox fx:id="sellerActionsBox" spacing="6" visible="false" managed="false"
+              onMouseClicked="#onSellerActionsClick">
+            <Button fx:id="editButton" text="Edit"
+                    onAction="#onEditClick"
+                    style="-fx-background-color:#1565C0;-fx-text-fill:white;-fx-font-size:10px;-fx-padding:3 10;-fx-cursor:hand;"/>
+            <Button fx:id="deleteButton" text="Delete"
+                    onAction="#onDeleteClick"
+                    style="-fx-background-color:#B71C1C;-fx-text-fill:white;-fx-font-size:10px;-fx-padding:3 10;-fx-cursor:hand;"/>
+        </HBox>
 
     </VBox>
 

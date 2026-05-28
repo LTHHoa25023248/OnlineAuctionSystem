@@ -42,37 +42,13 @@
                   StackPane.alignment="CENTER">
 
                 <VBox styleClass="loginLeftPanel"
-                      alignment="CENTER" spacing="20" prefWidth="380.0">
-                    <padding><Insets top="48" right="40" bottom="48" left="40"/></padding>
-                    <Label text="Welcome Back" styleClass="loginWelcomeTitle">
+                      alignment="CENTER" spacing="0" prefWidth="380.0">
+                    <Label text="WELCOME" styleClass="loginWelcomeTitle">
                         <font><Font name="Georgia" size="30.0"/></font>
                     </Label>
-                    <Label text="Sign in to access your auctions, bids and watchlist."
-                           styleClass="loginWelcomeSub"
-                           wrapText="true" textAlignment="CENTER"/>
-                    <Region prefHeight="10"/>
-                    <HBox spacing="0" alignment="CENTER">
-                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
-                            <Label fx:id="statListings" text="1,200+" styleClass="statNumLabel">
-                                <font><Font name="Georgia" size="20.0"/></font>
-                            </Label>
-                            <Label text="Active Listings" styleClass="statTextLabel"/>
-                        </VBox>
-                        <Separator orientation="VERTICAL" styleClass="statDivider" prefHeight="40.0"/>
-                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
-                            <Label fx:id="statMembers" text="5,800+" styleClass="statNumLabel">
-                                <font><Font name="Georgia" size="20.0"/></font>
-                            </Label>
-                            <Label text="Members" styleClass="statTextLabel"/>
-                        </VBox>
-                        <Separator orientation="VERTICAL" styleClass="statDivider" prefHeight="40.0"/>
-                        <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS">
-                            <Label fx:id="statBids" text="2M+" styleClass="statNumLabel">
-                                <font><Font name="Georgia" size="20.0"/></font>
-                            </Label>
-                            <Label text="Total Bids" styleClass="statTextLabel"/>
-                        </VBox>
-                    </HBox>
+                    <Label text="AUCTION-SYSTEM" styleClass="loginWelcomeTitle">
+                        <font><Font name="Georgia" size="22.0"/></font>
+                    </Label>
                 </VBox>
 
                 <Separator orientation="VERTICAL" styleClass="panelDivider"/>

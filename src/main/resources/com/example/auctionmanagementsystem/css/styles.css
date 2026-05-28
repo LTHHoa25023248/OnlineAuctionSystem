@@ -713,3 +713,65 @@
 .sortingOption .radio-button {
     -fx-text-fill: #F2F0EC;
 }
+/*--THÔNG BÁO-------------------------- */
+
+/* Nút chuông: nền trong suốt, bo tròn, sáng nhẹ khi hover */
+.iconButton {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-padding: 4;
+}
+.iconButton:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* StackPane bọc chuông + badge (cho badge nhô ra góc) */
+.bellPane {
+    -fx-padding: 0;
+}
+
+/* Badge đỏ đếm số thông báo chưa đọc */
+.notificationBadge {
+    -fx-background-color: #e53935;
+    -fx-text-fill: white;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 999;
+    -fx-min-width: 16;
+    -fx-min-height: 16;
+    -fx-alignment: center;
+    -fx-padding: 0 4 0 4;
+    -fx-border-color: rgba(0,0,0,0.25);
+    -fx-border-radius: 999;
+    -fx-border-width: 0.5;
+}
+
+/* ListView thông báo trong popup */
+.notificationListView {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.notificationListView .list-cell {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 10;
+    -fx-padding: 12 14 12 14;
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+    /* khoảng cách giữa các cell */
+    -fx-border-color: transparent transparent rgba(255,255,255,0.06) transparent;
+    -fx-border-width: 0 0 6 0;
+}
+.notificationListView .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+.notificationListView .list-cell:hover {
+    -fx-background-color: rgba(255,255,255,0.09);
+}
+
+/* Dòng "chưa có thông báo" */
+.emptyLabel {
+    -fx-text-fill: rgba(255,255,255,0.55);
+}
