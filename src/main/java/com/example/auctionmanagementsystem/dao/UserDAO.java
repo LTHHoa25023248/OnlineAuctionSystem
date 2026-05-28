@@ -3,13 +3,10 @@ package com.example.auctionmanagementsystem.dao;
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
 import java.sql.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 public class UserDAO implements DAOInterface<User> {
 
-  // =====================================================
-  // INSERT USER
-  // =====================================================
   // =====================================================
   // INSERT USER
   // =====================================================
@@ -20,7 +17,7 @@ public class UserDAO implements DAOInterface<User> {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
-    // KHÔNG TỰ MỞ CONNECTION NỮA, DÙNG conn ĐƯỢC TRUYỀN VÀO
+    // Dùng conn được truyền vào thay vì tự mở connection riêng
     try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       pstmt.setString(1, user.getUsername());
       pstmt.setString(2, user.getPassword()); // Nên hash
@@ -60,7 +57,7 @@ public class UserDAO implements DAOInterface<User> {
       }
       return affectedRows;
     } catch (SQLException e) {
-      // Tốt nhất nên ném RuntimeException như AuctionDAO thay vì in ra rồi trả về 0
+      // Ném RuntimeException như AuctionDAO thay vì in ra rồi trả về 0
       throw new RuntimeException("[UserDAO.insert] SQL Error: " + e.getMessage(), e);
     }
   }
@@ -213,7 +210,7 @@ public class UserDAO implements DAOInterface<User> {
 
     return false;
   }
-  // =====================================================
+// =====================================================
 // CHECK EMAIL EXISTS FOR RESET PASSWORD
 // =====================================================
   public static boolean emailExistsForReset(String email) {
@@ -237,7 +234,7 @@ public class UserDAO implements DAOInterface<User> {
 
     return false;
   }
-  // =====================================================
+// =====================================================
 // SAVE RESET CODE
 // =====================================================
   public static boolean saveResetCode(String email,
@@ -255,12 +252,10 @@ public class UserDAO implements DAOInterface<User> {
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
       pstmt.setString(1, code);
-
-      pstmt.setTimestamp(
-              2,
-              new Timestamp(expiresAt)
-      );
-
+      // Dùng LocalDateTime để tránh lệch timezone với MySQL CURRENT_TIMESTAMP
+      long minutesLeft = (expiresAt - System.currentTimeMillis()) / 60_000;
+      java.time.LocalDateTime expiry = java.time.LocalDateTime.now().plusMinutes(Math.max(minutesLeft, 1));
+      pstmt.setTimestamp(2, Timestamp.valueOf(expiry));
       pstmt.setString(3, email);
 
       return pstmt.executeUpdate() > 0;
@@ -273,7 +268,7 @@ public class UserDAO implements DAOInterface<User> {
 
     return false;
   }
-  // =====================================================
+// =====================================================
 // VERIFY RESET CODE
 // =====================================================
   public static boolean verifyResetCode(String email,
@@ -306,7 +301,7 @@ public class UserDAO implements DAOInterface<User> {
 
     return false;
   }
-  // =====================================================
+// =====================================================
 // RESET PASSWORD
 // =====================================================
   public static boolean resetPassword(String email,
@@ -352,7 +347,7 @@ public class UserDAO implements DAOInterface<User> {
     String sql = """
         INSERT INTO users 
         (first_name, last_name, username, email, phone, user_password, address, role, is_active, balance) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'BIDDER', true, 0.0)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'BIDDER', true, 50000.0)
         """;
     return executeRegister(sql, firstName, lastName, username, email, phone, password, address);
   }
@@ -478,9 +473,9 @@ public class UserDAO implements DAOInterface<User> {
         return user;
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
+  // ==========================================================================
   // MAPPING HELPER
-  // ══════════════════════════════════════════════════════════════════════════
+  // ==========================================================================
 
   /**
    * Map một ResultSet row thành đúng loại User (Bidder / Seller / Admin). Gọi khi rs.next() đã trả
@@ -500,7 +495,7 @@ public class UserDAO implements DAOInterface<User> {
     return user;
   }
   // =====================================================
-  // LOGIN (Thêm mới cho LoginController)
+  // LOGIN 
   // =====================================================
   public static User login(String username, String password) {
     String sql = "SELECT * FROM users WHERE username = ? AND user_password = ? AND is_active = true";
@@ -525,7 +520,25 @@ public class UserDAO implements DAOInterface<User> {
   }
 
   // =====================================================
-  // GET STRING FIELD (Thêm mới cho LoginController)
+  // UPDATE PROFILE (phone, firstName, lastName)
+  // =====================================================
+  public static boolean updateProfile(int userId, String firstName, String lastName, String phone) {
+    String sql = "UPDATE users SET first_name=?, last_name=?, phone=? WHERE id=?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+      pstmt.setString(1, firstName != null ? firstName : "");
+      pstmt.setString(2, lastName != null ? lastName : "");
+      pstmt.setString(3, phone != null ? phone : "");
+      pstmt.setInt(4, userId);
+      return pstmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+      System.err.println("[UserDAO.updateProfile] SQL Error: " + e.getMessage());
+      return false;
+    }
+  }
+
+  // =====================================================
+  // GET STRING FIELD 
   // =====================================================
   public static String getStringField(int userId, String fieldName) {
     // Chỉ cho phép các cột an toàn để tránh SQL Injection
@@ -547,6 +560,49 @@ public class UserDAO implements DAOInterface<User> {
       e.printStackTrace();
     }
     return "";
+  }
+
+  // =====================================================
+  // SET ACTIVE (Ban / Unban)
+  // =====================================================
+  public static boolean setActive(int userId, boolean active) {
+    String sql = "UPDATE users SET is_active = ? WHERE id = ?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setBoolean(1, active);
+      ps.setInt(2, userId);
+      return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+      System.err.println("[UserDAO.setActive] SQL Error: " + e.getMessage());
+      return false;
+    }
+  }
+
+  // =====================================================
+  // BALANCE HELPERS — dùng bởi PaymentService
+  // =====================================================
+  public static double getBalance(int userId, Connection conn) {
+    String sql = "SELECT balance FROM users WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setInt(1, userId);
+      try (ResultSet rs = ps.executeQuery()) {
+        if (rs.next()) return rs.getDouble("balance");
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException("[UserDAO.getBalance] SQL Error", e);
+    }
+    return 0.0;
+  }
+
+  public static void updateBalance(int userId, double newBalance, Connection conn) {
+    String sql = "UPDATE users SET balance = ? WHERE id = ?";
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setDouble(1, newBalance);
+      ps.setInt(2, userId);
+      ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException("[UserDAO.updateBalance] SQL Error", e);
+    }
   }
 
 }
