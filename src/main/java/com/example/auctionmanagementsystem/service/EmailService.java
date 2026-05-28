@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class EmailService {
 
-  // ── Cấu hình SMTP ────────────────────────────────────────────────────────
+
   private static final String SMTP_HOST = "smtp.gmail.com";
   private static final int SMTP_PORT = 587;
 
@@ -20,7 +20,7 @@ public class EmailService {
   // OTP hết hạn sau 10 phút (ms)
   public static final long OTP_EXPIRE_MS = 10 * 60 * 1000L;
 
-  // ── Public API ────────────────────────────────────────────────────────────
+
 
   /**
    * Tạo mã OTP 6 chữ số ngẫu nhiên.
@@ -43,7 +43,7 @@ public class EmailService {
       Message message = new MimeMessage(session);
       message.setFrom(new InternetAddress(SENDER_EMAIL, "Auction House"));
       message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-      message.setSubject("🔑 Your Password Reset Code — Auction House");
+      message.setSubject(" Your Password Reset Code — Auction House");
       message.setContent(buildEmailBody(code), "text/html; charset=utf-8");
 
       Transport.send(message);
@@ -57,7 +57,6 @@ public class EmailService {
     }
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
 
   private static Session buildSession() {
     Properties props = new Properties();

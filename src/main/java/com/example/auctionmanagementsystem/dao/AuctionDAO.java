@@ -9,28 +9,23 @@ import java.util.List;
 public class AuctionDAO implements DAOInterface<Auction> {
 
   @Override
-  public int insert(Auction auction, Connection conn) {
+  public int insert(Auction auction, Connection connect) {
     String sql = "INSERT INTO auction (item_id, seller_id, current_price, status, start_time, end_time, highest_bidder_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-    // Sử dụng try-with-resources để tự động đóng PreparedStatement
-    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (PreparedStatement ps = connect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
       ps.setInt(1, auction.getItem().getId());
       ps.setInt(2, auction.getSeller().getId());
       ps.setDouble(3, auction.getCurrentPrice());
       ps.setString(4, auction.getStatus().name());
       ps.setTimestamp(5, Timestamp.valueOf(auction.getStartTime()));
       ps.setTimestamp(6, Timestamp.valueOf(auction.getEndTime()));
-
+      // kiem tra xem highestBidder co null ko, boi luc khoi tao thi chua co ai dat gia
       if (auction.getHighestBidder() != null) {
         ps.setInt(7, auction.getHighestBidder().getId());
       } else {
         ps.setNull(7, Types.INTEGER);
       }
-
       ps.executeUpdate();
-
-      // Sử dụng try-with-resources lồng nhau cho ResultSet
-      try (ResultSet rs = ps.getGeneratedKeys()) {
+       try (ResultSet rs = ps.getGeneratedKeys()) {
         if (rs.next()) {
           int id = rs.getInt(1);
           auction.setId(id);
@@ -39,26 +34,29 @@ public class AuctionDAO implements DAOInterface<Auction> {
         throw new RuntimeException("Cannot get generated auction ID");
       }
     } catch (SQLException e) {
-      // Bọc Checked Exception thành Unchecked Exception
       throw new RuntimeException("Insert Auction failed", e);
     }
   }
 
   @Override
-  public int update(Auction auction, Connection conn) {
-    String sql = "UPDATE auction SET current_price=?, status=?, end_time=?, highest_bidder_id=? WHERE id=?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+  public int update(Auction auction, Connection connect) {
+    String sql = "UPDATE auction SET current_price=?, status=?, end_time=?, highest_bidder_id=?, reject_reason=? WHERE id=?";
+    try (PreparedStatement ps = connect.prepareStatement(sql)) {
       ps.setDouble(1, auction.getCurrentPrice());
       ps.setString(2, auction.getStatus().name());
       ps.setTimestamp(3, Timestamp.valueOf(auction.getEndTime()));
-
       if (auction.getHighestBidder() != null) {
         ps.setInt(4, auction.getHighestBidder().getId());
       } else {
         ps.setNull(4, Types.INTEGER);
       }
-      ps.setInt(5, auction.getId());
-
+     // luu ly do tu choi, neu khong co thi set Null nguoc lai 
+      if (auction.getRejectReason() != null) {
+        ps.setString(5, auction.getRejectReason());
+      } else {
+        ps.setNull(5, Types.VARCHAR);
+      }
+      ps.setInt(6, auction.getId()); 
       return ps.executeUpdate();
     } catch (SQLException e) {
       throw new RuntimeException("Update Auction failed for ID: " + auction.getId(), e);
@@ -77,12 +75,13 @@ public class AuctionDAO implements DAOInterface<Auction> {
   }
 
   @Override
-  public Auction selectById(int id, Connection conn) {
+  public Auction selectById(int id, Connection connect) {
     String sql = "SELECT * FROM auction WHERE id=?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (PreparedStatement ps = connect.prepareStatement(sql)) {
       ps.setInt(1, id);
       try (ResultSet rs = ps.executeQuery()) {
         if (!rs.next()) return null;
+        // goi ham mapRow de chuyen rs thanh oject Auction
         return AuctionMapper.mapRow(rs);
       }
     } catch (SQLException e) {
@@ -91,11 +90,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
   }
 
   @Override
-  public List<Auction> selectAll(Connection conn) {
+  public List<Auction> selectAll(Connection connect) {
     List<Auction> list = new ArrayList<>();
     String sql = "SELECT * FROM auction ORDER BY id DESC";
-    // Khai báo nhiều tài nguyên trong cùng 1 khối try
-    try (PreparedStatement ps = conn.prepareStatement(sql);
+    try (PreparedStatement ps = connect.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
       while (rs.next()) {
         list.add(AuctionMapper.mapRow(rs));
@@ -106,13 +104,27 @@ public class AuctionDAO implements DAOInterface<Auction> {
     }
   }
 
-  // Không cần Override nếu Interface không yêu cầu hàm đặc thù này
-  public List<Auction> selectOpenAuctions(Connection conn) {
+ // danh sach dau gia cho admin duyet qua
+  public List<Auction> selectPendingAuctions(Connection connect) {
     List<Auction> list = new ArrayList<>();
-    // Tránh dùng NOW() của database, ưu tiên dùng tham số để kiểm soát Timezone
+    //lay cac auctiion co statu=PENDING, sap xep theo id tang dan, ai tao truoc thi duoc xet truoc
+    String sql = "SELECT * FROM auction WHERE status='PENDING' ORDER BY id ASC";
+    try (PreparedStatement ps = connect.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+      while (rs.next()) {
+        list.add(AuctionMapper.mapRow(rs));
+      }
+      return list;
+    } catch (SQLException e) {
+      throw new RuntimeException("SelectPendingAuctions failed", e);
+    }
+  }
+
+ 
+  public List<Auction> selectOpenAuctions(Connection connect) {
+    List<Auction> list = new ArrayList<>();
     String sql = "SELECT * FROM auction WHERE status='RUNNING' AND end_time > ?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-      // Truyền thời gian hiện tại từ tầng ứng dụng Java
+    try (PreparedStatement ps = connect.prepareStatement(sql)) {
       ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {

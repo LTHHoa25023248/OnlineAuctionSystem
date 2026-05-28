@@ -7,4 +7,5 @@ CREATE TABLE auction (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     highest_bidder_id INT DEFAULT NULL,
+    reject_reason VARCHAR(300) DEFAULT NULL,
     PRIMARY KEY (id)

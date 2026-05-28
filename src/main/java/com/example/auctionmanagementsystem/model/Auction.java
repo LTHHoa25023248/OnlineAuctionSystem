@@ -102,7 +102,11 @@ public class Auction extends Entity {
     hisAutoBid.add(autoBid);
   }
 
-  public void getRejectReason(String rejectReason) {
+  public String getRejectReason() {
+    return rejectReason;
+  }
+
+  public void setRejectReason(String rejectReason) {
     this.rejectReason = rejectReason;
   }
 

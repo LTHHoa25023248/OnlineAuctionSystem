@@ -1,5 +1,10 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.config.DatabaseConnection;
+import com.example.auctionmanagementsystem.model.*;
+import com.example.auctionmanagementsystem.service.AuctionService;
+import com.example.auctionmanagementsystem.service.ImageStorageService;
+import com.example.auctionmanagementsystem.service.ItemService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -12,23 +17,20 @@ import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 
 import java.io.File;
-import java.util.concurrent.ThreadLocalRandom;
+import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * ════════════════════════════════════════════════════════════ AddListingController Popup thêm sản
- * phẩm đấu giá mới — add_listing.fxml Mở từ: AuctionListController → onSellButtonClick()
- * ════════════════════════════════════════════════════════════
+ * AddListingController — Popup thêm sản phẩm đấu giá mới (add_listing.fxml)
+ * Mở từ: AuctionListController → onSellButtonClick()
  *
- * LUỒNG HOẠT ĐỘNG: 1. User nhập thông tin (tên, category, giá, ngày, mô tả) 2. User chọn ảnh qua
- * FileChooser (không bắt buộc) 3. User bấm "Add" → validate → tạo AuctionItem → đóng popup 4.
- * AuctionListController đọc lastAddedItem → hiện lên đầu danh sách
- *
- * ── CẦN GẮN DATABASE ────────────────────────────────────── handleAdd() → TODO:
- * AuctionDAO.create(...) chooseImage() → TODO: ImageStorageService.save(file)
- *
- * ── HOẠT ĐỘNG ĐẦY ĐỦ ────────────────────────────────────── chooseImage() → mở FileChooser, lưu
- * path ✅ validate form → kiểm tra từng trường ✅ tạo AuctionItem → truyền về AuctionListController ✅
- * handleClose() → đóng popup ✅
+ * LUỒNG HOẠT ĐỘNG:
+ * 1. User nhập thông tin (tên, category, giá, ngày, mô tả)
+ * 2. User chọn ảnh qua FileChooser (không bắt buộc)
+ * 3. User bấm "Add" → validate → copy ảnh → lưu Item+Auction vào DB → đóng popup
+ * 4. AuctionListController đọc lastAddedItem → hiện lên đầu danh sách
  */
 public class AddListingController {
 
@@ -113,23 +115,6 @@ public class AddListingController {
     }
   }
 
-  /**
-   * [VALIDATE ✅ — LƯU DB CHƯA LÀM ❌]
-   *
-   * Validate form, tạo AuctionItem và lưu vào lastAddedItem. AuctionListController đọc
-   * lastAddedItem sau khi popup đóng để hiển thị ngay lên đầu danh sách.
-   *
-   * TODO (khi có DB — QUAN TRỌNG): Thay phần tạo AuctionItem bằng:
-   *
-   * String imagePath = selectedImageFile != null ?
-   * ImageStorageService.copyToAppFolder(selectedImageFile) : null;
-   *
-   * int newId = AuctionDAO.create( name.getText().trim(), category.getValue(), price,
-   * enddate.getValue(), description.getText().trim(), imagePath,
-   * SessionManager.getInstance().getUserId() );
-   *
-   * Sau đó xóa lastAddedItem — không cần nữa vì DB đã có.
-   */
   private void handleAdd() {
     validationLabel.setText("");
 
@@ -156,31 +141,95 @@ public class AddListingController {
       return;
     }
 
-    // ── Tạo AuctionItem để truyền về AuctionListController ────────────────
-    // ID tạm thời ngẫu nhiên trong range cao để tránh trùng với sample data (1-100)
-    int tempId = ThreadLocalRandom.current().nextInt(1000, 9999);
+    // Tinh so ngay con lai tu hom nay den ngay ket thuc
+    long daysLeft = java.time.temporal.ChronoUnit.DAYS
+        .between(java.time.LocalDate.now(), enddate.getValue());
+    if (daysLeft < 1) daysLeft = 1;
 
-    // Lấy path ảnh nếu user đã chọn
-    String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
+    try {
+      // ── Bước 1: Copy ảnh vào thư mục app ─────────────────────────────
+      // Luu ten file (UUID) vao DB thay vi path goc — anh khong bi mat khi file goc bi xoa
+      String savedFileName = null;
+      String displayImagePath = null;
+      if (selectedImageFile != null) {
+        savedFileName = ImageStorageService.save(selectedImageFile);
+        displayImagePath = ImageStorageService.getFullPath(savedFileName);
+      }
 
-    // Tính số ngày còn lại từ hôm nay đến ngày kết thúc
-    long daysLeft =
-        java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(), enddate.getValue());
-    if (daysLeft < 1)
-      daysLeft = 1; // tối thiểu 1 ngày
+      // ── Bước 2: Map category UI → item_type DB ────────────────────────
+      // Cars → VEHICLE, Fine Art → ART, con lai → ELECTRONICS
+      Map<String, String> attributes = new HashMap<>();
+      String itemType;
+      switch (category.getValue()) {
+        case "Cars" -> {
+          itemType = "VEHICLE";
+          attributes.put("year", "0");
+          attributes.put("mileage", "0.0");
+        }
+        case "Fine Art" -> {
+          itemType = "ART";
+          attributes.put("artist", "Unknown");
+          attributes.put("theme", "Unknown");
+          attributes.put("material", "Unknown");
+        }
+        default -> {
+          itemType = "ELECTRONICS";
+          attributes.put("brand", category.getValue());
+          attributes.put("warranty", "0");
+        }
+      }
 
-    // Tạo item mới — sẽ hiện lên đầu danh sách
-    lastAddedItem = new AuctionListController.AuctionItem(tempId, name.getText().trim(),
-        category.getValue(), price, 0, // 0 bids vì mới tạo
-        (int) daysLeft, imagePath);
+      // ── Bước 3: Tạo Item và lưu DB ──────────────────────────────────
+      Item item = ItemFactory.createItem(itemType, name.getText().trim(),
+          description.getText().trim(), price, attributes);
+      item.setImagePath(savedFileName); // chi luu ten file vao DB, khong luu full path
 
-    System.out.println("[AddListing] Created: " + lastAddedItem.name + " | "
-        + lastAddedItem.category + " | " + lastAddedItem.price + " USD" + " | Image: "
-        + (imagePath != null ? imagePath : "none"));
+      ItemService itemService = new ItemService();
+      int itemId = itemService.createItem(item); // [FIX] creatItem → createItem (ten method da doi)
+      item.setId(itemId);
 
-    // TODO: AuctionDAO.create(name, category, price, enddate, description, imagePath, userId)
+      // ── Bước 4: Tạo Auction và lưu DB ──────────────────────────────
+      // Seller chi can id, khong can load toan bo thong tin tu DB
+      Seller seller = new Seller();
+      seller.setId(SessionManager.getInstance().getUserId());
 
-    // Đóng popup — AuctionListController sẽ đọc lastAddedItem ngay sau đây
+      Auction auction = new Auction(item, seller, price, AuctionStatus.PENDING,
+          LocalDateTime.now(), enddate.getValue().atTime(23, 59));
+
+      Connection connect = DatabaseConnection.getConnection();
+      connect.setAutoCommit(false);
+      try {
+        new AuctionService().creatAuction(connect, auction);
+        connect.commit();
+      } catch (Exception ex) {
+        connect.rollback();
+        throw ex;
+      } finally {
+        connect.close();
+      }
+
+      // ── Bước 5: Cập nhật lastAddedItem để AuctionListController hiển thị ngay ──
+      // Dung id thuc tu DB thay vi id tam thoi ngau nhien nhu truoc
+      lastAddedItem = new AuctionListController.AuctionItem(
+          auction.getId(),
+          name.getText().trim(),
+          category.getValue(),
+          price,
+          0,             // 0 bids vì mới tạo
+          (int) daysLeft,
+          displayImagePath); // full path de JavaFX hien thi duoc
+
+      System.out.println("[AddListing] Saved to DB: " + lastAddedItem.name
+          + " | auctionId=" + auction.getId()
+          + " | image=" + (savedFileName != null ? savedFileName : "none"));
+
+    } catch (Exception ex) {
+      ex.printStackTrace();
+      validationLabel.setText("Lỗi: " + ex.getMessage());
+      return;
+    }
+
+    // Dong popup — AuctionListController se doc lastAddedItem ngay sau day
     ((Stage) addButton.getScene().getWindow()).close();
   }
 

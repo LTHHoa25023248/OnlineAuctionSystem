@@ -1,8 +1,5 @@
 package com.example.auctionmanagementsystem.dao;
-
-import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

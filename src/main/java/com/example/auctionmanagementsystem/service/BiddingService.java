@@ -1,54 +1,103 @@
 package com.example.auctionmanagementsystem.service;
 
+import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.exception.AuctionClosedException;
-import com.example.auctionmanagementsystem.exception.AuctionStatusException;
 import com.example.auctionmanagementsystem.exception.InvalidBidException;
 import com.example.auctionmanagementsystem.exception.SellerBiddingOwnItemException;
 import com.example.auctionmanagementsystem.model.Auction;
-import com.example.auctionmanagementsystem.model.AuctionStatus;
 import com.example.auctionmanagementsystem.model.BidTransaction;
+import com.example.auctionmanagementsystem.model.Bidder;
 import com.example.auctionmanagementsystem.model.User;
+import com.example.auctionmanagementsystem.dao.AuctionDAO;
+import com.example.auctionmanagementsystem.dao.BidTransactionDAO;
 
+import java.sql.Connection;
 import java.time.LocalDateTime;
-// Luu tam thoi, chua ket noi database
+
 
 public class BiddingService {
-  private final AutoBidService autoBidService = new AutoBidService();
-  private final AntiSnipingService antiSnipingService = new AntiSnipingService();
+    private final AuctionDAO auctionDao=new AuctionDAO();
+    private final BidTransactionDAO bidDao=new BidTransactionDAO();
+    private final AdvancedAuctionService advancedService=new AdvancedAuctionService();
+    //logic dau gia
+    public void placeBid(Auction auction,Bidder bidder,double amount){
+        //lock de trang nhieu nguoi bid cung luc, goi tu auction
+        auction.getLock().lock();
+        // cho ket noi = null de thuc hien rollback
+        Connection connect=null;
+        //luu lai gia tri cu truoc khi thay doi, de RAM quay ve gia tri cu neu sai
+         double oldPrice=auction.getCurrentPrice();
+        User oldHighestBidder=auction.getHighestBidder();
+        try{
+            new DatabaseConnection();
+            //mo ket noi
+            connect=DatabaseConnection.getConnection();
+            //gom lai +luu du lieu tam thoi, chua ghi xuong database
+            connect.setAutoCommit(false);
+           //kiem tra xem seller co dang co tinh tu dat gia nham day gia tang len hay khong 
+           //so sanh id cua bidder xem co trung voi id cua seller khong
+            if (auction.getSeller() != null && auction.getSeller().getId() == bidder.getId()) {
+                throw new SellerBiddingOwnItemException();
+            }
+          
+            //kiem tra trang thai xem phien dau gia co mo khong
+            if(!auction.isOpen()){
+                throw new AuctionClosedException();
+            }
+            // kiem tra thoi gian dau gia, xem ket thuc chua
+            if(LocalDateTime.now().isAfter(auction.getEndTime())){
+                throw new AuctionClosedException();
+            }
+            //kiem tra gia bid hop le
+            if (amount<= auction.getCurrentPrice()){
+                throw new InvalidBidException(amount,auction.getCurrentPrice());
+            }
+            // update phien dau
+            // Gia dau moi nhat, nguoi dau gia cao nhat sau cap nhap
+            auction.setCurrentPrice(amount);
+            auction.setHighestBidder(bidder);
+            // Luu Bidtransaction
+            BidTransaction bid =new BidTransaction();
+            bid.setAuction(auction);
+            bid.setBidder(bidder);
+            bid.setAmount(amount);
+            bid.setTime(LocalDateTime.now());
+            bidDao.insert(connect,bid);
+            //update Auction trong DB
+            auctionDao.update(auction,connect);
+            //qua trinh tu dau gia
+            advancedService.processAutoBids(connect,auction);
+            //gia han thoi gian
+            advancedService.applyAntiSniping(connect,auction);
+            //tat ca o tren deu thanh cong thi luu du lieu vao database
+            connect.commit();
 
-  public void placeBid(Auction auction, User user, double amount) {
-    // Khong dat cung luc
-    auction.getLock().lock();
-    try {
-      // kiem tra trang thai phien, ko mo thi ko cho dau gia
-      if (!auction.isOpen()) {
-        throw new AuctionClosedException();
-      }
-      if (auction.getStatus() == AuctionStatus.FINISHED
-          || auction.getStatus() == AuctionStatus.CANCELED) {
-        throw new AuctionStatusException(auction.getStatus().name());
-      }
-      // Kiem tra thoi gian, neu thoi gian hien tai vuot qua tg ket thuc-> ko cho dau gia nua
-      if (LocalDateTime.now().isAfter(auction.getEndTime())) {
-        throw new AuctionClosedException();
-      }
-      // gia phai cao hon gia hien tai
-      if (amount <= auction.getCurrentPrice()) {
-        throw new InvalidBidException(amount, auction.getCurrentPrice());
-      }
-      // cap nhat gia hien tai, nguoi dang dan dau
-      auction.setCurrentPrice(amount);
-      auction.setHighestBidder(user);
-      // luu ls dau gia
-      auction.addBid(new BidTransaction(user, amount));
-      // Neu co nguoi dung dat autobid->he thong tu dau gia thay
-      autoBidService.processAutoBids(auction);
-      // neu co nguoi dat gia can cuoi gio--> gia han thoi gian
-      antiSnipingService.applyAntiSnipping(auction);
 
-
-    } finally {
-      auction.getLock().unlock();
+        }catch(Exception e){
+            //neu co van de thi rollback, du lieu duoc quay tro ve luc chua thay doi
+            try{
+                if(connect!=null){
+                    connect.rollback();
+                    //dua du lieu trong RAM ve trang thai du lieu cu
+                     auction.setCurrentPrice(oldPrice);
+                     auction.setHighestBidder(oldHighestBidder);
+                }
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            throw new RuntimeException("Place bid failed",e);
+        }finally{
+            //dong ket noi
+            try{
+                if(connect!=null){
+                    connect.close();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            //mo lock de nguoi kha di vao dau gia
+            auction.getLock().unlock();
+        }
     }
-  }
+
 }
