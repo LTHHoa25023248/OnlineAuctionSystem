@@ -20,6 +20,12 @@ public class BidTransaction extends Entity {
 
   public BidTransaction() {};
 
+  public BidTransaction(User bidder, double amount) {
+    this.bidder = bidder;
+    this.amount = amount;
+    this.time = LocalDateTime.now();
+  }
+
   // sort,compare,.. time
   public LocalDateTime getTime() {
     return time;

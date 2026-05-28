@@ -1,5 +1,7 @@
 package com.example.auctionmanagementsystem.model;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 
 public class ItemFactory {
@@ -44,5 +46,31 @@ public class ItemFactory {
             throw new IllegalArgumentException("Invalid number formatted!", e);
         }
 
+    }
+
+    public static Item createDummyItem(int id) {
+        Item dummyItem = new Item() {
+
+            @Override
+            public void insertSubData(Connection connect, int itemId) throws SQLException {
+                throw new UnsupportedOperationException("This is a dummy item. Cannot insert sub data.");
+            }
+
+            @Override
+            public void updateSubData(Connection connect) throws SQLException {
+                throw new UnsupportedOperationException("This is a dummy item. Cannot update sub data.");
+            }
+
+            // Bổ sung hàm bị thiếu ở đây
+            @Override
+            public String getCategoryDetails() {
+                // Ném lỗi hoặc trả về một giá trị mặc định để báo hiệu đây chỉ là đối tượng ảo
+                throw new UnsupportedOperationException("This is a dummy item. No category details available.");
+            }
+        };
+
+        // Gán ID cho đối tượng giả này
+        dummyItem.setId(id);
+        return dummyItem;
     }
 }

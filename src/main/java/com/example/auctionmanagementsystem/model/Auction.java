@@ -8,6 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Auction extends Entity {
 
   private Item item;
+  private int id;
+  private int bids;
+  private int daysLeft;
   private double currentPrice;
   private User highestBidder;
   private AuctionStatus status;
@@ -17,6 +20,7 @@ public class Auction extends Entity {
   private List<BidTransaction> historyBid = new ArrayList<>();
   private List<AutoBid> hisAutoBid = new ArrayList<>();
   private final ReentrantLock lock = new ReentrantLock();
+  private String rejectReason;
 
   public double getCurrentPrice() {
     return currentPrice;
@@ -87,7 +91,7 @@ public class Auction extends Entity {
   }
 
   public boolean isOpen() {
-    return status == AuctionStatus.RUNNING;
+    return status == AuctionStatus.RUNNING || status == AuctionStatus.OPEN;
   }
 
   public void addBid(BidTransaction bid) {
@@ -96,6 +100,10 @@ public class Auction extends Entity {
 
   public void addAutoBid(AutoBid autoBid) {
     hisAutoBid.add(autoBid);
+  }
+
+  public void getRejectReason(String rejectReason) {
+    this.rejectReason = rejectReason;
   }
 
   // Tao constructor rong de phan DAO set duoc

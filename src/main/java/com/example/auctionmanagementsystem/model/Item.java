@@ -6,6 +6,7 @@ import java.sql.SQLException;
 public abstract class Item extends Entity {
   private String name, description;
   private double startingPrice;
+  private String imagePath;
 
   public Item() {}
 
@@ -40,6 +41,10 @@ public abstract class Item extends Entity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public void setImagePath(String imagePath){
+    this.imagePath=imagePath;
   }
 
   public abstract String getCategoryDetails();
