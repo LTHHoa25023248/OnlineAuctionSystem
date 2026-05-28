@@ -38,7 +38,7 @@ public class Electronics extends Item {
 
   @Override
   public void insertSubData(Connection conn, int itemId) throws SQLException {
-    String sql = "INSERT INTO electronics_items(item_id, year, mileage) VALUES (?,?,?)";
+    String sql = "INSERT INTO electronics_items(item_id, brand, warranty_months) VALUES (?,?,?)";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
       ps.setInt(1, itemId);
       ps.setString(2, this.brand);
@@ -49,7 +49,7 @@ public class Electronics extends Item {
 
   @Override
   public void updateSubData(Connection conn) throws SQLException {
-    String sql = "UPDATE items SET brand=?, warrantyMonths =? WHERE id=?";
+    String sql = "UPDATE items SET brand=?, warrantymonths =? WHERE id=?";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
       ps.setString(1, this.brand);
       ps.setInt(2, this.warrantyMonths);

@@ -47,9 +47,7 @@ public class ItemFactory {
             throw new IllegalArgumentException("Invalid number formatted!", e);
         }
     }
-    // =====================================================================
-    // HÀM BỔ SUNG: Tạo Dummy Item chỉ chứa ID phục vụ cho Mapper
-    // =====================================================================
+
     public static Item createDummyItem(int id) {
         Item dummyItem = new Item() {
 
@@ -75,4 +73,5 @@ public class ItemFactory {
         dummyItem.setId(id);
         return dummyItem;
     }
+
 }

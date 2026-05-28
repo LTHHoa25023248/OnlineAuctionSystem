@@ -49,6 +49,10 @@ public abstract class Item extends Entity {
     this.imagePath=imagePath;
   }
 
+  public void setImagePath(String imagePath){
+    this.imagePath=imagePath;
+  }
+
   public abstract String getCategoryDetails();
 
   /**

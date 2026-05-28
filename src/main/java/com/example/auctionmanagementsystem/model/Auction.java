@@ -8,6 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Auction extends Entity {
 
   private Item item;
+  private int id;
+  private int bids;
+  private int daysLeft;
   private double currentPrice;
   private User highestBidder;
   private AuctionStatus status;
@@ -88,7 +91,7 @@ public class Auction extends Entity {
   }
 
   public boolean isOpen() {
-    return status == AuctionStatus.RUNNING;
+    return status == AuctionStatus.RUNNING || status == AuctionStatus.OPEN;
   }
 
   public void addBid(BidTransaction bid) {
