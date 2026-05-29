@@ -47,7 +47,6 @@ public class ItemService {
     public void updateItem(Item item) {
         Connection connect = null;
         try {
-            // [FIX] xoa dong thua new DatabaseConnection(), dung static method dung cach
             connect = DatabaseConnection.getConnection();
             // luu du lieu tam thoi, chua vao DB
             connect.setAutoCommit(false);
@@ -64,8 +63,7 @@ public class ItemService {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            throw new RuntimeException(
-                    "Update item failed",e );
+            throw new RuntimeException("Update item failed",e );
 
         } finally {
             try {
