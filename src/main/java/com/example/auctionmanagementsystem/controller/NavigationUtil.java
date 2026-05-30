@@ -28,6 +28,7 @@ public class NavigationUtil {
   public static final String AUCTION_LIST = "View/auction_list.fxml";
   public static final String AUCTION_DETAIL = "View/auction_detail.fxml";
   public static final String PROFILE = "View/auction_profile.fxml";
+  public static final String NOTIFICATIONS = "View/notification_list.fxml";
   public static final String ADMIN = "View/AdminDashboard.fxml";
   public static final String MAIN_LAYOUT = "View/main_layout.fxml";
 
@@ -98,6 +99,15 @@ public class NavigationUtil {
    * @return Controller của popup, null nếu load thất bại
    */
   public static <T> T openPopup(Node source, String fxmlPath, String title) {
+    return openPopupWith(source, fxmlPath, title, null);
+  }
+
+  /**
+   * Mở popup modal, gọi setup(controller) TRƯỚC khi showAndWait — dùng khi cần
+   * truyền dữ liệu vào controller ngay khi popup mở (ví dụ: loadAuction(id)).
+   */
+  public static <T> T openPopupWith(Node source, String fxmlPath, String title,
+                                    java.util.function.Consumer<T> setup) {
     try {
       URL url = resolveUrl(fxmlPath);
       if (url == null) {
@@ -106,8 +116,10 @@ public class NavigationUtil {
       }
       FXMLLoader loader = new FXMLLoader(url);
       Parent root = loader.load();
+      T ctrl = loader.getController();
 
-      // Tạo Scene cho popup và áp dụng theme ngay
+      if (setup != null) setup.accept(ctrl);
+
       Scene popupScene = new Scene(root);
       ThemeManager.getInstance().applyTheme(popupScene, getCssType(fxmlPath));
 
@@ -119,7 +131,7 @@ public class NavigationUtil {
       popup.setScene(popupScene);
       popup.showAndWait();
 
-      return loader.getController();
+      return ctrl;
     } catch (IOException e) {
       e.printStackTrace();
       return null;
