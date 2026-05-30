@@ -2,6 +2,7 @@
 
 <?import io.github.palexdev.materialfx.controls.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -138,6 +139,22 @@
                             <!-- Bid History -->
                             <VBox spacing="8">
                                 <Label text="BID HISTORY" styleClass="detailSectionLabel"/>
+                                <LineChart fx:id="bidChart"
+                                           prefHeight="210.0" maxWidth="Infinity"
+                                           animated="false" createSymbols="true"
+                                           verticalGridLinesVisible="false"
+                                           styleClass="bidLineChart"
+                                           style="-fx-background-color: white;"
+                                           visible="false" managed="false">
+                                    <xAxis>
+                                        <CategoryAxis label="Time"
+                                                      style="-fx-tick-label-fill:#555; -fx-font-size:10px;"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Price (USD)" autoRanging="true"
+                                                    style="-fx-tick-label-fill:#555; -fx-font-size:10px;"/>
+                                    </yAxis>
+                                </LineChart>
                                 <ListView fx:id="bidHistoryList"
                                           prefHeight="160.0"
                                           styleClass="bidHistoryList"/>
