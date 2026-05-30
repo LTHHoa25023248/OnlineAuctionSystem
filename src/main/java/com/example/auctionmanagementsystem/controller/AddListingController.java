@@ -22,16 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * AddListingController — Popup thêm sản phẩm đấu giá mới (add_listing.fxml)
- * Mở từ: AuctionListController → onSellButtonClick()
- *
- * LUỒNG HOẠT ĐỘNG:
- * 1. User nhập thông tin (tên, category, giá, ngày, mô tả)
- * 2. User chọn ảnh qua FileChooser (không bắt buộc)
- * 3. User bấm "Add" → validate → copy ảnh → lưu Item+Auction vào DB → đóng popup
- * 4. AuctionListController đọc lastAddedItem → hiện lên đầu danh sách
- */
+
 public class AddListingController {
 
   // ── FXML fields ───────────────────────────────────────────────────────────
@@ -56,51 +47,23 @@ public class AddListingController {
   @FXML
   private ImageView closeButton;
 
-  /** File ảnh user đã chọn — null nếu chưa chọn */
-  private File selectedImageFile;
 
-  /**
-   * [TRUYỀN DỮ LIỆU POPUP → MÀN HÌNH CHA]
-   *
-   * AuctionItem vừa được tạo trong handleAdd(). AuctionListController đọc field này ngay sau khi
-   * popup đóng.
-   *
-   * Static vì NavigationUtil.openPopup() không trả về controller của AddListing trực tiếp.
-   *
-   * TODO (khi có DB): Xóa field này. handleAdd() gọi AuctionDAO.create() → lưu DB.
-   * AuctionListController chỉ cần loadListings() để thấy item mới.
-   */
+  private File selectedImageFile;
   public static AuctionListController.AuctionItem lastAddedItem = null;
 
-  /**
-   * [KHỞI TẠO — TỰ ĐỘNG GỌI KHI FXML LOAD]
-   */
   @FXML
   public void initialize() {
     validationLabel.setText("");
-
-    // Điền danh sách category vào dropdown
     category.getItems().addAll("Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others");
 
-    // Wire sự kiện
     chooseImageButton.setOnAction(e -> chooseImage());
     addButton.setOnAction(e -> handleAdd());
     closeButton.setOnMouseClicked(this::handleClose);
   }
 
-  /** Placeholder — không có logic, tránh click form đóng popup */
   @FXML
   private void onCloseButtonClick(MouseEvent e) { /* intentionally empty */ }
 
-  /**
-   * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
-   *
-   * Mở FileChooser chọn ảnh sản phẩm. Cập nhật imageLabel với tên file đã chọn.
-   *
-   * TODO (khi có DB): Thay getAbsolutePath() bằng: String savedPath =
-   * ImageStorageService.copyToAppFolder(selectedImageFile); Để ảnh không mất khi file gốc bị xóa
-   * hoặc di chuyển.
-   */
   private void chooseImage() {
     FileChooser fc = new FileChooser();
     fc.setTitle("Select product image");
@@ -118,7 +81,7 @@ public class AddListingController {
   private void handleAdd() {
     validationLabel.setText("");
 
-    // ── Validate từng trường ──────────────────────────────────────────────
+
     if (name.getText().trim().isEmpty()) {
       validationLabel.setText("Title is required.");
       return;
@@ -141,14 +104,11 @@ public class AddListingController {
       return;
     }
 
-    // Tinh so ngay con lai tu hom nay den ngay ket thuc
     long daysLeft = java.time.temporal.ChronoUnit.DAYS
         .between(java.time.LocalDate.now(), enddate.getValue());
     if (daysLeft < 1) daysLeft = 1;
 
     try {
-      // ── Bước 1: Copy ảnh vào thư mục app ─────────────────────────────
-      // Luu ten file (UUID) vao DB thay vi path goc — anh khong bi mat khi file goc bi xoa
       String savedFileName = null;
       String displayImagePath = null;
       if (selectedImageFile != null) {
@@ -156,8 +116,6 @@ public class AddListingController {
         displayImagePath = ImageStorageService.getFullPath(savedFileName);
       }
 
-      // ── Bước 2: Map category UI → item_type DB ────────────────────────
-      // Cars → VEHICLE, Fine Art → ART, con lai → ELECTRONICS
       Map<String, String> attributes = new HashMap<>();
       String itemType;
       switch (category.getValue()) {
@@ -178,8 +136,6 @@ public class AddListingController {
           attributes.put("warranty", "0");
         }
       }
-
-      // ── Bước 3: Tạo Item và lưu DB ──────────────────────────────────
       Item item = ItemFactory.createItem(itemType, name.getText().trim(),
           description.getText().trim(), price, attributes);
       item.setImagePath(savedFileName); // chi luu ten file vao DB, khong luu full path
@@ -188,7 +144,7 @@ public class AddListingController {
       int itemId = itemService.createItem(item); // [FIX] creatItem → createItem (ten method da doi)
       item.setId(itemId);
 
-      // ── Bước 4: Tạo Auction và lưu DB ──────────────────────────────
+
       // Seller chi can id, khong can load toan bo thong tin tu DB
       Seller seller = new Seller();
       seller.setId(SessionManager.getInstance().getUserId());
@@ -233,9 +189,6 @@ public class AddListingController {
     ((Stage) addButton.getScene().getWindow()).close();
   }
 
-  /**
-   * [HOẠT ĐỘNG ĐẦY ĐỦ ✅] Đóng popup không lưu gì cả.
-   */
   private void handleClose(MouseEvent e) {
     ((Stage) closeButton.getScene().getWindow()).close();
   }
