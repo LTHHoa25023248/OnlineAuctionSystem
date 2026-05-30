@@ -1,6 +1,8 @@
 package com.example.auctionmanagementsystem.controller;
 
-import com.example.auctionmanagementsystem.dao.UserDAO;
+import com.example.auctionmanagementsystem.client.ApiClient;
+import com.google.gson.JsonObject;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -99,7 +101,7 @@ public class SignupController {
     private void onSignupButtonClick() {
         if (!validateForm()) return;
 
-        setSignupButtonState(false, "Đang đăng ký...");
+        setSignupButtonState(false, "Registering...");
         clearGeneralError();
 
         final String firstName = firstNameField.getText().trim();
@@ -113,15 +115,18 @@ public class SignupController {
 
         Task<RegisterResult> task = new Task<>() {
             @Override
-            protected RegisterResult call() {
-                if (UserDAO.usernameExists(username)) return RegisterResult.USERNAME_TAKEN;
-                if (UserDAO.emailExists(email))       return RegisterResult.EMAIL_TAKEN;
-
-                boolean success = seller
-                        ? UserDAO.registerSeller(firstName, lastName, username, email, phone, password, address)
-                        : UserDAO.register(firstName, lastName, username, email, phone, password, address);
-
-                return success ? RegisterResult.SUCCESS : RegisterResult.DB_ERROR;
+            protected RegisterResult call() throws Exception {
+                JsonObject res = ApiClient.post("/auth/register", Map.of(
+                        "firstName", firstName, "lastName", lastName,
+                        "username", username, "email", email,
+                        "phone", phone, "password", password,
+                        "address", address, "seller", seller));
+                return switch (res.get("result").getAsString()) {
+                    case "SUCCESS"        -> RegisterResult.SUCCESS;
+                    case "USERNAME_TAKEN" -> RegisterResult.USERNAME_TAKEN;
+                    case "EMAIL_TAKEN"    -> RegisterResult.EMAIL_TAKEN;
+                    default               -> RegisterResult.DB_ERROR;
+                };
             }
         };
 
@@ -129,22 +134,22 @@ public class SignupController {
             switch (task.getValue()) {
                 case SUCCESS        -> NavigationUtil.goTo(signupButton, NavigationUtil.LOGIN);
                 case USERNAME_TAKEN -> {
-                    show(usernameError, "Tên đăng nhập đã được sử dụng.");
+                    show(usernameError, "Username is already taken.");
                     setSignupButtonState(true, "Create Account");
                 }
                 case EMAIL_TAKEN    -> {
-                    show(emailError, "Email đã được đăng ký.");
+                    show(emailError, "Email is already registered.");
                     setSignupButtonState(true, "Create Account");
                 }
                 case DB_ERROR       -> {
-                    showGeneralError("Đăng ký thất bại. Vui lòng thử lại sau.");
+                    showGeneralError("Registration failed. Please try again.");
                     setSignupButtonState(true, "Create Account");
                 }
             }
         });
 
         task.setOnFailed(e -> {
-            showGeneralError("Lỗi kết nối. Vui lòng kiểm tra lại.");
+            showGeneralError("Connection error. Please try again.");
             setSignupButtonState(true, "Create Account");
             task.getException().printStackTrace();
         });
@@ -160,60 +165,60 @@ public class SignupController {
     boolean ok = true;
 
     if (firstNameField.getText().trim().isEmpty()) {
-      show(firstNameError, "Vui lòng nhập họ.");
+      show(firstNameError, "Please enter your first name.");
       ok = false;
     }
     if (lastNameField.getText().trim().isEmpty()) {
-      show(lastNameError, "Vui lòng nhập tên.");
+      show(lastNameError, "Please enter your last name.");
       ok = false;
     }
 
     String username = usernameField.getText().trim();
     if (username.isEmpty()) {
-      show(usernameError, "Vui lòng nhập tên đăng nhập.");
+      show(usernameError, "Please enter a username.");
       ok = false;
     } else if (username.length() < 4) {
-      show(usernameError, "Tên đăng nhập phải có ít nhất 4 ký tự.");
+      show(usernameError, "Username must be at least 4 characters.");
       ok = false;
     } else if (username.contains(" ")) {
-      show(usernameError, "Tên đăng nhập không được chứa khoảng trắng.");
+      show(usernameError, "Username must not contain spaces.");
       ok = false;
     }
 
     String email = emailField.getText().trim();
     if (email.isEmpty()) {
-      show(emailError, "Vui lòng nhập email.");
+      show(emailError, "Please enter your email.");
       ok = false;
     } else if (!isValidEmail(email)) {
-      show(emailError, "Email không hợp lệ.");
+      show(emailError, "Invalid email address.");
       ok = false;
     }
 
     String phone = phoneField.getText().trim();
     if (phone.isEmpty()) {
-      show(phoneError, "Vui lòng nhập số điện thoại.");
+      show(phoneError, "Please enter a phone number.");
       ok = false;
     } else if (!phone.matches("[+\\d\\s\\-()]+")) {
-      show(phoneError, "Số điện thoại không hợp lệ.");
+      show(phoneError, "Invalid phone number.");
       ok = false;
     }
 
     String pass = passwordField.getText();
     if (pass.length() < 8) {
-      show(passwordError, "Mật khẩu phải có ít nhất 8 ký tự.");
+      show(passwordError, "Password must be at least 8 characters.");
       ok = false;
     } else if (!pass.matches(".*[a-zA-Z].*") || !pass.matches(".*\\d.*")) {
-      show(passwordError, "Mật khẩu phải có cả chữ cái và chữ số.");
+      show(passwordError, "Password must contain both letters and numbers.");
       ok = false;
     }
 
     if (!pass.equals(confirmPasswordField.getText())) {
-      show(confirmPasswordError, "Mật khẩu xác nhận không khớp.");
+      show(confirmPasswordError, "Passwords do not match.");
       ok = false;
     }
 
     if (termsCheckBox != null && !termsCheckBox.isSelected()) {
-      show(termsError, "Bạn phải đồng ý với điều khoản sử dụng.");
+      show(termsError, "You must agree to the terms of service.");
       ok = false;
     }
 

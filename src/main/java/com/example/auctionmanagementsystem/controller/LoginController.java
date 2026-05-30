@@ -1,9 +1,12 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.client.ApiClient;
 import com.example.auctionmanagementsystem.dao.UserDAO;
 import com.example.auctionmanagementsystem.model.Admin;
 import com.example.auctionmanagementsystem.model.Seller;
 import com.example.auctionmanagementsystem.model.User;
+import com.google.gson.JsonObject;
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -72,6 +75,7 @@ public class LoginController {
   }
 
   private void handleLogin() {
+    // System.out.println("[Client] Nút đăng nhập đã được bấm!");
     hideError(unValidLabel);
     hideError(pwValidLabel);
 
@@ -79,46 +83,47 @@ public class LoginController {
     String password = passwordField != null ? passwordField.getText() : "";
 
     if (username.isEmpty()) {
-      showError(unValidLabel, "Vui lòng nhập tên đăng nhập.");
+      showError(unValidLabel, "Please enter your username.");
       return;
     }
     if (password.isEmpty()) {
-      showError(pwValidLabel, "Vui lòng nhập mật khẩu.");
+      showError(pwValidLabel, "Please enter your password");
       return;
     }
 
-    setLoginButtonState(false, "Đang đăng nhập...");
+    setLoginButtonState(false, "Logging in...");
 
     Task<User> loginTask = new Task<>() {
       @Override
-      protected User call() {
-        return UserDAO.login(username, password);
+      @Override
+      protected JsonObject call() throws Exception {
+        return ApiClient.post("/auth/login",
+            Map.of("username", username, "password", password));
       }
     };
 
     loginTask.setOnSucceeded(e -> {
-      User user = loginTask.getValue();
-      if (user != null) {
-        String phone = UserDAO.getStringField(user.getId(), "phone");
-        String firstName = UserDAO.getStringField(user.getId(), "first_name");
-        String lastName = UserDAO.getStringField(user.getId(), "last_name");
-
-        // Xác định role từ kiểu object trả về bởi UserDAO.login()
-        String role =
-            (user instanceof Admin) ? "ADMIN" : (user instanceof Seller) ? "SELLER" : "BIDDER";
-
-        SessionManager.getInstance().login(user.getId(), user.getUsername(), user.getEmail(), phone,
-            firstName, lastName, user instanceof Admin, role);
-
+      JsonObject resp = loginTask.getValue();
+      if (resp.get("success").getAsBoolean()) {
+        int userId       = resp.get("userId").getAsInt();
+        String uname     = resp.get("username").getAsString();
+        String email     = resp.get("email").getAsString();
+        String phone     = resp.get("phone").getAsString();
+        String firstName = resp.get("firstName").getAsString();
+        String lastName  = resp.get("lastName").getAsString();
+        String role      = resp.get("role").getAsString();
+        boolean isAdmin  = resp.get("isAdmin").getAsBoolean();
+        SessionManager.getInstance().login(userId, uname, email, phone,
+            firstName, lastName, isAdmin, role);
         NavigationUtil.goTo(loginButton, NavigationUtil.AUCTION_LIST);
       } else {
-        showError(unValidLabel, "Sai tên đăng nhập hoặc mật khẩu.");
+        showError(unValidLabel, "Incorrect username or password.");
         setLoginButtonState(true, "Login");
       }
     });
 
     loginTask.setOnFailed(e -> {
-      showError(unValidLabel, "Lỗi kết nối. Vui lòng thử lại.");
+      showError(unValidLabel, "Connection error. Please try again.");
       setLoginButtonState(true, "Login");
       loginTask.getException().printStackTrace();
     });

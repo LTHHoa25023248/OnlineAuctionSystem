@@ -1,161 +1,111 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.client.ApiClient;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import java.util.Map;
 
-/**
- * AdminDashboardController — Màn hình quản trị (AdminDashboard.fxml).
- *
- * Chỉ truy cập được nếu SessionManager.isAdmin() == true. Mở từ AuctionListController (adminButton)
- * — chuyển trang, không phải popup.
- *
- * Tính năng: - Stat cards: tổng listing, active auctions, tổng users, doanh thu - Bảng Listings:
- * filter theo category, xem/sửa từng item - Bảng Users: toggle hiện/ẩn, filter theo role/status
- *
- * TODO: Thay dữ liệu mẫu bằng AuctionDAO và UserDAO thật.
- */
 public class AdminDashboardController {
 
   // ── FXML fields — Top bar ─────────────────────────────────────────────────
-  @FXML
-  private Label usernameLabel;
+  @FXML private Label usernameLabel;
 
   // ── FXML fields — Stat cards ──────────────────────────────────────────────
-  @FXML
-  private Label totalListingsLabel;
-  @FXML
-  private Label activeAuctionsLabel;
-  @FXML
-  private Label totalUsersLabel;
-  @FXML
-  private Label revenueLabel;
+  @FXML private Label totalListingsLabel;
+  @FXML private Label activeAuctionsLabel;
+  @FXML private Label totalUsersLabel;
+  @FXML private Label revenueLabel;
 
   // ── FXML fields — Listings table ─────────────────────────────────────────
-  @FXML
-  private TableView<AuctionRow> listingsTable;
-  @FXML
-  private TableColumn<AuctionRow, String> colItem;
-  @FXML
-  private TableColumn<AuctionRow, String> colCategory;
-  @FXML
-  private TableColumn<AuctionRow, String> colSeller;
-  @FXML
-  private TableColumn<AuctionRow, String> colBid;
-  @FXML
-  private TableColumn<AuctionRow, String> colStatus;
-  @FXML
-  private TableColumn<AuctionRow, String> colActions;
+  @FXML private TableView<AuctionRow> listingsTable;
+  @FXML private TableColumn<AuctionRow, String> colItem;
+  @FXML private TableColumn<AuctionRow, String> colCategory;
+  @FXML private TableColumn<AuctionRow, String> colSeller;
+  @FXML private TableColumn<AuctionRow, String> colBid;
+  @FXML private TableColumn<AuctionRow, String> colStatus;
+  @FXML private TableColumn<AuctionRow, String> colActions;
 
-  // ── FXML fields — Users table (ẩn mặc định) ──────────────────────────────
-  @FXML
-  private VBox usersCard; // container ẩn/hiện
-  @FXML
-  private TableView<UserRow> usersTable;
-  @FXML
-  private TableColumn<UserRow, String> colUserId;
-  @FXML
-  private TableColumn<UserRow, String> colUsername;
-  @FXML
-  private TableColumn<UserRow, String> colEmail;
-  @FXML
-  private TableColumn<UserRow, String> colRole;
-  @FXML
-  private TableColumn<UserRow, String> colUserStatus;
-  @FXML
-  private TableColumn<UserRow, String> colJoinDate;
+  // ── FXML fields — Sidebar nav items ──────────────────────────────────────
+  @FXML private HBox navListings;
+  @FXML private HBox navUsers;
 
-  // ── Inner classes: Row models cho TableView ───────────────────────────────
+  // ── FXML fields — Listings card ───────────────────────────────────────────
+  @FXML private VBox listingsCard;
 
-  /**
-   * Model một hàng trong bảng Listings. JavaFX TableView yêu cầu getter cho mỗi cột
-   * (PropertyValueFactory).
-   */
+  // ── FXML fields — Users table ─────────────────────────────────────────────
+  @FXML private VBox usersCard;
+  @FXML private TableView<UserRow> usersTable;
+  @FXML private TableColumn<UserRow, String> colUserId;
+  @FXML private TableColumn<UserRow, String> colUsername;
+  @FXML private TableColumn<UserRow, String> colEmail;
+  @FXML private TableColumn<UserRow, String> colRole;
+  @FXML private TableColumn<UserRow, String> colUserStatus;
+  @FXML private TableColumn<UserRow, String> colJoinDate;
+  @FXML private TableColumn<UserRow, String> colUserActions;
+
+  // ── Inner classes: Row models ─────────────────────────────────────────────
+
   public static class AuctionRow {
-    private final StringProperty item, category, seller, bid, status, actions;
+    private final int auctionId;
+    private final StringProperty item, category, seller, bid, status, rejectReason;
 
-    public AuctionRow(String item, String category, String seller, String bid, String status,
-        String actions) {
-      this.item = new SimpleStringProperty(item);
-      this.category = new SimpleStringProperty(category);
-      this.seller = new SimpleStringProperty(seller);
-      this.bid = new SimpleStringProperty(bid);
-      this.status = new SimpleStringProperty(status);
-      this.actions = new SimpleStringProperty(actions);
+    public AuctionRow(int auctionId, String item, String category, String seller,
+                      String bid, String status, String rejectReason) {
+      this.auctionId    = auctionId;
+      this.item         = new SimpleStringProperty(item);
+      this.category     = new SimpleStringProperty(category);
+      this.seller       = new SimpleStringProperty(seller);
+      this.bid          = new SimpleStringProperty(bid);
+      this.status       = new SimpleStringProperty(status);
+      this.rejectReason = new SimpleStringProperty(rejectReason != null ? rejectReason : "");
     }
 
-    // Getters — phải đúng tên để PropertyValueFactory tìm được
-    public String getItem() {
-      return item.get();
-    }
-
-    public String getCategory() {
-      return category.get();
-    }
-
-    public String getSeller() {
-      return seller.get();
-    }
-
-    public String getBid() {
-      return bid.get();
-    }
-
-    public String getStatus() {
-      return status.get();
-    }
-
-    public String getActions() {
-      return actions.get();
-    }
+    public int    getAuctionId()    { return auctionId; }
+    public String getItem()         { return item.get(); }
+    public String getCategory()     { return category.get(); }
+    public String getSeller()       { return seller.get(); }
+    public String getBid()          { return bid.get(); }
+    public String getStatus()       { return status.get(); }
+    public String getRejectReason() { return rejectReason.get(); }
   }
 
-  /**
-   * Model một hàng trong bảng Users.
-   */
   public static class UserRow {
+    private final int userIdInt;
+    private final boolean active;
     private final StringProperty userId, username, email, role, status, joinDate;
 
-    public UserRow(String userId, String username, String email, String role, String status,
-        String joinDate) {
-      this.userId = new SimpleStringProperty(userId);
-      this.username = new SimpleStringProperty(username);
-      this.email = new SimpleStringProperty(email);
-      this.role = new SimpleStringProperty(role);
-      this.status = new SimpleStringProperty(status);
-      this.joinDate = new SimpleStringProperty(joinDate);
+    public UserRow(int userIdInt, String username, String email,
+                   String role, boolean active, String joinDate) {
+      this.userIdInt = userIdInt;
+      this.active    = active;
+      this.userId    = new SimpleStringProperty(String.valueOf(userIdInt));
+      this.username  = new SimpleStringProperty(username);
+      this.email     = new SimpleStringProperty(email);
+      this.role      = new SimpleStringProperty(role);
+      this.status    = new SimpleStringProperty(active ? "Active" : "Banned");
+      this.joinDate  = new SimpleStringProperty(joinDate);
     }
 
-    public String getUserId() {
-      return userId.get();
-    }
-
-    public String getUsername() {
-      return username.get();
-    }
-
-    public String getEmail() {
-      return email.get();
-    }
-
-    public String getRole() {
-      return role.get();
-    }
-
-    public String getStatus() {
-      return status.get();
-    }
-
-    public String getJoinDate() {
-      return joinDate.get();
-    }
+    public int     getUserIdInt() { return userIdInt; }
+    public boolean isActive()     { return active; }
+    public String  getUserId()    { return userId.get(); }
+    public String  getUsername()  { return username.get(); }
+    public String  getEmail()     { return email.get(); }
+    public String  getRole()      { return role.get(); }
+    public String  getStatus()    { return status.get(); }
+    public String  getJoinDate()  { return joinDate.get(); }
   }
 
   // ── Initialize ────────────────────────────────────────────────────────────
@@ -163,45 +113,48 @@ public class AdminDashboardController {
   @FXML
   public void initialize() {
     usernameLabel.setText(SessionManager.getInstance().getUsername());
-    loadStats();
     setupTable();
-    loadTable("ALL"); // load bảng listing mặc định
-    setupUsersTable(); // chuẩn bị cột, chưa load data
+    setupUsersTable();
+    loadStats();
+    showListings();
   }
 
   // ── Sidebar handlers ──────────────────────────────────────────────────────
 
-  /** Quay về màn hình danh sách auction */
-  @FXML
-  private void handleHome() {
-    NavigationUtil.goTo(usernameLabel, NavigationUtil.AUCTION_LIST);
-  }
+  @FXML private void handleHome()      { NavigationUtil.goTo(usernameLabel, NavigationUtil.AUCTION_LIST); }
+  @FXML private void handleAnalytics() { }
 
-  /** Reload bảng listing toàn bộ */
   @FXML
   private void handleListings() {
+    showListings();
+  }
+
+  @FXML
+  private void handleUsers() {
+    showUsers();
+  }
+
+  private void showListings() {
+    if (listingsCard != null) { listingsCard.setVisible(true);  listingsCard.setManaged(true); }
+    if (usersCard    != null) { usersCard.setVisible(false);    usersCard.setManaged(false); }
+    setNavActive(navListings, navUsers);
+    loadStats();
     loadTable("ALL");
   }
 
-  /**
-   * Toggle hiển thị bảng Users. Lần đầu mở sẽ load dữ liệu.
-   */
-  @FXML
-  private void handleUsers() {
-    boolean show = !usersCard.isVisible();
-    usersCard.setVisible(show);
-    usersCard.setManaged(show);
-    if (show)
-      loadUsersTable("ALL");
+  private void showUsers() {
+    if (usersCard    != null) { usersCard.setVisible(true);     usersCard.setManaged(true); }
+    if (listingsCard != null) { listingsCard.setVisible(false); listingsCard.setManaged(false); }
+    setNavActive(navUsers, navListings);
+    loadStats();
+    loadUsersTable("ALL");
   }
 
-  /** Mở popup biểu đồ Analytics */
-  @FXML
-  private void handleAnalytics() {
-    NavigationUtil.openPopup(usernameLabel, NavigationUtil.CHART, "Analytics");
+  private void setNavActive(HBox active, HBox inactive) {
+    if (active   != null) { active.getStyleClass().remove("navActive");   active.getStyleClass().add("navActive"); }
+    if (inactive != null) { inactive.getStyleClass().remove("navActive"); }
   }
 
-  /** Đăng xuất và về trang Login */
   @FXML
   private void handleLogout() {
     SessionManager.getInstance().logout();
@@ -209,158 +162,264 @@ public class AdminDashboardController {
   }
 
   // ── Auction filter buttons ────────────────────────────────────────────────
-
-  @FXML
-  private void filterAll() {
-    loadTable("ALL");
-  }
-
-  @FXML
-  private void filterJewelry() {
-    loadTable("Jewelry");
-  }
-
-  @FXML
-  private void filterWatches() {
-    loadTable("Watches");
-  }
-
-  @FXML
-  private void filterCars() {
-    loadTable("Cars");
-  }
-
-  @FXML
-  private void filterOthers() {
-    loadTable("Others");
-  }
+  @FXML private void filterAll()        { loadTable("ALL"); }
+  @FXML private void filterPending()    { loadTable("PENDING"); }
+  @FXML private void filterElectronics(){ loadTable("ELECTRONICS"); }
+  @FXML private void filterArt()        { loadTable("ART"); }
+  @FXML private void filterVehicle()    { loadTable("VEHICLE"); }
 
   // ── Users filter buttons ──────────────────────────────────────────────────
-
-  @FXML
-  private void filterUsersAll() {
-    loadUsersTable("ALL");
-  }
-
-  @FXML
-  private void filterUsersActive() {
-    loadUsersTable("Active");
-  }
-
-  @FXML
-  private void filterUsersBanned() {
-    loadUsersTable("Banned");
-  }
-
-  @FXML
-  private void filterUsersAdmin() {
-    loadUsersTable("Admin");
-  }
+  @FXML private void filterUsersAll()    { loadUsersTable("ALL"); }
+  @FXML private void filterUsersActive() { loadUsersTable("Active"); }
+  @FXML private void filterUsersBanned() { loadUsersTable("Banned"); }
+  @FXML private void filterUsersAdmin()  { loadUsersTable("Admin"); }
 
   // ── Setup column mappings ─────────────────────────────────────────────────
 
-  /**
-   * Kết nối cột TableView với getter của AuctionRow. PropertyValueFactory("item") tìm getItem()
-   * trong AuctionRow.
-   */
   private void setupTable() {
-    colItem.setCellValueFactory(new PropertyValueFactory<>("item"));
-    colCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
-    colSeller.setCellValueFactory(new PropertyValueFactory<>("seller"));
-    colBid.setCellValueFactory(new PropertyValueFactory<>("bid"));
-    colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-    colActions.setCellValueFactory(new PropertyValueFactory<>("actions"));
+    if (colItem     != null) colItem.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getItem()));
+    if (colCategory != null) colCategory.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCategory()));
+    if (colSeller   != null) colSeller.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSeller()));
+    if (colBid      != null) colBid.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getBid()));
+    if (colStatus   != null) colStatus.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
+
+    if (colActions != null) {
+      colActions.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
+      colActions.setCellFactory(col -> new TableCell<>() {
+        private final Button btnApprove = new Button("Approve");
+        private final Button btnReject  = new Button("Reject");
+        private final HBox   box        = new HBox(6, btnApprove, btnReject);
+
+        {
+          btnApprove.setStyle("-fx-background-color:#2e7d32;-fx-text-fill:white;-fx-font-size:11px;-fx-padding:3 8;");
+          btnReject.setStyle("-fx-background-color:#c62828;-fx-text-fill:white;-fx-font-size:11px;-fx-padding:3 8;");
+
+          btnApprove.setOnAction(e -> {
+            AuctionRow row = getTableView().getItems().get(getIndex());
+            approveAuction(row.getAuctionId());
+          });
+          btnReject.setOnAction(e -> {
+            AuctionRow row = getTableView().getItems().get(getIndex());
+            rejectAuction(row.getAuctionId());
+          });
+        }
+
+        @Override
+        protected void updateItem(String status, boolean empty) {
+          super.updateItem(status, empty);
+          if (empty || status == null) {
+            setGraphic(null);
+            setText(null);
+          } else if ("PENDING".equals(status)) {
+            setGraphic(box);
+            setText(null);
+          } else {
+            setGraphic(null);
+            setText("—");
+          }
+        }
+      });
+    }
   }
 
   private void setupUsersTable() {
-    colUserId.setCellValueFactory(new PropertyValueFactory<>("userId"));
-    colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
-    colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-    colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
-    colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-    colJoinDate.setCellValueFactory(new PropertyValueFactory<>("joinDate"));
+    if (colUserId     != null) colUserId.setCellValueFactory(new PropertyValueFactory<>("userId"));
+    if (colUsername   != null) colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
+    if (colEmail      != null) colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+    if (colRole       != null) colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+    if (colUserStatus != null) colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+    if (colJoinDate   != null) colJoinDate.setCellValueFactory(new PropertyValueFactory<>("joinDate"));
+
+    if (colUserActions != null) {
+      colUserActions.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
+      colUserActions.setCellFactory(col -> new TableCell<>() {
+        private final Button btn = new Button();
+        {
+          btn.setOnAction(e -> {
+            UserRow row = getTableView().getItems().get(getIndex());
+            if (row.isActive()) {
+              banUser(row.getUserIdInt());
+            } else {
+              unbanUser(row.getUserIdInt());
+            }
+          });
+        }
+
+        @Override
+        protected void updateItem(String status, boolean empty) {
+          super.updateItem(status, empty);
+          if (empty || status == null) {
+            setGraphic(null);
+          } else {
+            boolean isActive = "Active".equals(status);
+            btn.setText(isActive ? "Ban" : "Unban");
+            btn.setStyle(isActive
+                ? "-fx-background-color:#c62828;-fx-text-fill:white;-fx-font-size:11px;-fx-padding:3 10;"
+                : "-fx-background-color:#2e7d32;-fx-text-fill:white;-fx-font-size:11px;-fx-padding:3 10;");
+            setGraphic(btn);
+          }
+        }
+      });
+    }
   }
 
-  // ── Stats (TODO: thay bằng DAO thật) ─────────────────────────────────────
+  // ── Stats ─────────────────────────────────────────────────────────────────
 
   private void loadStats() {
-    totalListingsLabel.setText("128");
-    activeAuctionsLabel.setText("34");
-    totalUsersLabel.setText("512");
-    revenueLabel.setText("48,200 USD");
+    Task<JsonObject> task = new Task<>() {
+      @Override
+      protected JsonObject call() throws Exception {
+        return ApiClient.getObject("/admin/stats");
+      }
+    };
+    task.setOnSucceeded(e -> Platform.runLater(() -> {
+      JsonObject s = task.getValue();
+      if (totalListingsLabel  != null) totalListingsLabel.setText(s.get("totalListings").getAsString());
+      if (activeAuctionsLabel != null) activeAuctionsLabel.setText(s.get("activeAuctions").getAsString());
+      if (totalUsersLabel     != null) totalUsersLabel.setText(s.get("totalUsers").getAsString());
+      if (revenueLabel        != null) revenueLabel.setText(
+          String.format("%,.0f USD", s.get("revenue").getAsDouble()));
+    }));
+    task.setOnFailed(e -> {
+      if (totalListingsLabel != null) totalListingsLabel.setText("N/A");
+    });
+    new Thread(task).start();
   }
 
   // ── Listings data ─────────────────────────────────────────────────────────
 
-  /**
-   * Load dữ liệu vào bảng Listings, filter theo category nếu cần. TODO: Thay bằng
-   * AuctionDAO.getAll() hoặc AuctionDAO.getByCategory(category).
-   *
-   * @param category "ALL" để lấy tất cả, hoặc tên category cụ thể
-   */
-  private void loadTable(String category) {
-    ObservableList<AuctionRow> data = FXCollections.observableArrayList();
+  private void loadTable(String filter) {
+    Task<ObservableList<AuctionRow>> task = new Task<>() {
+      @Override
+      protected ObservableList<AuctionRow> call() throws Exception {
+        ObservableList<AuctionRow> data = FXCollections.observableArrayList();
+        JsonArray arr = ApiClient.getArray("/admin/auctions?filter=" + filter);
+        for (JsonElement el : arr) {
+          JsonObject obj = el.getAsJsonObject();
+          
+          // ID
+          int id = (obj.has("id") && !obj.get("id").isJsonNull()) ? obj.get("id").getAsInt() : 0;
+          
+          // Name
+          String name = (obj.has("name") && !obj.get("name").isJsonNull()) ? obj.get("name").getAsString() : "N/A";
+          
+          // Type / Category (Sửa "itemType" thành "category" theo đúng JSON)
+          String type = (obj.has("category") && !obj.get("category").isJsonNull()) ? obj.get("category").getAsString() : "";
+          
+          // Seller
+          String seller = (obj.has("seller") && !obj.get("seller").isJsonNull()) ? obj.get("seller").getAsString() : "N/A";
+          
+          // Price (Sửa "currentPrice" thành "price", và lấy trực tiếp dạng String)
+          String price = (obj.has("price") && !obj.get("price").isJsonNull()) 
+                         ? obj.get("price").getAsString() 
+                         : "N/A";
+                         
+          // Status
+          String status = (obj.has("status") && !obj.get("status").isJsonNull()) ? obj.get("status").getAsString() : "";
+          
+          // Reject Reason
+          String reason = (obj.has("rejectReason") && !obj.get("rejectReason").isJsonNull()) ? obj.get("rejectReason").getAsString() : "";
+          
+          // Xử lý Cat Label cho đẹp
+          String catLabel = type;
+          if (type.equalsIgnoreCase("VEHICLE")) catLabel = "Vehicle";
+          else if (type.equalsIgnoreCase("ART")) catLabel = "Art";
+          else if (type.equalsIgnoreCase("ELECTRONICS")) catLabel = "Electronics";
 
-    // Dữ liệu mẫu — mỗi phần tử: {tên, category, seller, giá, status, action}
-    Object[][] rows = {{"Rolex Daytona", "Jewelry", "alice", "15,000 USD", "Active", "Edit"},
-        {"Diamond Ring", "Jewelry", "bob", "8,500 USD", "Active", "Edit"},
-        {"Pearl Necklace", "Jewelry", "carol", "3,200 USD", "Ended", "View"},
-        {"Omega Seamaster", "Watches", "dave", "5,400 USD", "Active", "Edit"},
-        {"Patek Philippe", "Watches", "eve", "22,000 USD", "Active", "Edit"},
-        {"TAG Heuer Monaco", "Watches", "frank", "4,100 USD", "Ended", "View"},
-        {"Hermes Birkin", "Bags", "grace", "12,000 USD", "Active", "Edit"},
-        {"Chanel Flap", "Bags", "heidi", "7,800 USD", "Active", "Edit"},
-        {"Porsche 911", "Cars", "judy", "95,000 USD", "Active", "Edit"},
-        {"Ferrari 488", "Cars", "kevin", "180,000 USD", "Active", "Edit"},
-        {"Lamborghini Huracan", "Cars", "laura", "220,000 USD", "Ended", "View"},
-        {"Mona Lisa Print", "Fine Art", "mike", "45,000 USD", "Active", "Edit"},
-        {"Vintage Guitar", "Others", "oscar", "2,800 USD", "Active", "Edit"},
-        {"Antique Clock", "Others", "peggy", "1,500 USD", "Ended", "View"},
-        {"Rare Coin", "Others", "quentin", "900 USD", "Active", "Edit"},};
-
-    for (Object[] row : rows) {
-      String cat = (String) row[1];
-      if (category.equals("ALL") || cat.equalsIgnoreCase(category)) {
-        data.add(new AuctionRow((String) row[0], cat, (String) row[2], (String) row[3],
-            (String) row[4], (String) row[5]));
+          data.add(new AuctionRow(id, name, catLabel, seller, price, status, reason));
+        }
+        return data;
       }
-    }
-    listingsTable.setItems(data);
+    };
+    task.setOnSucceeded(e -> Platform.runLater(() -> {
+      if (listingsTable != null) listingsTable.setItems(task.getValue());
+    }));
+    task.setOnFailed(e -> task.getException().printStackTrace());
+    new Thread(task).start();
+  }
+
+  // ── Approve / Reject actions ──────────────────────────────────────────────
+
+  private void approveAuction(int auctionId) {
+    Task<Void> task = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        ApiClient.post("/auction/approve", Map.of("auctionId", auctionId));
+        return null;
+      }
+    };
+    task.setOnSucceeded(e -> { loadTable("PENDING"); loadStats(); });
+    task.setOnFailed(e -> task.getException().printStackTrace());
+    new Thread(task).start();
+  }
+
+  private void rejectAuction(int auctionId) {
+    TextInputDialog dialog = new TextInputDialog();
+    dialog.setTitle("Reject Auction");
+    dialog.setHeaderText("Auction ID: " + auctionId);
+    dialog.setContentText("Reject reason:");
+
+    dialog.showAndWait().ifPresent(reason -> {
+      if (reason.isBlank()) return;
+      Task<Void> task = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+          ApiClient.post("/auction/reject", Map.of("auctionId", auctionId, "reason", reason.trim()));
+          return null;
+        }
+      };
+      task.setOnSucceeded(e -> { loadTable("PENDING"); loadStats(); });
+      task.setOnFailed(e -> task.getException().printStackTrace());
+      new Thread(task).start();
+    });
   }
 
   // ── Users data ────────────────────────────────────────────────────────────
 
-  /**
-   * Load dữ liệu vào bảng Users, filter theo role hoặc status. TODO: Thay bằng UserDAO.getAll()
-   * hoặc UserDAO.getByStatus(filter).
-   *
-   * @param filter "ALL", "Active", "Banned", hoặc "Admin"
-   */
   private void loadUsersTable(String filter) {
-    ObservableList<UserRow> data = FXCollections.observableArrayList();
-
-    Object[][] users = {{"1", "alice", "alice@demo.com", "User", "Active", "01/01/2024"},
-        {"2", "bob", "bob@demo.com", "User", "Active", "05/02/2024"},
-        {"3", "carol", "carol@demo.com", "User", "Banned", "10/03/2024"},
-        {"4", "dave", "dave@demo.com", "User", "Active", "15/03/2024"},
-        {"5", "eve", "eve@demo.com", "Admin", "Active", "20/04/2024"},
-        {"6", "frank", "frank@demo.com", "User", "Active", "01/05/2024"},
-        {"7", "grace", "grace@demo.com", "User", "Banned", "10/05/2024"},
-        {"8", "heidi", "heidi@demo.com", "User", "Active", "15/06/2024"},
-        {"9", "ivan", "ivan@demo.com", "Admin", "Active", "20/07/2024"},
-        {"10", "judy", "judy@demo.com", "User", "Active", "25/08/2024"},};
-
-    for (Object[] u : users) {
-      String role = (String) u[3];
-      String status = (String) u[4];
-      // Match nếu là ALL, hoặc khớp status, hoặc khớp role
-      boolean match =
-          filter.equals("ALL") || filter.equalsIgnoreCase(status) || filter.equalsIgnoreCase(role);
-      if (match) {
-        data.add(
-            new UserRow((String) u[0], (String) u[1], (String) u[2], role, status, (String) u[5]));
+    Task<ObservableList<UserRow>> task = new Task<>() {
+      @Override
+      protected ObservableList<UserRow> call() throws Exception {
+        ObservableList<UserRow> data = FXCollections.observableArrayList();
+        JsonArray arr = ApiClient.getArray("/admin/users?filter=" + filter);
+        for (JsonElement el : arr) {
+          JsonObject obj = el.getAsJsonObject();
+          int    userId   = obj.has("id") ? obj.get("id").getAsInt() : 0;
+          String username = !obj.get("username").isJsonNull() ? obj.get("username").getAsString() : "";
+          String email    = !obj.get("email").isJsonNull()    ? obj.get("email").getAsString()    : "";
+          String role     = !obj.get("role").isJsonNull()     ? obj.get("role").getAsString()     : "";
+          boolean active  = "Active".equals(obj.get("status").getAsString());
+          String joinDate = !obj.get("joinDate").isJsonNull() ? obj.get("joinDate").getAsString() : "N/A";
+          data.add(new UserRow(userId, username, email, role, active, joinDate));
+        }
+        return data;
       }
-    }
-    usersTable.setItems(data);
+    };
+    task.setOnSucceeded(e -> Platform.runLater(() -> {
+      if (usersTable != null) usersTable.setItems(task.getValue());
+    }));
+    task.setOnFailed(e -> task.getException().printStackTrace());
+    new Thread(task).start();
+  }
+
+  private void banUser(int userId) {
+    setUserActive(userId, false);
+  }
+
+  private void unbanUser(int userId) {
+    setUserActive(userId, true);
+  }
+
+  private void setUserActive(int userId, boolean active) {
+    Task<Void> task = new Task<>() {
+      @Override
+      protected Void call() throws Exception {
+        ApiClient.post("/admin/user/ban", Map.of("userId", userId, "active", active));
+        return null;
+      }
+    };
+    task.setOnSucceeded(e -> { loadUsersTable("ALL"); loadStats(); });
+    task.setOnFailed(e -> task.getException().printStackTrace());
+    new Thread(task).start();
   }
 }

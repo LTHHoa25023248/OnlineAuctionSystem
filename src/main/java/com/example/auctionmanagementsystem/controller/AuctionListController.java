@@ -240,12 +240,12 @@ public class AuctionListController implements Observer {
           boolean isWinner = false;
 
           if (winnerId <= 0) {
-            notifMsg = "🔔 Phiên đấu giá '" + itemName + "' kết thúc (Không có người mua).";
+            notifMsg = "🔔 Auction '" + itemName + "' ended (No buyer).";
           } else if (currentUserId == winnerId) {
-            notifMsg = "🎉 THẮNG GIẢI! Bạn đã mua thành công '" + itemName + "' (Giá: $" + finalPrice + ")";
+            notifMsg = "🎉 YOU WON! Successfully purchased '" + itemName + "' (Price: $" + finalPrice + ")";
             isWinner = true;
           } else {
-            notifMsg = "🔔 Phiên đấu giá '" + itemName + "' kết thúc (Người khác đã mua).";
+            notifMsg = "🔔 Auction '" + itemName + "' ended (Sold to another bidder).";
           }
 
           // 1. Đẩy vào kho thông báo dùng chung -> hiện trong panel chuông + tăng badge
