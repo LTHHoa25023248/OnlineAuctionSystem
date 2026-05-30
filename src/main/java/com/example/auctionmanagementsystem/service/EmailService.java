@@ -1,6 +1,7 @@
 package com.example.auctionmanagementsystem.service;
 
 import jakarta.mail.*;
+import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.internet.*;
 
 import java.util.Properties;
@@ -13,7 +14,7 @@ public class EmailService {
   private static final String SMTP_HOST = "smtp.gmail.com";
   private static final int SMTP_PORT = 587;
 
-  // TODO: Thay bằng Gmail thật + App Password của bạn
+
   private static final String SENDER_EMAIL = "duc2112602003@gmail.com";
   private static final String SENDER_PASSWORD = "qyvj lmbd azul ssxg";
 
@@ -29,13 +30,7 @@ public class EmailService {
     return String.format("%06d", new Random().nextInt(1_000_000));
   }
 
-  /**
-   * Gửi email chứa mã OTP đặt lại mật khẩu.
-   *
-   * @param toEmail Địa chỉ nhận
-   * @param code Mã OTP 6 chữ số
-   * @return true nếu gửi thành công
-   */
+
   public static boolean sendResetCode(String toEmail, String code) {
     try {
       Session session = buildSession();
@@ -50,8 +45,19 @@ public class EmailService {
       System.out.println("[EmailService] OTP sent to: " + toEmail);
       return true;
 
+    } catch (AuthenticationFailedException e) {
+      System.err.println("[EmailService] SMTP Authentication failed — App Password sai hoặc hết hạn.");
+      System.err.println("  Hint: Vào Google Account → Security → App Passwords → tạo mật khẩu mới.");
+      e.printStackTrace();
+      return false;
+    } catch (MessagingException e) {
+      System.err.println("[EmailService] SMTP error: " + e.getMessage());
+      Throwable cause = e.getCause();
+      if (cause != null) System.err.println("  Cause: " + cause.getClass().getSimpleName() + ": " + cause.getMessage());
+      e.printStackTrace();
+      return false;
     } catch (Exception e) {
-      System.err.println("[EmailService] Failed to send email: " + e.getMessage());
+      System.err.println("[EmailService] Unexpected error: " + e.getMessage());
       e.printStackTrace();
       return false;
     }
@@ -60,11 +66,16 @@ public class EmailService {
 
   private static Session buildSession() {
     Properties props = new Properties();
-    props.put("mail.smtp.auth", "true");
-    props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.smtp.host", SMTP_HOST);
-    props.put("mail.smtp.port", String.valueOf(SMTP_PORT));
-    props.put("mail.smtp.ssl.trust", SMTP_HOST);
+    props.put("mail.smtp.auth",              "true");
+    props.put("mail.smtp.starttls.enable",   "true");
+    props.put("mail.smtp.starttls.required", "true");
+    props.put("mail.smtp.host",              SMTP_HOST);
+    props.put("mail.smtp.port",              String.valueOf(SMTP_PORT));
+    props.put("mail.smtp.ssl.trust",         SMTP_HOST);
+    props.put("mail.smtp.ssl.protocols",     "TLSv1.2");
+    props.put("mail.smtp.connectiontimeout", "10000");
+    props.put("mail.smtp.timeout",           "10000");
+    props.put("mail.smtp.writetimeout",      "10000");
 
     return Session.getInstance(props, new Authenticator() {
       @Override
