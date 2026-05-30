@@ -1,32 +1,38 @@
 package com.example.auctionmanagementsystem.controller;
 
+import com.example.auctionmanagementsystem.client.ApiClient;
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.model.*;
 import com.example.auctionmanagementsystem.service.AuctionService;
 import com.example.auctionmanagementsystem.service.ImageStorageService;
 import com.example.auctionmanagementsystem.service.ItemService;
+import com.google.gson.JsonObject;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXDatePicker;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-
-import java.io.File;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddListingController {
 
   // ── FXML fields ───────────────────────────────────────────────────────────
-  @FXML
+   @FXML
   private MFXTextField name;
   @FXML
   private MFXComboBox<String> category;
@@ -34,6 +40,12 @@ public class AddListingController {
   private MFXTextField startingprice;
   @FXML
   private MFXDatePicker enddate;
+  @FXML
+  private MFXTextField endHour;
+  @FXML
+  private MFXTextField endMinute;
+  @FXML
+  private MFXTextField endSecond;
   @FXML
   private MFXTextField description;
   @FXML
@@ -46,19 +58,62 @@ public class AddListingController {
   private Label validationLabel;
   @FXML
   private ImageView closeButton;
+  @FXML private ComboBox<String> cbCategory;
+  @FXML private VBox dynamicAttributesBox;
 
 
   private File selectedImageFile;
+  public java.util.Map<String, MFXTextField> currentAttributeFields = new java.util.HashMap<>();
   public static AuctionListController.AuctionItem lastAddedItem = null;
 
   @FXML
   public void initialize() {
     validationLabel.setText("");
-    category.getItems().addAll("Jewelry", "Watches", "Bags", "Fine Art", "Cars", "Others");
+    category.getItems().addAll("Electronics", "Art", "Vehicle");
+    category.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+      renderDynamicFields(newVal);
+    });
 
     chooseImageButton.setOnAction(e -> chooseImage());
     addButton.setOnAction(e -> handleAdd());
     closeButton.setOnMouseClicked(this::handleClose);
+  }
+
+  // Quyết định danh mụ nào sẽ hiện ra attributes cần
+  private void renderDynamicFields(String cat) {
+    dynamicAttributesBox.getChildren().clear();
+    currentAttributeFields.clear();
+
+    if (cat == null) return;
+
+    switch (cat) {
+      case "Electronics" -> {
+        createInput("brand", "Brand (e.g., Apple)");
+        createInput("warranty", "Warranty (Months)");
+      }
+      case "Art" -> {
+        createInput("artist", "Artist Name");
+        createInput("material", "Material (e.g., Oil, Paper)");
+        createInput("theme", "Theme (e.g., Landscape)");
+      }
+      case "Vehicle" -> {
+        createInput("year", "Year (e.g., 2022)");
+        createInput("mileage", "Mileage (KM)");
+      }
+    }
+  }
+
+  private void createInput(String key, String promptText) {
+    MFXTextField txt = new MFXTextField();
+    // Bật hiệu ứng chữ nổi lên viền
+    txt.setFloatMode(io.github.palexdev.materialfx.enums.FloatMode.BORDER);
+    txt.setFloatingText("  " + promptText + "  ");
+    txt.setPrefHeight(45.0); // Chỉnh cao xíu cho cân đối
+    txt.setPrefWidth(354.0);
+    txt.getStyleClass().add("fields"); 
+
+    dynamicAttributesBox.getChildren().add(txt);
+    currentAttributeFields.put(key, txt); // Cất vào Map để xài lúc Save
   }
 
   @FXML
@@ -104,6 +159,16 @@ public class AddListingController {
       return;
     }
 
+    int hour = 23, minute = 59, second = 0;
+    try {
+      String hText = endHour != null ? endHour.getText().trim() : "";
+      String mText = endMinute != null ? endMinute.getText().trim() : "";
+      String sText = endSecond != null ? endSecond.getText().trim() : "";
+    } catch (NumberFormatException ex) {
+      validationLabel.setText("Invalid time. HH 0-23, MM/SS 0-59");
+      return;
+    }
+
     long daysLeft = java.time.temporal.ChronoUnit.DAYS
         .between(java.time.LocalDate.now(), enddate.getValue());
     if (daysLeft < 1) daysLeft = 1;
@@ -117,66 +182,52 @@ public class AddListingController {
       }
 
       Map<String, String> attributes = new HashMap<>();
-      String itemType;
-      switch (category.getValue()) {
-        case "Cars" -> {
-          itemType = "VEHICLE";
-          attributes.put("year", "0");
-          attributes.put("mileage", "0.0");
-        }
-        case "Fine Art" -> {
-          itemType = "ART";
-          attributes.put("artist", "Unknown");
-          attributes.put("theme", "Unknown");
-          attributes.put("material", "Unknown");
-        }
-        default -> {
-          itemType = "ELECTRONICS";
-          attributes.put("brand", category.getValue());
-          attributes.put("warranty", "0");
-        }
+      String itemType = category.getValue().toUpperCase();
+      for (Map.Entry<String, MFXTextField> entry : currentAttributeFields.entrySet()) {
+          String key = entry.getKey();
+          String val = entry.getValue().getText().trim();
+          
+          // Nếu người dùng lười không nhập, mình set mặc định
+          if (val.isEmpty()) {
+              if (key.equals("warranty") || key.equals("year") || key.equals("mileage")) {
+                  val = "0"; 
+              } else {
+                  val = "Unknown";
+              }
+          }
+          attributes.put(key, val);
       }
-      Item item = ItemFactory.createItem(itemType, name.getText().trim(),
-          description.getText().trim(), price, attributes);
-      item.setImagePath(savedFileName); // chi luu ten file vao DB, khong luu full path
 
-      ItemService itemService = new ItemService();
-      int itemId = itemService.createItem(item); // [FIX] creatItem → createItem (ten method da doi)
-      item.setId(itemId);
+      LocalDateTime endDateTime = enddate.getValue().atTime(hour, minute, second);
+      Map<String, Object> body = new HashMap<>();
+      body.put("sellerId",     SessionManager.getInstance().getUserId());
+      body.put("itemType",     itemType);
+      body.put("name",         name.getText().trim());
+      body.put("desc",         description.getText().trim());
+      body.put("price",        price);
+      body.put("imageFileName",savedFileName);
+      body.put("endTime",      endDateTime.toString());
+      body.put("attributes",   attributes);
+      JsonObject resp = ApiClient.post("/auction/create", body);
+      if (!resp.get("success").getAsBoolean())
+        throw new RuntimeException(resp.has("error") ? resp.get("error").getAsString() : "Create failed");
 
-
-      // Seller chi can id, khong can load toan bo thong tin tu DB
-      Seller seller = new Seller();
-      seller.setId(SessionManager.getInstance().getUserId());
-
-      Auction auction = new Auction(item, seller, price, AuctionStatus.PENDING,
-          LocalDateTime.now(), enddate.getValue().atTime(23, 59));
-
-      Connection connect = DatabaseConnection.getConnection();
-      connect.setAutoCommit(false);
-      try {
-        new AuctionService().creatAuction(connect, auction);
-        connect.commit();
-      } catch (Exception ex) {
-        connect.rollback();
-        throw ex;
-      } finally {
-        connect.close();
-      }
+      int auctionId = resp.get("auctionId").getAsInt();
 
       // ── Bước 5: Cập nhật lastAddedItem để AuctionListController hiển thị ngay ──
       // Dung id thuc tu DB thay vi id tam thoi ngau nhien nhu truoc
       lastAddedItem = new AuctionListController.AuctionItem(
-          auction.getId(),
+          auctionId,
           name.getText().trim(),
           category.getValue(),
           price,
           0,             // 0 bids vì mới tạo
           (int) daysLeft,
-          displayImagePath); // full path de JavaFX hien thi duoc
+          displayImagePath);
+      lastAddedItem.setAttributes(attributes); // full path de JavaFX hien thi duoc
 
-      System.out.println("[AddListing] Saved to DB: " + lastAddedItem.name
-          + " | auctionId=" + auction.getId()
+      System.out.println("[AddListing] Saved to API: " + lastAddedItem.name
+          + " | auctionId=" + auctionId
           + " | image=" + (savedFileName != null ? savedFileName : "none"));
 
     } catch (Exception ex) {

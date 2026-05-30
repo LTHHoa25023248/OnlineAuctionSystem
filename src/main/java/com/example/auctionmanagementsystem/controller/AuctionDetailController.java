@@ -19,6 +19,10 @@ import java.util.Map;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -58,6 +62,7 @@ public class AuctionDetailController implements Observer {
 
   // ── FXML fields — bid history ─────────────────────────────────────────────
   @FXML private ListView<String> bidHistoryList;
+  @FXML private LineChart<String, Number> bidChart;
 
   // ── FXML fields — seller actions ─────────────────────────────────────────
   @FXML private HBox sellerActionsDetailBox;
@@ -141,14 +146,28 @@ public class AuctionDetailController implements Observer {
             currentAuction.setCurrentPrice(newPrice);
             priceLabel.setText(String.format("%,.2f USD", newPrice));
 
+            String timeStr = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));
+
             // 2. Chèn dòng lịch sử realtime mới lên đầu ListView
             if (bidHistoryList != null) {
-              String timeStr = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));
               String historyEntry = String.format("Realtime  |  %,.2f USD  |  %s (%s)", newPrice, timeStr, bidderName);
               bidHistoryList.getItems().add(0, historyEntry);
             }
 
-            // 3. Tự tăng số lượng tổng lượt bids lên giao diện
+            // 3. Thêm điểm mới vào line chart realtime
+            if (bidChart != null) {
+              if (bidChart.getData().isEmpty()) {
+                XYChart.Series<String, Number> s = new XYChart.Series<>();
+                s.setName("Bid Price (USD)");
+                bidChart.getData().add(s);
+              }
+              bidChart.getData().get(0).getData().add(new XYChart.Data<>(timeStr, newPrice));
+              bidChart.setVisible(true);
+              bidChart.setManaged(true);
+              applyChartStyle();
+            }
+
+            // 4. Tự tăng số lượng tổng lượt bids lên giao diện
             try {
               int currentBidsCount = Integer.parseInt(totalBidsLabel.getText().replaceAll("[^0-9]", ""));
               totalBidsLabel.setText((currentBidsCount + 1) + " bids");
@@ -156,7 +175,7 @@ public class AuctionDetailController implements Observer {
               totalBidsLabel.setText("Updated bids");
             }
 
-            // 4. Thông báo dải băng trạng thái màu xanh lá
+            // 5. Thông báo dải băng trạng thái màu xanh lá
             bidValidationLabel.setStyle("-fx-text-fill: #3DBA7F;");
             bidValidationLabel.setText("New bid placed by " + bidderName + "!");
           });
@@ -364,7 +383,7 @@ public class AuctionDetailController implements Observer {
         }
       }
     } else if (status == AuctionStatus.FINISHED || status == AuctionStatus.PAID) {
-      winnerLabel.setText("Phiên đấu giá kết thúc — Không có người đặt giá");
+      winnerLabel.setText("Auction ended — No bids placed");
       winnerLabel.setStyle("-fx-text-fill: #999999; -fx-font-size: 13px;");
     } else {
       winnerLabel.setText("");
@@ -421,6 +440,50 @@ public class AuctionDetailController implements Observer {
         }
       } catch (Exception ignored) {}
     }
+
+    fillBidChart(bids);
+  }
+
+  private void fillBidChart(List<BidTransaction> bids) {
+    if (bidChart == null) return;
+    bidChart.getData().clear();
+    if (bids.isEmpty()) {
+      bidChart.setVisible(false);
+      bidChart.setManaged(false);
+      return;
+    }
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
+    series.setName("Bid Price (USD)");
+    for (BidTransaction b : bids) {
+      String label = b.getTime() != null
+          ? b.getTime().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"))
+          : "#" + b.getId();
+      series.getData().add(new XYChart.Data<>(label, b.getAmount()));
+    }
+    bidChart.getData().add(series);
+    bidChart.setVisible(true);
+    bidChart.setManaged(true);
+    applyChartStyle();
+  }
+
+  // Programmatic styling — CSS alone cannot override JavaFX chart's internal dark layers
+  private void applyChartStyle() {
+    Platform.runLater(() -> {
+      bidChart.setStyle("-fx-background-color: white;");
+      // Force white on chart-content (axis label area)
+      javafx.scene.Node content = bidChart.lookup(".chart-content");
+      if (content != null) content.setStyle("-fx-background-color: white;");
+      // Force white on inner plot area
+      javafx.scene.Node plot = bidChart.lookup(".chart-plot-background");
+      if (plot != null) plot.setStyle("-fx-background-color: white;");
+      // Thin dark line
+      javafx.scene.Node line = bidChart.lookup(".default-color0.chart-series-line");
+      if (line != null) line.setStyle("-fx-stroke: #1A1A1A; -fx-stroke-width: 1.8px;");
+      // Small solid dark dots
+      for (javafx.scene.Node sym : bidChart.lookupAll(".default-color0.chart-line-symbol")) {
+        sym.setStyle("-fx-background-color: #1A1A1A; -fx-padding: 4px; -fx-background-radius: 5px;");
+      }
+    });
   }
 
   private void startCountdown(LocalDateTime endTime, AuctionStatus status) {
@@ -596,7 +659,7 @@ public class AuctionDetailController implements Observer {
 
       activeLabel.setText(statusLabel(AuctionStatus.PAID));
       if (countdown != null) countdown.stop();
-      if (countdownLabel != null) countdownLabel.setText("Kết thúc");
+      if (countdownLabel != null) countdownLabel.setText("Ended");
       placeBidButton.setDisable(true);
       bidField.setDisable(true);
       endnowButton.setVisible(false);
