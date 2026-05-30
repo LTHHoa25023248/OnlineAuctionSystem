@@ -125,28 +125,28 @@ public class ForgotPassController {
             switch (result) {
                 case SUCCESS -> {
                     verifiedEmail = email;
-                    showStatus("✅ Mã đã được gửi đến " + email
-                            + ". Vui lòng kiểm tra hộp thư (và thư mục Spam).", true);
+                    showStatus("Code send to " + email
+                            + ". Please check your inbox.", true);
                     // Disable nút 60 giây chống spam
                     startResendCountdown();
                 }
                 case EMAIL_NOT_FOUND -> {
-                    showError(unValidLabel, "Email này chưa được đăng ký trong hệ thống.");
+                    showError(unValidLabel, "This email is not registered.");
                     setSendCodeButtonState(true, "Send Code");
                 }
                 case DB_ERROR -> {
-                    showStatus("❌ Lỗi hệ thống. Vui lòng thử lại.", false);
+                    showStatus("System error. Please try again", false);
                     setSendCodeButtonState(true, "Send Code");
                 }
                 case EMAIL_SEND_FAIL -> {
-                    showStatus("❌ Không thể gửi email. Kiểm tra cấu hình SMTP.", false);
+                    showStatus("Failed to send email.", false);
                     setSendCodeButtonState(true, "Send Code");
                 }
             }
         });
 
         task.setOnFailed(e -> {
-            showStatus("❌ Lỗi kết nối. Vui lòng thử lại.", false);
+            showStatus("Connection error. Please try again", false);
             setSendCodeButtonState(true, "Send Code");
             task.getException().printStackTrace();
         });
@@ -173,28 +173,28 @@ public class ForgotPassController {
 
         // ── Validate client-side ──────────────────────────────────────────────
         if (verifiedEmail == null) {
-            showError(unValidLabel, "Vui lòng gửi mã xác thực trước.");
+            showError(unValidLabel, "Please send a verification code first.");
             return;
         }
         if (code.isEmpty()) {
-            showError(unValidLabel, "Vui lòng nhập mã xác thực.");
+            showError(unValidLabel, "Please enter the verification code");
             return;
         }
         if (code.length() != 6 || !code.matches("\\d+")) {
-            showError(unValidLabel, "Mã xác thực phải là 6 chữ số.");
+            showError(unValidLabel, "Verification code must be 6 ");
             return;
         }
         if (pass.length() < 8) {
-            showError(pwValidLabel, "Mật khẩu phải có ít nhất 8 ký tự."); return;
+            showError(pwValidLabel, "Password must be at least 8 characters."); return;
         }
         if (!pass.matches(".*[a-zA-Z].*") || !pass.matches(".*\\d.*")) {
-            showError(pwValidLabel, "Mật khẩu phải có cả chữ cái và chữ số."); return;
+            showError(pwValidLabel, "Password must contain both letters and numbers."); return;
         }
         if (!pass.equals(confirm)) {
-            showError(pwValidLabel, "Mật khẩu xác nhận không khớp."); return;
+            showError(pwValidLabel, "Passwords do not match."); return;
         }
 
-        setOkButtonState(false, "Đang lưu...");
+        setOkButtonState(false, "Saving...");
 
         final String emailToReset = verifiedEmail;
 
@@ -215,7 +215,7 @@ public class ForgotPassController {
             ResetResult result = task.getValue();
             switch (result) {
                 case SUCCESS -> {
-                    showStatus("✅ Mật khẩu đã được cập nhật thành công!", true);
+                    showStatus("Password updated successfully!", true);
                     // Tự đóng popup sau 2 giây
                     new Thread(() -> {
                         try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
@@ -223,18 +223,18 @@ public class ForgotPassController {
                     }).start();
                 }
                 case INVALID_CODE -> {
-                    showError(unValidLabel, "Mã xác thực sai hoặc đã hết hạn.");
+                    showError(unValidLabel, "Invalid or expired verification code.");
                     setOkButtonState(true, "Save New Password");
                 }
                 case DB_ERROR -> {
-                    showStatus("❌ Lỗi hệ thống. Vui lòng thử lại.", false);
+                    showStatus("System error. Please try again.", false);
                     setOkButtonState(true, "Save New Password");
                 }
             }
         });
 
         task.setOnFailed(e -> {
-            showStatus("❌ Lỗi kết nối. Vui lòng thử lại.", false);
+            showStatus("Connection error. Please try again.", false);
             setOkButtonState(true, "Save New Password");
             task.getException().printStackTrace();
         });
