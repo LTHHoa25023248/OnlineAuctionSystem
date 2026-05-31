@@ -161,9 +161,12 @@ public class AddListingController {
 
     int hour = 23, minute = 59, second = 0;
     try {
-      String hText = endHour != null ? endHour.getText().trim() : "";
+      String hText = endHour   != null ? endHour.getText().trim()   : "";
       String mText = endMinute != null ? endMinute.getText().trim() : "";
       String sText = endSecond != null ? endSecond.getText().trim() : "";
+      if (!hText.isEmpty()) { hour   = Integer.parseInt(hText); if (hour   < 0 || hour   > 23) throw new NumberFormatException(); }
+      if (!mText.isEmpty()) { minute = Integer.parseInt(mText); if (minute < 0 || minute > 59) throw new NumberFormatException(); }
+      if (!sText.isEmpty()) { second = Integer.parseInt(sText); if (second < 0 || second > 59) throw new NumberFormatException(); }
     } catch (NumberFormatException ex) {
       validationLabel.setText("Invalid time. HH 0-23, MM/SS 0-59");
       return;

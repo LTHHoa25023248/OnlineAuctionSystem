@@ -3,39 +3,42 @@ package com.example.auctionmanagementsystem;
 import com.example.auctionmanagementsystem.config.DatabaseConnection;
 import com.example.auctionmanagementsystem.server.AuctionServer;
 import com.example.auctionmanagementsystem.service.AuctionScheduler;
-
-
+import java.net.Socket;
 
 public class Main {
-
   public static void main(String[] args) {
-    boolean isServerMode = false;
-    if (args.length > 0 && args[0].equalsIgnoreCase("server")) {
-      isServerMode = true;
+
+    if (!DatabaseConnection.testConnection()) {
+      System.err.println("[Main] Cannot connect to DB.");
+      System.exit(1);
     }
 
-    if (isServerMode) {
-      if (!DatabaseConnection.testConnection()) {
-        System.err.println("[Main-Server] Cannot connect to database.");
-        System.err.println("[Main-Server] Check database.properties or DatabaseConnection.java");
-        System.exit(1);
-      }
-      System.out.println("[Main-Server] Database connected.");
-
+    // Kiểm tra xem server đã chạy chưa (port 8080 đã bị chiếm chưa)
+    if (isServerRunning()) {
+      // Server đã chạy ở cửa sổ khác → chỉ mở thêm giao diện JavaFX
+      System.out.println("[Main] Server already running — launching additional client window.");
+    } else {
+      // Server chưa chạy → khởi động server + scheduler
       try {
         AuctionServer.start();
-        System.out.println("[Main-Server] HTTP Server started successfully.");
+        System.out.println("[Main] Server started on port 8080.");
       } catch (Exception e) {
-        System.err.println("[Main-Server] Failed to start HTTP server: " + e.getMessage());
+        System.err.println("[Main] Failed to start server: " + e.getMessage());
         System.exit(1);
       }
       AuctionScheduler.getInstance().start();
-      System.out.println("[Main-Server] AuctionScheduler cron-job is running...");
-      System.out.println("[Main-Server] Server is fully operational. Press Ctrl+C to stop.");
+      System.out.println("[Main] Scheduler started.");
     }
-    else {
-      System.out.println("[Main-Client] Launching JavaFX Graphical User Interface...");
-      App.main(args);
+
+    App.main(args);
+  }
+
+  //Trả về true nếu port 8080 đang có gì đó lắng nghe (server đã chạy). */
+  private static boolean isServerRunning() {
+    try (Socket s = new Socket("localhost", 8080)) {
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 }

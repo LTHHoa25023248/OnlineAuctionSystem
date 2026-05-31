@@ -15,6 +15,7 @@ public class AuctionService {
         this.auctionDao = new AuctionDAO();
     }
 
+    // UNUSED — constructor dự phòng cho unit test (mock DAO), không được gọi trong app
     public AuctionService(AuctionDAO auctionDao) {
         this.auctionDao = auctionDao;
     }
@@ -36,7 +37,8 @@ public class AuctionService {
             throw new RuntimeException("Create auction failed",e);
         }
     }
-    // mo phien dau gia
+    // UNUSED — startAuction() không được gọi ở đâu.
+    // Approve xử lý trực tiếp bằng SQL trong AuctionHandler.handleApprove()
     public void startAuction(Connection connect, Auction auction) {
         try {
             //set trang thai duyet da  moi cho mo
@@ -44,7 +46,7 @@ public class AuctionService {
                 throw new IllegalStateException("Auction must be PENDING to start");
             }
             //set trang thai, time, update data
-            auction.setStatus(AuctionStatus.RUNNING);
+            auction.setStatus(AuctionStatus.OPEN);
             auction.setStartTime(LocalDateTime.now());
             auctionDao.update(auction, connect);
 
@@ -67,6 +69,7 @@ public class AuctionService {
         }
     }
 
+    // UNUSED — cancelAuction() không được gọi ở đâu trong app
     public void cancelAuction(Connection connect, Auction auction) {
 
     try {
@@ -90,6 +93,7 @@ public class AuctionService {
         }
     }
 
+    // UNUSED — getAll() không được gọi. AuctionHandler.handleList() query thẳng SQL
     public List<Auction> getAll(Connection connect) {
         try {
             return auctionDao.selectAll(connect);
@@ -98,6 +102,8 @@ public class AuctionService {
         }
     }
 
+    // UNUSED — getActiveAuctions() không được gọi.
+    // AuctionScheduler gọi auctionDao.selectOpenAuctions() trực tiếp, bỏ qua method này
     public List<Auction> getActiveAuctions(Connection connect) {
         try {
             return auctionDao.selectOpenAuctions(connect);
@@ -106,6 +112,8 @@ public class AuctionService {
         }
     }
 
+    // UNUSED — updateAuction() không được gọi từ bên ngoài.
+    // Các method nội bộ (endAuction, cancelAuction...) gọi auctionDao.update() trực tiếp
     public void updateAuction(Connection connect, Auction auction) {
         try {
             auctionDao.update(auction, connect);
@@ -113,6 +121,7 @@ public class AuctionService {
             throw new RuntimeException("Update auction failed", e);
         }
     }
+    // UNUSED — deleteAuction() không được gọi. ItemHandler.handleDelete() dùng AuctionDAO trực tiếp
     public void deleteAuction(Connection connect, int id) {
         try {
             auctionDao.delete(id, connect);
@@ -122,7 +131,7 @@ public class AuctionService {
     }
 
    
-     //lay danh sach tat ca cac phien dau gia dang cho admin duyet
+     // UNUSED — getPendingAuctions() không được gọi. AdminHandler query SQL trực tiếp
     public List<Auction> getPendingAuctions(Connection connect) {
         try {
             return auctionDao.selectPendingAuctions(connect);
@@ -130,7 +139,8 @@ public class AuctionService {
             throw new RuntimeException("Get pending auctions failed", e);
         }
     }
-    //admin duyet dau gia, tu cho duyet chuyen sang trang thai mo phien dau gia
+    // UNUSED — approveAuction() không được gọi.
+    // AuctionHandler.handleApprove() chạy SQL UPDATE trực tiếp, không qua Service
     public void approveAuction(Connection connect, Auction auction) {
         try {
             // Chi duyet neu dang o trang thai PENDING
@@ -146,7 +156,8 @@ public class AuctionService {
         }
     }
 
-    // Admin tu choi phien dau gia, chuyen sang trang thai REJECTED ( chac ban hang cam) va luu ly do tu choi
+    // UNUSED — rejectAuction() không được gọi.
+    // AuctionHandler.handleReject() chạy SQL UPDATE trực tiếp, không qua Service
     public void rejectAuction(Connection connect, Auction auction, String reason) {
         try {
             //chi duoc tu choi item dang o trang thai cho admin phe duyet -PENDING

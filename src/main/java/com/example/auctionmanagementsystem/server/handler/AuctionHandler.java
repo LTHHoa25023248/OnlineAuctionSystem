@@ -266,6 +266,7 @@ public class AuctionHandler extends BaseHandler {
             cached.setStatus(AuctionStatus.REJECTED);
             cached.setRejectReason(reason);
         }
+        sendJson(ex, 200, ok()); 
     }
 
     private void handleEnd(HttpExchange ex) throws Exception {

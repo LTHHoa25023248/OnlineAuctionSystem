@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Q&amp;A — Online Auction System</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --card: #21253a;
+    --accent: #6c8aff;
+    --accent2: #ff6b9d;
+    --green: #3dba7f;
+    --yellow: #f5a623;
+    --text: #e8eaf6;
+    --muted: #8b93b3;
+    --border: #2d3155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7;
+  }
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 40px 60px 30px;
+    text-align: center;
+  }
+  header h1 { font-size: 2.4rem; font-weight: 800; color: var(--accent); letter-spacing: 1px; }
+  header p { color: var(--muted); margin-top: 8px; font-size: 1rem; }
+  .stats-bar {
+    display: flex; justify-content: center; gap: 40px; margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat .num { font-size: 2rem; font-weight: 700; color: var(--green); }
+  .stat .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* TOC */
+  nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 32px;
+    max-width: 900px;
+    margin: 32px auto;
+  }
+  nav h2 { color: var(--yellow); font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; }
+  nav ol { padding-left: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  nav li { font-size: 0.9rem; }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  /* SECTIONS */
+  main { max-width: 960px; margin: 0 auto; padding: 0 24px 60px; }
+  section { margin-bottom: 56px; }
+  section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-left: 4px solid var(--accent2);
+    padding-left: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* Q&A CARD */
+  .qa {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .qa-q {
+    background: linear-gradient(90deg, #2a2f4a, var(--card));
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .qa-q .badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .qa-q p { font-weight: 600; font-size: 1rem; color: var(--text); }
+  .qa-a {
+    padding: 18px 22px;
+    border-top: 1px solid var(--border);
+    font-size: 0.93rem;
+    color: #c8ceee;
+  }
+  .qa-a p { margin-bottom: 10px; }
+  .qa-a p:last-child { margin-bottom: 0; }
+  .qa-a ul, .qa-a ol { padding-left: 22px; margin: 8px 0; }
+  .qa-a li { margin-bottom: 5px; }
+  .qa-a code {
+    background: #0f1117;
+    color: #82aaff;
+    font-family: 'Cascadia Code', Consolas, monospace;
+    font-size: 0.85em;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .qa-a pre {
+    background: #0f1117;
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    margin: 10px 0;
+    font-family: 'Cascadia Code', Consolas, monospace;
+    font-size: 0.83em;
+    color: #c3e88d;
+    line-height: 1.6;
+  }
+  .qa-a .highlight { color: var(--green); font-weight: 600; }
+  .qa-a .warn { color: var(--yellow); font-weight: 600; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.87rem;
+  }
+  th {
+    background: #2a2f4a;
+    color: var(--accent);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #1e2235; }
+
+  /* DIFFICULTY BADGES */
+  .badge.easy   { background: #2d6a4f; }
+  .badge.medium { background: #9b5500; }
+  .badge.hard   { background: #8b1a1a; }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏆 Online Auction System</h1>
+  <p>Tài liệu Q&amp;A — Câu hỏi &amp; Trả lời cho Buổi Chấm Dự Án</p>
+  <div class="stats-bar">
+    <div class="stat"><div class="num">50</div><div class="lbl">Câu hỏi</div></div>
+    <div class="stat"><div class="num">8</div><div class="lbl">Chủ đề</div></div>
+    <div class="stat"><div class="num">22+</div><div class="lbl">Classes</div></div>
+    <div class="stat"><div class="num">Java 17</div><div class="lbl">Platform</div></div>
+  </div>
+</header>
+
+<nav>
+  <h2>📋 Mục lục</h2>
+  <ol>
+    <li><a href="#oop">OOP &amp; Thiết kế lớp</a></li>
+    <li><a href="#patterns">Design Patterns</a></li>
+    <li><a href="#db">Cơ sở dữ liệu &amp; DAO</a></li>
+    <li><a href="#server">Kiến trúc Client-Server</a></li>
+    <li><a href="#concurrency">Concurrency &amp; Thread Safety</a></li>
+    <li><a href="#business">Nghiệp vụ đấu giá</a></li>
+    <li><a href="#javafx">JavaFX &amp; UI</a></li>
+    <li><a href="#advanced">Câu hỏi nâng cao</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<section id="oop">
+<h2>1. OOP &amp; Thiết kế lớp</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Hệ thống có những lớp nào? Hãy mô tả cây kế thừa (inheritance hierarchy).</p></div>
+  <div class="qa-a">
+    <p>Hệ thống có <span class="highlight">hai cây kế thừa chính</span>:</p>
+    <p><strong>Cây User:</strong></p>
+    <pre>Entity (abstract, id)
+  └── User (abstract: username, password, email, isActive)
+        ├── Bidder  — balance, deductBalance()
+        ├── Seller  — storeName, rating
+        └── Admin   — accessLevel</pre>
+    <p><strong>Cây Item:</strong></p>
+    <pre>Entity (abstract, id)
+  └── Item (abstract: name, description, startingPrice, imagePath)
+        ├── Art         — artist, theme, material
+        ├── Vehicle     — year, mileage
+        └── Electronics — brand, warrantyMonths</pre>
+    <p>Ngoài ra còn các lớp độc lập: <code>Auction</code>, <code>BidTransaction</code>, <code>AutoBid</code>, <code>AuctionStatus</code> (enum).</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Tại sao lớp <code>Item</code> lại là abstract? Phương thức abstract nào nó khai báo?</p></div>
+  <div class="qa-a">
+    <p><code>Item</code> là abstract vì không có "item chung chung" trong thực tế — mỗi item phải thuộc một danh mục cụ thể (Art, Vehicle, Electronics). Việc abstract hóa ép các subclass phải cài đặt logic riêng của mình.</p>
+    <p><strong>3 phương thức abstract:</strong></p>
+    <ul>
+      <li><code>getCategoryDetails()</code> — trả về thông tin đặc trưng của từng loại (ví dụ Art trả về artist/theme/material)</li>
+      <li><code>insertSubData(Connection conn, int itemId)</code> — chèn dữ liệu vào bảng con (art_items, vehicle_items, electronics_items)</li>
+      <li><code>updateSubData(Connection conn)</code> — cập nhật dữ liệu bảng con</li>
+    </ul>
+    <p>Đây là ví dụ của <span class="highlight">Template Method Pattern</span>: <code>ItemDAO.insert()</code> gọi chung <code>item.insertSubData()</code> mà không cần biết đây là Art hay Vehicle.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Encapsulation được áp dụng như thế nào trong project?</p></div>
+  <div class="qa-a">
+    <p>Encapsulation được áp dụng nhất quán:</p>
+    <ul>
+      <li>Tất cả fields đều là <code>private</code> hoặc <code>protected</code> — không truy cập trực tiếp từ ngoài</li>
+      <li>Truy cập qua <strong>getter/setter</strong> được kiểm soát (ví dụ <code>Bidder.deductBalance()</code> kiểm tra số dư trước khi trừ)</li>
+      <li><code>Auction.lock</code> (ReentrantLock) là <code>private final</code>, chỉ expose qua <code>getLock()</code></li>
+      <li><code>SessionManager</code> dùng Singleton — hide constructor, chỉ expose <code>getInstance()</code></li>
+      <li>DAO classes ẩn toàn bộ SQL queries khỏi business logic</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Polymorphism được sử dụng ở đâu trong project này?</p></div>
+  <div class="qa-a">
+    <p><span class="highlight">Ít nhất 4 điểm sử dụng polymorphism:</span></p>
+    <ol>
+      <li><strong>ItemDAO.insert(item):</strong> Tham số kiểu <code>Item</code> nhưng runtime có thể là <code>Art</code>, <code>Vehicle</code>, hoặc <code>Electronics</code>. Gọi <code>item.insertSubData()</code> — mỗi subclass tự xử lý bảng của mình</li>
+      <li><strong>ItemFactory.createItem():</strong> Returns <code>Item</code> nhưng thực tế tạo ra subclass tương ứng với type string</li>
+      <li><strong>AuctionDetailController.fillUI():</strong> Dùng <code>item.getClass().getSimpleName()</code> để xác định category label mà không cần instanceof</li>
+      <li><strong>User hierarchy:</strong> <code>UserDAO</code> trả về <code>User</code> nhưng runtime là <code>Bidder</code>/<code>Seller</code>/<code>Admin</code> với behavior khác nhau</li>
+    </ol>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Lớp <code>Entity</code> có vai trò gì? Tại sao cần lớp base này?</p></div>
+  <div class="qa-a">
+    <p><code>Entity</code> là abstract base class chung cho tất cả domain objects, chứa field <code>id</code> và getter/setter tương ứng.</p>
+    <p><strong>Lý do cần Entity:</strong></p>
+    <ul>
+      <li><span class="highlight">DRY (Don't Repeat Yourself):</span> Mọi object trong hệ thống đều có ID — không cần viết lại ở từng class</li>
+      <li>DAO có thể dùng <code>entity.getId()</code> một cách thống nhất</li>
+      <li>Là nền tảng cho các framework ORM nếu mở rộng sau này</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Tại sao <code>Bidder</code> có method <code>deductBalance(amount)</code> thay vì chỉ setter <code>setBalance()</code>?</p></div>
+  <div class="qa-a">
+    <p>Đây là nguyên tắc <span class="highlight">Tell, Don't Ask</span> — đối tượng tự quản lý state của mình.</p>
+    <p><code>deductBalance(amount)</code>:</p>
+    <ul>
+      <li>Kiểm tra <code>balance >= amount</code> trước khi trừ</li>
+      <li>Nếu không đủ → trả về <code>false</code> (không throw exception ngay)</li>
+      <li>Ngăn code bên ngoài vô tình set balance âm bằng cách gọi <code>setBalance(balance - amount)</code> mà không check</li>
+    </ul>
+    <p>So sánh: <code>setBalance(-100)</code> sẽ không có validation nào → dễ bug. <code>deductBalance()</code> đảm bảo invariant "balance không âm".</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Hãy giải thích các custom exceptions trong project. Tại sao không dùng <code>Exception</code> chung?</p></div>
+  <div class="qa-a">
+    <p>Project có <span class="highlight">6 custom exceptions</span>:</p>
+    <table>
+      <tr><th>Exception</th><th>Khi nào throw</th></tr>
+      <tr><td><code>AuctionClosedException</code></td><td>Đặt bid khi auction đã kết thúc</td></tr>
+      <tr><td><code>InvalidBidException</code></td><td>Bid amount ≤ current price</td></tr>
+      <tr><td><code>SellerBiddingOwnItemException</code></td><td>Seller tự bid item của mình</td></tr>
+      <tr><td><code>InsufficientBalanceException</code></td><td>Bidder không đủ tiền thanh toán</td></tr>
+      <tr><td><code>AuctionStatusException</code></td><td>Thao tác không hợp lệ với status hiện tại</td></tr>
+      <tr><td><code>UnauthorizedActionException</code></td><td>User không có quyền thực hiện action</td></tr>
+    </table>
+    <p><strong>Lý do không dùng <code>Exception</code> chung:</strong></p>
+    <ul>
+      <li>Caller biết chính xác loại lỗi gì để xử lý phù hợp</li>
+      <li>API của <code>BiddingService.placeBid()</code> tự document — đọc signature biết ngay những gì có thể xảy ra</li>
+      <li>Handler phía server catch từng loại exception để trả về error message rõ ràng cho client</li>
+    </ul>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="patterns">
+<h2>2. Design Patterns</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Project sử dụng những design pattern nào? Hãy liệt kê và cho ví dụ cụ thể.</p></div>
+  <div class="qa-a">
+    <table>
+      <tr><th>Pattern</th><th>Class áp dụng</th><th>Mô tả</th></tr>
+      <tr><td><strong>Factory</strong></td><td>ItemFactory</td><td>Tạo Art/Vehicle/Electronics từ type string</td></tr>
+      <tr><td><strong>Singleton</strong></td><td>AuctionScheduler, AuctionNotifier, SessionManager, ThemeManager</td><td>Đảm bảo chỉ có 1 instance</td></tr>
+      <tr><td><strong>Observer</strong></td><td>Subject, Observer, AuctionNotifier</td><td>Thông báo real-time khi có bid mới</td></tr>
+      <tr><td><strong>DAO</strong></td><td>DAOInterface + AuctionDAO, ItemDAO, UserDAO...</td><td>Tách biệt data access khỏi business logic</td></tr>
+      <tr><td><strong>Mapper</strong></td><td>AuctionMapper, BidTransactionMapper</td><td>Convert ResultSet → Object</td></tr>
+      <tr><td><strong>Template Method</strong></td><td>Item.insertSubData(), ItemDAO.insert()</td><td>Skeleton trong abstract class, subclass fill in</td></tr>
+      <tr><td><strong>Handler Chain</strong></td><td>BaseHandler + AuthHandler, AuctionHandler...</td><td>HTTP request routing &amp; processing</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Factory Pattern được hiện thực như thế nào trong <code>ItemFactory</code>? Tại sao cần Factory?</p></div>
+  <div class="qa-a">
+    <p><code>ItemFactory.createItem(type, name, desc, price, attributes)</code>:</p>
+    <pre>switch (type) {
+  case "ART"         → new Art(artist, theme, material)
+  case "VEHICLE"     → new Vehicle(year, mileage)
+  case "ELECTRONICS" → new Electronics(brand, warrantyMonths)
+  default            → new Electronics(...)   // fallback
+}</pre>
+    <p><strong>Attributes</strong> là <code>Map&lt;String, String&gt;</code> chứa các thuộc tính đặc trưng (brand cho Electronics, artist cho Art...).</p>
+    <p><strong>Tại sao cần Factory:</strong></p>
+    <ul>
+      <li><span class="highlight">Tách logic tạo object</span> khỏi code sử dụng — client code không cần biết Art hay Electronics có gì</li>
+      <li>Khi thêm loại item mới (ví dụ "Jewelry"), chỉ sửa Factory, không phải sửa tất cả nơi tạo Item</li>
+      <li>Cả server handler lẫn controller đều gọi <code>ItemFactory.createItem()</code> — code nhất quán</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Singleton Pattern được dùng ở đâu? Hiện thực theo cách nào? Có thread-safe không?</p></div>
+  <div class="qa-a">
+    <p><strong>4 Singleton trong project:</strong></p>
+    <ul>
+      <li><code>AuctionScheduler</code> — quản lý timer đóng auction tự động</li>
+      <li><code>AuctionNotifier</code> — broadcast events đến observers</li>
+      <li><code>SessionManager</code> — lưu thông tin user đang đăng nhập</li>
+      <li><code>ThemeManager</code> — trạng thái Dark/Light mode</li>
+    </ul>
+    <p><strong>Pattern hiện thực (Lazy Initialization):</strong></p>
+    <pre>private static AuctionScheduler instance;
+
+public static synchronized AuctionScheduler getInstance() {
+    if (instance == null) instance = new AuctionScheduler();
+    return instance;
+}</pre>
+    <p><strong>Thread safety:</strong> Dùng <code>synchronized</code> trên method <code>getInstance()</code> → thread-safe nhưng có overhead. Trong JavaFX app, <code>SessionManager</code> chỉ được gọi từ JavaFX Application Thread nên không cần synchronized.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Observer Pattern được hiện thực như thế nào? Cho ví dụ cụ thể một notification flow.</p></div>
+  <div class="qa-a">
+    <p><strong>Interfaces:</strong></p>
+    <pre>interface Subject { addObserver(o); removeObserver(o); notifyObservers(msg); }
+interface Observer { update(message); }</pre>
+    <p><strong>AuctionNotifier</strong> implements Subject, lưu danh sách observers trong <code>CopyOnWriteArrayList</code> (thread-safe).</p>
+    <p><strong>Ví dụ flow khi có bid mới:</strong></p>
+    <ol>
+      <li>BiddingService.placeBid() thành công</li>
+      <li>Gọi <code>AuctionNotifier.getInstance().notifyNewBid(auctionId, 1500.0, "alice")</code></li>
+      <li>Notifier format message: <code>"NEW_BID|42|1500.0|alice"</code></li>
+      <li>Loop qua tất cả registered observers → gọi <code>observer.update(message)</code></li>
+      <li>Mỗi observer tự parse và xử lý (ví dụ UI update, log...)</li>
+    </ol>
+    <p><span class="warn">Lưu ý:</span> Trong implementation hiện tại, Observer pattern dùng để log/notify internal events. Không phải WebSocket — client không nhận real-time push mà phải reload.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>DAO Pattern giải quyết vấn đề gì? Nếu không có DAO, code sẽ trông như thế nào?</p></div>
+  <div class="qa-a">
+    <p><strong>DAO (Data Access Object)</strong> tách biệt business logic khỏi data persistence.</p>
+    <p><strong>Không có DAO:</strong></p>
+    <pre>// Trong BiddingService.placeBid() (business logic)
+PreparedStatement ps = conn.prepareStatement(
+    "UPDATE auction SET current_price=?, highest_bidder_id=? WHERE id=?");
+ps.setDouble(1, newPrice);
+// SQL lẫn lộn với business logic ❌</pre>
+    <p><strong>Với DAO:</strong></p>
+    <pre>// BiddingService chỉ gọi:
+auctionDAO.updateBid(conn, auctionId, newPrice, bidderId); // ✅
+// SQL nằm trong AuctionDAO, hoàn toàn ẩn</pre>
+    <p><strong>Lợi ích của DAO trong project:</strong></p>
+    <ul>
+      <li>Đổi từ MySQL sang PostgreSQL → chỉ sửa DAO classes</li>
+      <li>Business logic classes có thể test bằng mock DAO</li>
+      <li>Code dễ đọc hơn: <code>auctionDAO.findById(id)</code> thay vì SQL dài</li>
+    </ul>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="db">
+<h2>3. Cơ sở dữ liệu &amp; DAO</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Database có những bảng nào? Vẽ sơ lược quan hệ giữa chúng.</p></div>
+  <div class="qa-a">
+    <table>
+      <tr><th>Bảng</th><th>Cột chính</th><th>Ghi chú</th></tr>
+      <tr><td><code>users</code></td><td>id, username, user_password, email, role, is_active, balance, phone, first_name, last_name</td><td>Lưu mọi loại user</td></tr>
+      <tr><td><code>items</code></td><td>id, name, description, starting_price, item_type, image_path</td><td>Base item</td></tr>
+      <tr><td><code>electronics_items</code></td><td>item_id (FK), brand, warranty_months</td><td>Sub-table</td></tr>
+      <tr><td><code>art_items</code></td><td>item_id (FK), artist, theme, material</td><td>Sub-table</td></tr>
+      <tr><td><code>vehicle_items</code></td><td>item_id (FK), year, mileage</td><td>Sub-table</td></tr>
+      <tr><td><code>auction</code></td><td>id, item_id (FK), seller_id (FK), current_price, status, start_time, end_time, highest_bidder_id (FK), reject_reason</td><td>Core table</td></tr>
+      <tr><td><code>bid_transaction</code></td><td>id, auction_id (FK), bidder_id (FK), amount, bid_time</td><td>Lịch sử bid</td></tr>
+      <tr><td><code>auto_bid</code></td><td>id, auction_id (FK), bidder_id (FK), max_bid, increment, created_at</td><td>Auto-bid config</td></tr>
+    </table>
+    <p><strong>Quan hệ chính:</strong> <code>auction → items (1-1), auction → users seller (N-1), bid_transaction → auction (N-1), auto_bid → auction (N-1)</code></p>
+    <p><strong>Thiết kế polymorphic items:</strong> Dùng mô hình "Table Per Subclass" — bảng <code>items</code> chứa data chung, các bảng con chứa data riêng của từng loại.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Database transaction được dùng ở đâu? Tại sao cần transaction?</p></div>
+  <div class="qa-a">
+    <p><strong>Transaction được dùng trong 2 nơi quan trọng nhất:</strong></p>
+    <p><strong>1. BiddingService.placeBid():</strong></p>
+    <pre>conn.setAutoCommit(false);
+try {
+    // Cập nhật auction.current_price và highest_bidder_id
+    // Insert bid_transaction record
+    // Process auto-bids
+    // Anti-sniping check
+    conn.commit();
+} catch (Exception e) {
+    conn.rollback(); // Hoàn tác toàn bộ nếu bất kỳ bước nào fail
+}</pre>
+    <p><strong>2. PaymentService.processPayment():</strong></p>
+    <pre>// Trừ balance bidder
+// Cộng 90% cho seller
+// Cộng 10% cho admin
+// Update auction.status = PAID
+// Tất cả trong 1 transaction</pre>
+    <p><strong>Tại sao cần:</strong> Nếu không có transaction và server crash sau khi trừ tiền bidder nhưng trước khi cộng tiền seller → tiền biến mất. Transaction đảm bảo "all or nothing".</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Mapper classes (<code>AuctionMapper</code>, <code>BidTransactionMapper</code>) làm gì? Có thể bỏ chúng được không?</p></div>
+  <div class="qa-a">
+    <p>Mapper classes convert <code>ResultSet</code> (raw JDBC data) thành Java objects:</p>
+    <pre>// AuctionMapper.map(ResultSet rs) → Auction
+Auction a = new Auction();
+a.setId(rs.getInt("id"));
+a.setCurrentPrice(rs.getDouble("current_price"));
+a.setStatus(AuctionStatus.valueOf(rs.getString("status")));
+// ...</pre>
+    <p><strong>Có thể bỏ không?</strong> Về lý thuyết có, nhưng khi đó code mapping sẽ nằm rải rác trong từng DAO method. Mapper:</p>
+    <ul>
+      <li><span class="highlight">Tách concern:</span> DAO chỉ lo query, Mapper lo convert</li>
+      <li>Cùng query có thể dùng nhiều mapper khác nhau (ví dụ: full object vs lightweight DTO)</li>
+      <li>Dễ test mapper độc lập với mock ResultSet</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>SQL injection được phòng chống như thế nào?</p></div>
+  <div class="qa-a">
+    <p>Toàn bộ project dùng <span class="highlight">PreparedStatement</span> — không bao giờ concatenate user input vào SQL string.</p>
+    <pre>// ❌ Vulnerable (KHÔNG làm thế này):
+String sql = "SELECT * FROM users WHERE username = '" + username + "'";
+
+// ✅ An toàn (cách project làm):
+PreparedStatement ps = conn.prepareStatement(
+    "SELECT * FROM users WHERE username = ?");
+ps.setString(1, username); // ? được parameterized, không thể inject</pre>
+    <p>PreparedStatement tự động escape ký tự đặc biệt (<code>'</code>, <code>--</code>, <code>;</code>...) trước khi gửi xuống DB engine. Kể cả khi user nhập <code>'; DROP TABLE users; --</code>, nó sẽ được xử lý như một string literal bình thường.</p>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="server">
+<h2>4. Kiến trúc Client-Server</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Tại sao project lại dùng kiến trúc Client-Server? Trước đây không có kiến trúc này?</p></div>
+  <div class="qa-a">
+    <p><strong>Trước đây:</strong> JavaFX controller trực tiếp gọi DAO → kết nối MySQL từ UI thread. Vấn đề:</p>
+    <ul>
+      <li>Database credentials hardcoded hoặc trong config file phía client</li>
+      <li>Network calls (JDBC) trực tiếp từ UI → có thể block UI thread</li>
+      <li>Không có tầng trung gian để validate/authorize</li>
+      <li>Bid safety: race condition khi 2 user bid cùng lúc từ 2 máy khác nhau</li>
+    </ul>
+    <p><strong>Sau khi thêm Client-Server:</strong></p>
+    <ul>
+      <li>Server tập trung xử lý business logic và DB access</li>
+      <li>Bid được serialize qua <code>ReentrantLock</code> trên server — thread-safe</li>
+      <li>Client (JavaFX) chỉ gọi REST API qua HTTP — UI không block do <code>Task&lt;T&gt;</code></li>
+      <li>Dễ scale: có thể deploy server riêng, nhiều client connect vào</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>HTTP server được tạo ra như thế nào? Tại sao không dùng Spring Boot hay Tomcat?</p></div>
+  <div class="qa-a">
+    <p>Dùng <span class="highlight">JDK HttpServer</span> (<code>com.sun.net.httpserver</code>) — thư viện built-in của Java, không cần dependency ngoài:</p>
+    <pre>HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+server.createContext("/auction/list",  new AuctionHandler());
+server.createContext("/auth/login",    new AuthHandler());
+// ...
+server.setExecutor(Executors.newCachedThreadPool());
+server.start();</pre>
+    <p><strong>Tại sao không Spring Boot:</strong></p>
+    <ul>
+      <li>Đây là đồ án học thuật (Lập trình Nâng cao) — mục tiêu là hiểu cách hoạt động của HTTP, không phải dùng framework</li>
+      <li>Spring Boot thêm hàng trăm MB dependencies cho một project nhỏ</li>
+      <li>JDK HttpServer đủ mạnh cho use case của project</li>
+      <li>Hiện thực thủ công giúp hiểu rõ HTTP protocol hơn</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Dữ liệu được truyền giữa client và server như thế nào? Format gì?</p></div>
+  <div class="qa-a">
+    <p>Dùng <span class="highlight">JSON</span> qua <strong>Gson 2.11.0</strong>.</p>
+    <p><strong>Phía Client (ApiClient):</strong></p>
+    <pre>// GET request:
+HttpRequest req = HttpRequest.newBuilder()
+    .uri(URI.create(serverUrl + path))
+    .GET().build();
+// Parse response: Gson.fromJson(body, JsonObject.class)
+
+// POST request:
+String bodyJson = Gson.toJson(Map.of("username","alice","password","pass"));
+HttpRequest req = HttpRequest.newBuilder()
+    .uri(...).POST(BodyPublishers.ofString(bodyJson)).build();</pre>
+    <p><strong>Phía Server (BaseHandler):</strong></p>
+    <pre>// Đọc body:
+String body = new String(exchange.getRequestBody().readAllBytes());
+JsonObject params = JsonUtil.parseObject(body);
+
+// Trả về:
+byte[] response = JsonUtil.toJson(result).getBytes(UTF_8);
+exchange.sendResponseHeaders(200, response.length);
+exchange.getResponseBody().write(response);</pre>
+    <p><strong>Ví dụ response từ /auction/bid:</strong></p>
+    <pre>{ "success": true, "newPrice": 1500.00 }</pre>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>AUCTION_CACHE trong AuctionHandler là gì? Tại sao cần cache?</p></div>
+  <div class="qa-a">
+    <pre>private static final ConcurrentHashMap&lt;Integer, Auction&gt; AUCTION_CACHE = new ConcurrentHashMap&lt;&gt;();</pre>
+    <p><strong>Mục đích:</strong> Lưu <code>Auction</code> objects trong memory để share <code>ReentrantLock</code> giữa các request.</p>
+    <p><strong>Tại sao phải có:</strong> BiddingService dùng <code>auction.getLock()</code> để serialize bids. Lock này phải là <em>cùng một object</em> cho mọi request đến cùng auction. Nếu mỗi request tạo Auction mới từ DB → mỗi request có lock khác nhau → mất thread safety!</p>
+    <pre>// getCachedAuction() dùng computeIfAbsent:
+AUCTION_CACHE.computeIfAbsent(id, k -> {
+    // Chỉ load từ DB lần đầu tiên
+    return auctionService.getById(conn, k);
+});</pre>
+    <p><strong>Lưu ý:</strong> Cache này là in-memory per-JVM. Khi server restart, cache bị clear → load lại từ DB. Đây là acceptable cho single-instance deployment.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Sequence diagram khi user đặt bid — từ click "Place Bid" đến nhận kết quả?</p></div>
+  <div class="qa-a">
+    <pre>UI (JavaFX)          ApiClient          AuctionHandler         BiddingService         DB
+    |                     |                    |                      |                  |
+    | placeBidButton click|                    |                      |                  |
+    |──── Task&lt;Double&gt; ──→|                    |                      |                  |
+    |                     |── POST /auction/bid→|                      |                  |
+    |                     |   {auctionId,       |                      |                  |
+    |                     |    bidderId,amount} |                      |                  |
+    |                     |                    |── getCachedAuction() |                  |
+    |                     |                    |── placeBid() ────────→|                  |
+    |                     |                    |                      |── acquire lock    |
+    |                     |                    |                      |── validate        |
+    |                     |                    |                      |── BEGIN TX ──────→|
+    |                     |                    |                      |── UPDATE auction  |
+    |                     |                    |                      |── INSERT bid_tx ─→|
+    |                     |                    |                      |── processAutoBids |
+    |                     |                    |                      |── antiSniping     |
+    |                     |                    |                      |── COMMIT ─────────|
+    |                     |                    |                      |── release lock    |
+    |                     |                    |←─ newPrice ──────────|                  |
+    |                     |←── {success, newPrice}                    |                  |
+    |←── Platform.runLater|                    |                      |                  |
+    | update priceLabel   |                    |                      |                  |</pre>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Điều gì xảy ra nếu client mất kết nối giữa chừng khi đang đặt bid?</p></div>
+  <div class="qa-a">
+    <p><strong>Kịch bản:</strong> Client gửi POST /auction/bid → server nhận → đang xử lý → client timeout → TCP connection đóng.</p>
+    <p><strong>Phía server:</strong> Server tiếp tục xử lý request bình thường. Transaction được commit. Bid được lưu vào DB. Khi server cố ghi response → IOException (broken pipe) → catch và log. Server không rollback chỉ vì client ngắt.</p>
+    <p><strong>Phía client:</strong> <code>HttpClient</code> throw <code>HttpTimeoutException</code> (sau 15 giây) → Task.setOnFailed() → hiển thị error message "Lỗi kết nối".</p>
+    <p><strong>Vấn đề:</strong> Client thấy lỗi nhưng bid đã được lưu. Đây là vấn đề của "at-least-once delivery" trong distributed systems.</p>
+    <p><strong>Cách xử lý hoàn chỉnh hơn</strong> (nếu có thời gian): Return idempotency key với mỗi bid request → server check xem bid này đã xử lý chưa trước khi thực hiện.</p>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="concurrency">
+<h2>5. Concurrency &amp; Thread Safety</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Race condition có thể xảy ra ở đâu trong hệ thống đấu giá? Được giải quyết như thế nào?</p></div>
+  <div class="qa-a">
+    <p><strong>Kịch bản race condition:</strong> Alice và Bob đặt bid cùng lúc cho auction #42 với current_price = 1000.</p>
+    <pre>Thread A (Alice's bid $1100):      Thread B (Bob's bid $1050):
+  read currentPrice = 1000           read currentPrice = 1000
+  1100 > 1000 ✓ validate OK          1050 > 1000 ✓ validate OK
+  UPDATE current_price = 1100        UPDATE current_price = 1050  ← lost update!
+  INSERT bid_transaction Alice $1100 INSERT bid_transaction Bob $1050</pre>
+    <p><strong>Giải pháp: ReentrantLock trên mỗi Auction object:</strong></p>
+    <pre>auction.getLock().lock(); // chỉ 1 thread được phép vào tại một thời điểm
+try {
+    // Validate + Update + Insert — atomic
+} finally {
+    auction.getLock().unlock();
+}</pre>
+    <p>Bob phải chờ Alice xong mới vào. Khi đó currentPrice đã là 1100, bid $1050 của Bob bị từ chối (InvalidBidException).</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Tại sao <code>AuctionNotifier</code> dùng <code>CopyOnWriteArrayList</code> thay vì <code>ArrayList</code>?</p></div>
+  <div class="qa-a">
+    <p><code>ArrayList</code> không thread-safe: nếu một thread đang iterate để notify observers, thread khác add/remove observer → <code>ConcurrentModificationException</code>.</p>
+    <p><code>CopyOnWriteArrayList</code>: mỗi write operation (add/remove) tạo một copy mới của array → iteration luôn đọc snapshot tại thời điểm bắt đầu → an toàn concurrent reads.</p>
+    <p><strong>Trade-off:</strong> Write chậm hơn (phải copy), nhưng trong use case này:</p>
+    <ul>
+      <li>Observer đăng ký/hủy: hiếm (chỉ khi mở/đóng popup)</li>
+      <li>Notify: thường xuyên (mỗi bid)</li>
+      <li>→ Optimize cho đọc: <code>CopyOnWriteArrayList</code> là lựa chọn đúng</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>JavaFX <code>Task&lt;T&gt;</code> và <code>Platform.runLater()</code> được dùng để làm gì?</p></div>
+  <div class="qa-a">
+    <p>JavaFX có quy tắc: <span class="highlight">chỉ được update UI từ JavaFX Application Thread (JAT)</span>.</p>
+    <p><strong>Vấn đề:</strong> Gọi HTTP (ApiClient) blocking → nếu gọi từ JAT → UI freeze trong khi chờ server.</p>
+    <p><strong>Giải pháp:</strong></p>
+    <pre>Task&lt;Double&gt; task = new Task&lt;&gt;() {
+    @Override protected Double call() throws Exception {
+        // Chạy trên BACKGROUND thread — safe để gọi HTTP
+        JsonObject resp = ApiClient.post("/auction/bid", body);
+        return resp.get("newPrice").getAsDouble();
+    }
+};
+task.setOnSucceeded(e -> Platform.runLater(() -> {
+    // Chạy trên JavaFX Application Thread — safe để update UI
+    priceLabel.setText(String.format("%,.2f USD", task.getValue()));
+}));
+new Thread(task).start();</pre>
+    <p><code>Platform.runLater()</code> enqueue một Runnable vào JAT's event queue → được execute trên đúng thread → không crash.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>AuctionScheduler hoạt động như thế nào? Tại sao dùng daemon thread?</p></div>
+  <div class="qa-a">
+    <pre>ScheduledExecutorService scheduler =
+    Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r);
+        t.setDaemon(true); // ← quan trọng!
+        return t;
+    });
+
+scheduler.scheduleAtFixedRate(
+    this::closeExpiredAuctions, // task
+    0,    // initial delay
+    30,   // period
+    TimeUnit.SECONDS
+);</pre>
+    <p><strong>closeExpiredAuctions():</strong> Mỗi 30s, query tất cả auction có status = OPEN/RUNNING và endTime &lt; NOW → gọi <code>endAuction() + processPayment()</code> cho từng cái.</p>
+    <p><strong>Daemon thread:</strong> Khi main thread (JavaFX app) thoát, JVM chỉ dừng nếu không còn non-daemon thread nào đang chạy. Nếu scheduler là non-daemon → JVM không thoát được khi user đóng app. Daemon thread tự động bị kill khi JVM shutdown.</p>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="business">
+<h2>6. Nghiệp vụ Đấu giá</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Một auction trải qua những trạng thái (status) nào? Vẽ state diagram.</p></div>
+  <div class="qa-a">
+    <pre>                   Admin approve
+   [PENDING] ──────────────────────→ [OPEN]
+      │                                  │ Scheduled/endTime passed
+      │ Admin reject                     ↓
+      ↓                              [RUNNING]
+   [REJECTED]                            │ endTime passed OR manual end
+                                         ↓
+                                     [FINISHED]
+                                         │ Payment processed
+                                         ↓
+                                      [PAID]
+
+   [CANCELED] ← Seller/Admin cancel (from OPEN or RUNNING)</pre>
+    <p><strong>Chi tiết:</strong></p>
+    <ul>
+      <li><code>PENDING</code>: Vừa tạo, chờ admin duyệt</li>
+      <li><code>OPEN</code>: Admin duyệt, sẵn sàng nhận bid (OPEN và RUNNING đều cho phép bid)</li>
+      <li><code>RUNNING</code>: Đang diễn ra (có thể là after first bid)</li>
+      <li><code>FINISHED</code>: endTime qua, đang chờ payment</li>
+      <li><code>PAID</code>: Payment đã được xử lý</li>
+      <li><code>REJECTED</code>: Admin từ chối kèm lý do</li>
+      <li><code>CANCELED</code>: Đã hủy</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Auto-bid hoạt động như thế nào? Cho ví dụ cụ thể với số liệu.</p></div>
+  <div class="qa-a">
+    <p><strong>Setup:</strong> Auction #42, current_price = $1000. Alice đăng ký auto-bid: maxBid=$1500, increment=$100.</p>
+    <p><strong>Kịch bản:</strong> Bob đặt bid thủ công $1100.</p>
+    <p><strong>Flow trong processAutoBids():</strong></p>
+    <pre>1. Bob bid $1100 → current_price = $1100
+2. Sau khi commit bid của Bob, gọi processAutoBids()
+3. Load auto-bid của Alice: max=$1500, increment=$100
+4. nextBid = 1100 + 100 = $1200
+5. 1200 ≤ 1500 → Alice auto-bids $1200
+6. current_price = $1200
+7. Kiểm tra lại: có auto-bid nào khác không? Không → dừng
+8. Response trả về newPrice = $1200</pre>
+    <p><strong>Nếu Bob đặt $1600:</strong> nextBid = 1600 + 100 = $1700 &gt; maxBid $1500 → Alice không auto-bid, Bob thắng.</p>
+    <p><strong>Priority:</strong> Nhiều auto-bid → sort theo <code>createdAt</code> (FIFO) — đăng ký sớm hơn ưu tiên hơn.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Anti-sniping là gì? Tại sao cần tính năng này?</p></div>
+  <div class="qa-a">
+    <p><strong>Sniping:</strong> Kỹ thuật đặt bid vào giây cuối cùng (ví dụ 3 giây trước khi hết) để không ai có thời gian counter-bid.</p>
+    <p><strong>Anti-sniping trong project:</strong></p>
+    <pre>private void applyAntiSniping(Connection conn, Auction auction) {
+    long secsLeft = Duration.between(LocalDateTime.now(), auction.getEndTime()).getSeconds();
+    if (secsLeft <= 10) {
+        // Gia hạn thêm 60 giây
+        LocalDateTime newEnd = auction.getEndTime().plusSeconds(60);
+        // UPDATE auction SET end_time = newEnd WHERE id = ?
+        auction.setEndTime(newEnd);
+    }
+}</pre>
+    <p>Nếu ai đó bid trong 10 giây cuối → auction tự động kéo dài thêm 60 giây → các bidder khác có thêm thời gian để counter-bid. Đây là tính năng phổ biến trên các nền tảng đấu giá thực tế như eBay.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Payment được xử lý như thế nào? Phân chia tiền ra sao?</p></div>
+  <div class="qa-a">
+    <p><strong>PaymentService.processPayment(conn, auction):</strong></p>
+    <ol>
+      <li>Kiểm tra <code>auction.status == FINISHED</code></li>
+      <li>Nếu không có highest bidder → đóng auction (không cần payment)</li>
+      <li>Load bidder từ DB → check <code>bidder.getBalance() &gt;= finalPrice</code></li>
+      <li>Nếu không đủ → throw <code>InsufficientBalanceException</code></li>
+      <li>Tính toán: <code>adminFee = price * 0.10</code>, <code>sellerAmount = price * 0.90</code></li>
+      <li>UPDATE: <code>bidder.balance -= price</code></li>
+      <li>UPDATE: <code>seller.balance += sellerAmount</code></li>
+      <li>UPDATE: <code>admin.balance += adminFee</code></li>
+      <li>UPDATE: <code>auction.status = PAID</code></li>
+      <li>Tất cả trong 1 transaction → commit hoặc rollback</li>
+    </ol>
+    <p><strong>Commission model:</strong> Admin lấy 10%, Seller nhận 90%. Đây là mô hình phổ biến của marketplaces.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Email OTP hoạt động như thế nào trong tính năng Forgot Password?</p></div>
+  <div class="qa-a">
+    <p><strong>Flow:</strong></p>
+    <ol>
+      <li>User nhập email trên ForgotPassword screen</li>
+      <li>System tạo 6-digit random OTP: <code>String.format("%06d", new Random().nextInt(1000000))</code></li>
+      <li>Lưu OTP + timestamp vào memory (hoặc DB)</li>
+      <li><code>EmailService.sendResetCode(email, otp)</code> gửi HTML email qua Gmail SMTP</li>
+      <li>User nhập OTP → validate (phải &lt; 10 phút)</li>
+      <li>Nếu đúng → cho phép đặt mật khẩu mới</li>
+    </ol>
+    <p><strong>EmailService config:</strong></p>
+    <pre>host = smtp.gmail.com
+port = 587 (STARTTLS)
+auth = Gmail App Password (không phải mật khẩu Google thực)</pre>
+    <p><span class="warn">Lưu ý:</span> Gmail yêu cầu "App Password" (16 ký tự) thay vì mật khẩu tài khoản khi bật 2FA.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>Tại sao seller không thể bid vào item của chính mình?</p></div>
+  <div class="qa-a">
+    <p>Đây là business rule cơ bản để tránh <span class="highlight">shill bidding</span> — hành vi gian lận trong đấu giá khi seller tự bid vào item của mình để đẩy giá lên.</p>
+    <p><strong>Implementation trong BiddingService:</strong></p>
+    <pre>if (auction.getSeller() != null &amp;&amp;
+    auction.getSeller().getId() == bidder.getId()) {
+    throw new SellerBiddingOwnItemException(
+        "Seller cannot bid on their own auction");
+}</pre>
+    <p>Check này diễn ra ngay đầu <code>placeBid()</code>, trước khi acquire lock — vừa đúng business rule, vừa tiết kiệm resource (không cần lock nếu validation fail).</p>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="javafx">
+<h2>7. JavaFX &amp; UI</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>SessionManager làm gì? Tại sao cần singleton cho tính năng này?</p></div>
+  <div class="qa-a">
+    <p><code>SessionManager</code> lưu thông tin user đang đăng nhập trong bộ nhớ, accessible từ bất kỳ controller nào:</p>
+    <pre>SessionManager.getInstance().getUserId()    // → 42
+SessionManager.getInstance().getUsername()  // → "alice"
+SessionManager.getInstance().isSeller()     // → true/false
+SessionManager.getInstance().isAdmin()      // → true/false
+SessionManager.getInstance().getBalance()   // → 5000.00</pre>
+    <p><strong>Tại sao Singleton:</strong> Tất cả 20+ controllers cần biết ai đang đăng nhập. Thay vì truyền User object qua từng popup/screen, Singleton cho phép mọi nơi gọi <code>SessionManager.getInstance()</code> để lấy.</p>
+    <p><code>logout()</code> clear tất cả fields → quay về login screen.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge easy">Dễ</span><p>NavigationUtil.goTo() và openPopup() khác nhau như thế nào?</p></div>
+  <div class="qa-a">
+    <table>
+      <tr><th></th><th><code>goTo()</code></th><th><code>openPopup()</code></th></tr>
+      <tr><td>Behavior</td><td>Replace toàn bộ scene</td><td>Mở cửa sổ mới (Modal)</td></tr>
+      <tr><td>Parent window</td><td>Đóng + replace</td><td>Giữ nguyên, disable</td></tr>
+      <tr><td>Dùng khi</td><td>Chuyển trang chính (Login → Main)</td><td>Popup nhỏ (Add Listing, Profile, Sort)</td></tr>
+      <tr><td>Ví dụ</td><td>Login → AuctionList sau khi đăng nhập</td><td>Bấm "Sell" → mở form thêm sản phẩm</td></tr>
+    </table>
+    <p><code>openPopupWith()</code>: biến thể của openPopup cho phép truyền data vào controller vừa tạo (ví dụ: <code>ctrl.loadAuction(auctionId)</code>).</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Countdown timer trong AuctionDetailController hoạt động như thế nào?</p></div>
+  <div class="qa-a">
+    <pre>countdownTimeline = new Timeline(
+    new KeyFrame(Duration.seconds(1), e -> updateCountdownLabel(endTime))
+);
+countdownTimeline.setCycleCount(Animation.INDEFINITE);
+countdownTimeline.play();</pre>
+    <p><code>Timeline</code> của JavaFX chạy trên JavaFX Application Thread nên an toàn để update UI.</p>
+    <p><strong>updateCountdownLabel():</strong></p>
+    <pre>Duration remaining = Duration.between(LocalDateTime.now(), endTime);
+if (remaining.isNegative()) { countdownLabel.setText("Ended"); timeline.stop(); return; }
+long days = remaining.toDays();
+long hours = remaining.toHours() % 24;
+// Format: "2d 03:45:12" hoặc "00:45:12"</pre>
+    <p><strong>Cleanup:</strong> Khi popup đóng (scene = null), <code>sceneProperty listener</code> tự động <code>stop()</code> timeline để tránh memory leak.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>ThemeManager dùng Dark/Light mode như thế nào?</p></div>
+  <div class="qa-a">
+    <p><code>ThemeManager</code> (Singleton) quản lý CSS stylesheets:</p>
+    <pre>public void toggleTheme(Scene scene) {
+    isDarkMode = !isDarkMode;
+    scene.getStylesheets().clear();
+    scene.getStylesheets().add(
+        isDarkMode ? "dark-theme.css" : "light-theme.css"
+    );
+}</pre>
+    <p>CSS được applied dynamically tại runtime — không cần reload FXML. JavaFX CSS cascade system tương tự web CSS, cho phép override style variables.</p>
+    <p>Button "Dark"/"Light" ở top bar gọi <code>ThemeManager.toggleTheme(scene)</code> → toàn bộ UI đổi màu ngay lập tức.</p>
+  </div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<section id="advanced">
+<h2>8. Câu hỏi Nâng cao</h2>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>So sánh cách lưu dữ liệu polymorphic trong DB: Table Per Hierarchy vs Table Per Subclass. Project dùng cách nào?</p></div>
+  <div class="qa-a">
+    <table>
+      <tr><th></th><th>Table Per Hierarchy (TPH)</th><th>Table Per Subclass (TPS)</th></tr>
+      <tr><td>Cấu trúc</td><td>1 bảng cho tất cả, có discriminator column</td><td>1 bảng base + 1 bảng con cho mỗi subclass</td></tr>
+      <tr><td>Ưu điểm</td><td>Query đơn giản, JOIN ít</td><td>Normalized, không null columns</td></tr>
+      <tr><td>Nhược điểm</td><td>Nhiều NULL columns, bảng phình to</td><td>Cần JOIN để lấy full data</td></tr>
+    </table>
+    <p><strong>Project dùng TPS (Table Per Subclass):</strong></p>
+    <ul>
+      <li>Bảng <code>items</code>: data chung (name, description, starting_price, item_type)</li>
+      <li>Bảng <code>electronics_items</code>: brand, warranty_months (FK: item_id)</li>
+      <li>Bảng <code>art_items</code>: artist, theme, material (FK: item_id)</li>
+      <li>Bảng <code>vehicle_items</code>: year, mileage (FK: item_id)</li>
+    </ul>
+    <p>Query lấy full Electronics item cần JOIN: <code>items JOIN electronics_items ON items.id = electronics_items.item_id</code>.</p>
+    <p><strong>Lý do chọn TPS:</strong> Dữ liệu normalized hơn, không có null columns, phù hợp khi các subtype có nhiều thuộc tính riêng.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Hãy giải thích toàn bộ luồng từ khi app khởi động đến khi user có thể đặt bid.</p></div>
+  <div class="qa-a">
+    <pre>1. Main.main() được gọi
+   ├── AuctionServer.start()
+   │     └── HttpServer lắng nghe port 8080
+   │         └── Register: /auth/*, /auction/*, /user/*, /admin/*, /item/*
+   ├── AuctionScheduler.getInstance().start()
+   │     └── ScheduledExecutorService: closeExpiredAuctions() mỗi 30s
+   └── App.launch() → JavaFX bắt đầu
+
+2. JavaFX load login.fxml → LoginController.initialize()
+   └── Wire events: loginButton.setOnAction(...)
+
+3. User nhập username/password → click Login
+   ├── Task&lt;JsonObject&gt; chạy trên background thread
+   ├── ApiClient.post("/auth/login", {username, password})
+   │     └── HTTP POST → AuthHandler.handle()
+   │           └── UserDAO.findByUsername() → validate password
+   │                 └── Response: {success, userId, username, role, balance...}
+   └── SessionManager.getInstance().setUser(...)
+
+4. Nếu thành công → NavigationUtil.goTo(LOGIN → AUCTION_LIST)
+   └── AuctionListController.initialize()
+         └── loadListings() → Task → ApiClient.getArray("/auction/list")
+
+5. User click vào auction card → openAuctionDetail(auctionId)
+   └── AuctionDetailController.loadAuction(auctionId)
+         └── ApiClient.getObject("/auction/detail?id=" + id)
+               └── AuctionHandler: load Auction + Item + BidTransactions
+                   (Auction được cache vào AUCTION_CACHE)
+
+6. User nhập bid amount → click "Place Bid"
+   └── AuctionDetailController.handlePlaceBid()
+         └── Task → ApiClient.post("/auction/bid", {auctionId, bidderId, amount})
+               └── AuctionHandler → BiddingService.placeBid()
+                     └── Acquire lock → validate → TX → commit → return newPrice
+         └── Platform.runLater() → update priceLabel</pre>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Nếu có 1000 user cùng bid vào một auction trong 1 giây, hệ thống có chịu được không?</p></div>
+  <div class="qa-a">
+    <p><strong>Về lý thuyết, hệ thống đúng về mặt correctness nhưng sẽ bị bottleneck:</strong></p>
+    <p><strong>1. Lock contention:</strong> 1000 request đến AuctionHandler.handleBid() cùng lúc. HttpServer dùng CachedThreadPool nên tạo 1000 threads. Tất cả cùng gọi <code>auction.getLock().lock()</code> → 999 threads phải wait trong queue của ReentrantLock. Chỉ 1 thread xử lý tại một thời điểm.</p>
+    <p><strong>2. Database pressure:</strong> Mỗi bid = 1 transaction + multiple SQL queries. 1000 bid/s sẽ overload MySQL.</p>
+    <p><strong>3. Memory:</strong> 1000 threads × ~512KB stack = ~500MB chỉ cho threads.</p>
+    <p><strong>Cải tiến nếu cần scale:</strong></p>
+    <ul>
+      <li>Dùng connection pool (HikariCP) thay vì tạo connection mới mỗi request</li>
+      <li>Queue-based bid processing (Kafka) — serialize bids qua message queue</li>
+      <li>Rate limiting per user</li>
+      <li>Virtual threads (Java 21+) thay vì platform threads</li>
+    </ul>
+    <p>Với đồ án học thuật, single-user hoặc tens of users đồng thời là hoàn toàn ổn.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>So sánh <code>ReentrantLock</code> với <code>synchronized</code>. Tại sao chọn ReentrantLock?</p></div>
+  <div class="qa-a">
+    <table>
+      <tr><th>Feature</th><th>synchronized</th><th>ReentrantLock</th></tr>
+      <tr><td>Trylock (không block)</td><td>❌</td><td>✅ <code>tryLock(timeout)</code></td></tr>
+      <tr><td>Interruptible</td><td>❌</td><td>✅ <code>lockInterruptibly()</code></td></tr>
+      <tr><td>Fairness</td><td>Không đảm bảo</td><td>✅ <code>new ReentrantLock(true)</code></td></tr>
+      <tr><td>Multiple conditions</td><td>1 (wait/notify)</td><td>✅ Nhiều Condition</td></tr>
+      <tr><td>Code verbosity</td><td>Đơn giản hơn</td><td>Phải unlock trong finally</td></tr>
+    </table>
+    <p><strong>Tại sao project chọn ReentrantLock:</strong></p>
+    <ul>
+      <li><code>Auction.getLock()</code> là instance lock trên mỗi Auction object — mỗi auction có lock riêng, concurrent bidding trên DIFFERENT auctions không block nhau</li>
+      <li>Với <code>synchronized</code>, phải sync trên auction object hoặc class — ít linh hoạt hơn</li>
+      <li>Trong tương lai có thể dùng <code>tryLock(100, MILLISECONDS)</code> để từ chối bid nếu server quá tải</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Tại sao server trả JSON thay vì trả Java objects trực tiếp qua serialization?</p></div>
+  <div class="qa-a">
+    <p><strong>Java serialization (ObjectOutputStream) có vấn đề:</strong></p>
+    <ul>
+      <li>Tight coupling: client và server phải có CÙNG version của class. Thay đổi field nào → break compatibility</li>
+      <li>Security: Java deserialization có nhiều CVE nổi tiếng (arbitrary code execution)</li>
+      <li>Language-specific: Chỉ Java-to-Java, không thể test bằng browser/Postman</li>
+      <li>Debug khó: Binary format, không đọc được bằng mắt thường</li>
+    </ul>
+    <p><strong>JSON (với Gson):</strong></p>
+    <ul>
+      <li>Human-readable → dễ debug với Postman, browser DevTools</li>
+      <li>Language agnostic → frontend web sau này có thể kết nối</li>
+      <li>Decoupled: server có thể thay đổi internal classes mà không break client miễn JSON structure giữ nguyên</li>
+      <li>Industry standard cho REST APIs</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Hãy nêu 3 điểm yếu của hệ thống và đề xuất cải thiện.</p></div>
+  <div class="qa-a">
+    <p><strong>1. Không có Authentication token / Authorization</strong></p>
+    <ul>
+      <li>Hiện tại: Client gửi <code>userId</code> trong request body → không có gì verify userId đó có phải của user đang login không</li>
+      <li>Cải thiện: Implement JWT (JSON Web Token). Server trả JWT khi login, client gửi kèm mọi request trong Authorization header</li>
+    </ul>
+    <p><strong>2. Real-time chưa thực sự real-time</strong></p>
+    <ul>
+      <li>Hiện tại: Client phải reload để thấy bid mới (không có push notification)</li>
+      <li>Cải thiện: WebSocket hoặc Server-Sent Events — server push bid updates tới tất cả connected clients ngay khi có bid mới</li>
+    </ul>
+    <p><strong>3. Không có connection pooling</strong></p>
+    <ul>
+      <li>Hiện tại: Mỗi request tạo mới <code>DatabaseConnection.getConnection()</code> → overhead</li>
+      <li>Cải thiện: HikariCP — pool 10-20 connections, tái sử dụng thay vì tạo mới mỗi request</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Module system (module-info.java) có vai trò gì? Tại sao cần khai báo <code>opens ... to javafx.fxml</code>?</p></div>
+  <div class="qa-a">
+    <pre>module com.example.auctionmanagementsystem {
+    requires javafx.controls;
+    requires javafx.fxml;
+    requires java.sql;
+    requires jdk.httpserver;
+    requires com.google.gson;
+    requires java.net.http;
+    // ...
+    opens com.example.auctionmanagementsystem.controller to javafx.fxml;
+    opens com.example.auctionmanagementsystem.model to javafx.base, javafx.fxml;
+}</pre>
+    <p><strong>Module system (Java 9+):</strong> Encapsulation ở cấp module — kiểm soát package nào được expose ra ngoài. Ngăn external code truy cập internal packages.</p>
+    <p><strong>Tại sao cần <code>opens ... to javafx.fxml</code>:</strong> FXMLLoader dùng reflection để inject <code>@FXML</code> fields và gọi <code>initialize()</code>. Trong module system, reflection bị block mặc định. <code>opens</code> cho phép <code>javafx.fxml</code> module reflect vào controller/model classes của mình.</p>
+    <p><strong>Phân biệt <code>requires</code> vs <code>opens</code>:</strong></p>
+    <ul>
+      <li><code>requires</code>: compile-time + runtime dependency</li>
+      <li><code>opens</code>: cho phép reflective access vào package của mình từ module khác</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>Project có unit tests không? Nếu viết test cho BiddingService, bạn sẽ mock gì?</p></div>
+  <div class="qa-a">
+    <p>Project có framework JUnit 5 + Mockito trong pom.xml. Để test <code>BiddingService.placeBid()</code>:</p>
+    <pre>@ExtendWith(MockitoExtension.class)
+class BiddingServiceTest {
+    @Mock Connection mockConn;
+    @Mock BidTransactionDAO mockBidDao;
+    @Mock AuctionDAO mockAuctionDao;
+
+    @Test
+    void testSellerCannotBidOwnItem() {
+        Auction auction = new Auction();
+        Seller seller = new Seller(); seller.setId(1);
+        auction.setSeller(seller);
+
+        Bidder bidder = new Bidder(); bidder.setId(1); // Same ID as seller!
+
+        assertThrows(SellerBiddingOwnItemException.class, () ->
+            new BiddingService().placeBid(auction, bidder, 1500.0));
+    }
+
+    @Test
+    void testBidMustExceedCurrentPrice() {
+        Auction auction = new Auction(); auction.setCurrentPrice(1000.0);
+        Bidder bidder = new Bidder(); bidder.setId(2);
+
+        assertThrows(InvalidBidException.class, () ->
+            new BiddingService().placeBid(auction, bidder, 999.0)); // Bid thấp hơn
+    }
+}</pre>
+    <p>Mock <code>Connection</code>, <code>PreparedStatement</code>, <code>DAO</code> classes → test business logic thuần túy không cần DB thật.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge medium">Trung bình</span><p>ImageStorageService làm gì? Tại sao không lưu ảnh thẳng vào DB?</p></div>
+  <div class="qa-a">
+    <p><code>ImageStorageService</code> quản lý việc copy ảnh từ location gốc vào thư mục riêng của app:</p>
+    <pre>// save(file) → copy file vào app folder, return UUID filename
+String savedName = ImageStorageService.save(selectedImageFile);
+// → "a3f8b2c1-uuid.jpg" (tên file mới)
+
+// getFullPath(filename) → full path để load ảnh
+String path = ImageStorageService.getFullPath("a3f8b2c1-uuid.jpg");
+// → "C:/AuctionImages/a3f8b2c1-uuid.jpg"</pre>
+    <p><strong>Tại sao không lưu ảnh vào DB (BLOB):</strong></p>
+    <ul>
+      <li>BLOB làm phình DB, backup/restore chậm hơn nhiều</li>
+      <li>Mỗi lần load ảnh phải query DB → network overhead nếu DB là remote</li>
+      <li>Database không optimized cho serving static files</li>
+      <li>DB chỉ lưu <strong>tên file</strong> (UUID.jpg) → nhỏ gọn, không cần ảnh ổn định ở path gốc</li>
+    </ul>
+    <p>UUID làm tên file tránh conflict khi 2 user upload ảnh cùng tên.</p>
+  </div>
+</div>
+
+<div class="qa">
+  <div class="qa-q"><span class="badge hard">Khó</span><p>Nếu bạn được thêm tính năng "Đặt giá tối thiểu bí mật" (Reserve Price), bạn sẽ thiết kế như thế nào?</p></div>
+  <div class="qa-a">
+    <p><strong>Reserve Price:</strong> Seller đặt giá tối thiểu bí mật. Auction chỉ chốt bán nếu highest bid &gt;= reserve price.</p>
+    <p><strong>Thiết kế:</strong></p>
+    <p><em>DB:</em> Thêm column <code>reserve_price DECIMAL(10,2) NULL</code> vào bảng <code>auction</code>.</p>
+    <p><em>Model:</em></p>
+    <pre>// Auction.java
+private Double reservePrice; // null = không có reserve
+public boolean isReserveMet() {
+    return reservePrice == null || currentPrice >= reservePrice;
+}</pre>
+    <p><em>UI Seller (AddListingController):</em> Thêm optional field "Reserve Price".</p>
+    <p><em>UI Bidder (AuctionDetailController):</em> Hiển thị "Reserve not met" nếu <code>!auction.isReserveMet()</code>.</p>
+    <p><em>Payment logic:</em></p>
+    <pre>// PaymentService.processPayment():
+if (!auction.isReserveMet()) {
+    // Không bán, return tiền cho bidder
+    auction.setStatus(CANCELED);
+    return;
+}
+// Tiếp tục process payment bình thường</pre>
+    <p><em>API:</em> <code>/auction/detail</code> trả <code>"reserveMet": true/false</code> nhưng KHÔNG trả reservePrice (bí mật).</p>
+  </div>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+  <p>📄 Tài liệu này tổng hợp <strong>50 câu hỏi &amp; trả lời</strong> cho dự án <strong>Online Auction System</strong></p>
+  <p style="margin-top:8px">Java 17 · JavaFX 17 · MySQL · JDK HttpServer · Gson · MaterialFX</p>
+</footer>
+
+</body>
+</html>
