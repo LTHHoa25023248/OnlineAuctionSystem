@@ -10,10 +10,8 @@ public class App extends Application {
   public void start(Stage primaryStage) {
     primaryStage.setTitle("Auction Management System");
     primaryStage.setResizable(true);
-
     // Mở màn hình Login đầu tiên
     NavigationUtil.goTo(primaryStage, NavigationUtil.LOGIN);
-
     primaryStage.centerOnScreen();
     primaryStage.show();
   }
