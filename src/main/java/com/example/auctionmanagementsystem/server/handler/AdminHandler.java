@@ -81,7 +81,7 @@ public class AdminHandler extends BaseHandler {
         //doc tham so filter tu query string, mac dinh la All neu khong co
         String filter = queryParams(ex).getOrDefault("filter", "ALL");
         List<Map<String, Object>> result = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT a.id, i.name, i.item_type, u.username, a.current_price, a.status, a.reject_reason " + "FROM auction a " + "LEFT JOIN items i ON a.item_id = i.id " );
+        StringBuilder sql = new StringBuilder("SELECT a.id, i.name, i.item_type, u.username, a.current_price, a.status, a.reject_reason " + "FROM auction a " + "LEFT JOIN items i ON a.item_id = i.id "+"LEFT JOIN users u ON a.seller_id=u.id" );
         // whereParam la gia tri truyen vao ?
         String whereParam = null;
         switch (filter) {
