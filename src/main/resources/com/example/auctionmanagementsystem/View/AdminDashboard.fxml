@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.example.auctionmanagementsystem.controller.AdminDashboardController"
+        styleClass="rootPane">
+
+    <left>
+        <VBox styleClass="sidebar" prefWidth="220">
+            <Label text="Auction House" styleClass="sidebarTitle">
+                <font><Font name="Georgia" size="15.0"/></font>
+            </Label>
+            <VBox styleClass="sidebarNav" VBox.vgrow="ALWAYS">
+                <HBox styleClass="navItem" onMouseClicked="#handleHome">
+                    <Label text="Home" styleClass="navLabel"/>
+                </HBox>
+                <HBox fx:id="navListings" styleClass="navItem" onMouseClicked="#handleListings">
+                    <Label text="All Listings" styleClass="navLabel"/>
+                </HBox>
+                <HBox fx:id="navUsers" styleClass="navItem" onMouseClicked="#handleUsers">
+                    <Label text="Users" styleClass="navLabel"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <Label text="Admin Dashboard" styleClass="topbarTitle"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Logged in as " styleClass="topbarUser"/>
+            <Label fx:id="usernameLabel" text="Admin" styleClass="topbarUserBold"/>
+            <Button text="Log Out" styleClass="btnLogout" onAction="#handleLogout">
+                <HBox.margin><Insets left="14"/></HBox.margin>
+            </Button>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane styleClass="contentScroll" fitToWidth="true">
+            <VBox styleClass="contentArea" spacing="18">
+                <padding><Insets top="22" right="26" bottom="22" left="26"/></padding>
+
+                <HBox spacing="14" styleClass="statsRow">
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL LISTINGS" styleClass="statLabel"/>
+                        <Label fx:id="totalListingsLabel" text="---" styleClass="statValue">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="ACTIVE AUCTIONS" styleClass="statLabel"/>
+                        <Label fx:id="activeAuctionsLabel" text="---" styleClass="statValue statValueGold">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="TOTAL USERS" styleClass="statLabel"/>
+                        <Label fx:id="totalUsersLabel" text="---" styleClass="statValue">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
+                    </VBox>
+                    <VBox styleClass="statCard" HBox.hgrow="ALWAYS">
+                        <Label text="REVENUE" styleClass="statLabel"/>
+                        <Label fx:id="revenueLabel" text="---" styleClass="statValue statValueGold">
+                            <font><Font name="Georgia" size="24.0"/></font>
+                        </Label>
+                    </VBox>
+                </HBox>
+
+                <VBox fx:id="listingsCard" styleClass="tableCard">
+                    <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
+                        <Label text="Auction Listings" styleClass="tableHeaderTitle"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="filterTabs" spacing="6">
+                            <Button text="All"         styleClass="ftab ftabActive" onAction="#filterAll"/>
+                            <Button text="Pending"     styleClass="ftab" onAction="#filterPending"/>
+                            <Button text="Electronics" styleClass="ftab" onAction="#filterElectronics"/>
+                            <Button text="Art"         styleClass="ftab" onAction="#filterArt"/>
+                            <Button text="Vehicle"     styleClass="ftab" onAction="#filterVehicle"/>
+                        </HBox>
+                    </HBox>
+                    <TableView fx:id="listingsTable" styleClass="listingsTable" prefHeight="320">
+                        <columns>
+                            <TableColumn fx:id="colItem"     text="Item"        prefWidth="220"/>
+                            <TableColumn fx:id="colCategory" text="Category"    prefWidth="100"/>
+                            <TableColumn fx:id="colSeller"   text="Seller"      prefWidth="100"/>
+                            <TableColumn fx:id="colBid"      text="Current Bid" prefWidth="110"/>
+                            <TableColumn fx:id="colStatus"   text="Status"      prefWidth="110"/>
+                            <TableColumn fx:id="colActions"  text="Actions"     prefWidth="120"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No listings found"
+                                   style="-fx-text-fill: rgba(168,164,156,0.40); -fx-font-size: 13px;"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+                <VBox fx:id="usersCard" styleClass="tableCard" visible="false" managed="false">
+                    <HBox styleClass="tableHeader" alignment="CENTER_LEFT">
+                        <Label text="Users" styleClass="tableHeaderTitle"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="filterTabs" spacing="6">
+                            <Button text="All"    styleClass="ftab ftabActive" onAction="#filterUsersAll"/>
+                            <Button text="Active" styleClass="ftab" onAction="#filterUsersActive"/>
+                            <Button text="Banned" styleClass="ftab" onAction="#filterUsersBanned"/>
+                            <Button text="Admin"  styleClass="ftab" onAction="#filterUsersAdmin"/>
+                        </HBox>
+                    </HBox>
+                    <TableView fx:id="usersTable" styleClass="listingsTable" prefHeight="280">
+                        <columns>
+                            <TableColumn fx:id="colUserId"      text="ID"       prefWidth="50"/>
+                            <TableColumn fx:id="colUsername"    text="Username" prefWidth="130"/>
+                            <TableColumn fx:id="colEmail"       text="Email"    prefWidth="180"/>
+                            <TableColumn fx:id="colRole"        text="Role"     prefWidth="80"/>
+                            <TableColumn fx:id="colUserStatus"  text="Status"   prefWidth="80"/>
+                            <TableColumn fx:id="colJoinDate"    text="Joined"   prefWidth="100"/>
+                            <TableColumn fx:id="colUserActions" text="Actions"  prefWidth="110"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No users found"
+                                   style="-fx-text-fill: rgba(168,164,156,0.40); -fx-font-size: 13px;"/>
+                        </placeholder>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

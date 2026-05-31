@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane
+        onMouseClicked="#onCloseButtonClick"
+        prefHeight="630.0"
+        prefWidth="510.0"
+        styleClass="addListingRoot"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.AddListingController">
+
+    <children>
+
+        <Label alignment="CENTER"
+               layoutX="0.0" layoutY="18.0"
+               prefHeight="34.0" prefWidth="510.0"
+               text="Add Listing"
+               styleClass="addListingTitle">
+            <font><Font name="Berlin Sans FB" size="28.0"/></font>
+        </Label>
+
+        <MFXTextField fx:id="name"
+                      floatMode="BORDER" floatingText="  Title  "
+                      layoutX="101.0" layoutY="64.0"
+                      prefHeight="46.0" prefWidth="354.0"
+                      styleClass="fields"/>
+
+        <MFXComboBox fx:id="category"
+                     floatMode="BORDER" floatingText="  Category  "
+                     layoutX="101.0" layoutY="118.0"
+                     prefHeight="46.0" prefWidth="354.0"
+                     styleClass="fields"/>
+
+        <MFXTextField fx:id="startingprice"
+                      floatMode="BORDER" floatingText="  Starting Price  "
+                      layoutX="101.0" layoutY="172.0"
+                      prefHeight="46.0" prefWidth="354.0"
+                      styleClass="fields"/>
+
+        <MFXDatePicker fx:id="enddate"
+                       floatMode="BORDER" floatingText="  End Date  "
+                       layoutX="101.0" layoutY="226.0"
+                       prefHeight="48.0" prefWidth="354.0"
+                       styleClass="fields"/>
+
+        <!-- End Time: HH MM SS -->
+        <Label text="End Time (HH : MM : SS)"
+               layoutX="101.0" layoutY="282.0"
+               styleClass="fieldLabel"/>
+        <MFXTextField fx:id="endHour"
+                      floatMode="BORDER" floatingText="HH"
+                      layoutX="101.0" layoutY="302.0"
+                      prefHeight="44.0" prefWidth="100.0"
+                      styleClass="fields"/>
+        <MFXTextField fx:id="endMinute"
+                      floatMode="BORDER" floatingText="MM"
+                      layoutX="213.0" layoutY="302.0"
+                      prefHeight="44.0" prefWidth="100.0"
+                      styleClass="fields"/>
+        <MFXTextField fx:id="endSecond"
+                      floatMode="BORDER" floatingText="SS"
+                      layoutX="325.0" layoutY="302.0"
+                      prefHeight="44.0" prefWidth="130.0"
+                      styleClass="fields"/>
+
+        <MFXTextField fx:id="description"
+                      alignment="TOP_LEFT"
+                      floatMode="BORDER" floatingText="  Description  "
+                      layoutX="101.0" layoutY="356.0"
+                      prefHeight="66.0" prefWidth="354.0"
+                      styleClass="fields"/>
+
+        <ScrollPane layoutX="101.0" layoutY="430.0"
+                    prefHeight="76.0" prefWidth="354.0"
+                    fitToWidth="true"
+                    style="-fx-background: transparent; -fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-padding: 0;">
+            <content>
+                <VBox fx:id="dynamicAttributesBox" spacing="10"
+                      style="-fx-background-color: transparent; -fx-padding: 4 2 4 2;" />
+            </content>
+        </ScrollPane>
+
+        <Label fx:id="validationLabel"
+               layoutX="101.0" layoutY="510.0"
+               prefHeight="16.0" prefWidth="348.0"
+               styleClass="errorLabel"/>
+
+        <Label fx:id="imageLabel"
+               layoutX="101.0" layoutY="540.0"
+               prefHeight="24.0" prefWidth="196.0"
+               text="File Upload Label"
+               styleClass="addListingFileLabel"/>
+
+        <MFXButton fx:id="chooseImageButton"
+                   layoutX="335.0" layoutY="536.0"
+                   prefHeight="32.0" prefWidth="120.0"
+                   styleClass="goldButton"
+                   text="Choose Image"/>
+
+        <MFXButton fx:id="addButton"
+                   layoutX="204.0" layoutY="580.0"
+                   prefHeight="34.0" prefWidth="102.0"
+                   styleClass="goldButton"
+                   text="Add"/>
+
+        <ImageView fx:id="closeButton"
+                   fitHeight="26.0" fitWidth="25.0"
+                   layoutX="470.0" layoutY="12.0"
+                   pickOnBounds="true">
+            <image><Image url="@../../images/Icons/cross-circle.png"/></image>
+        </ImageView>
+
+    </children>
+</AnchorPane>

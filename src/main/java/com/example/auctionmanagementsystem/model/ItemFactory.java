@@ -1,0 +1,77 @@
+package com.example.auctionmanagementsystem.model;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
+
+public class ItemFactory {
+
+    public static Item createItem(String type, String name, String description, double startingPrice, Map<String, String> attributes ) {
+        //Dùng 'type' để xác định danh mục sản phẩm
+        //Không được để trống mục 'type' khi tạo sản phẩm
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("You must enter product category!");
+        }
+
+        //Tránh NullPointerException cho attributes khi tạo sản phẩm
+        if (attributes == null) {
+            throw new IllegalArgumentException("Please add more information!");
+        }
+
+        //Khởi tạo sản phẩm cho từng loại
+        try {
+            return switch(type.toUpperCase()) {
+                case "ELECTRONICS" -> {
+                    String brand = attributes.getOrDefault("brand", "Unknown");
+                    String warrantyMonthsStr = attributes.getOrDefault("warranty", "0");
+                    yield new Electronics(name, description, startingPrice, brand, Integer.parseInt(warrantyMonthsStr.trim()));
+                }
+
+                case "ART" -> {
+                    String artist = attributes.getOrDefault("artist", "Unknown");
+                    String material = attributes.getOrDefault("material", "Unknown");
+                    String theme = attributes.getOrDefault("theme", "Unknown");
+                    yield new Art(name, description, startingPrice, artist, theme, material);
+                }
+
+                case "VEHICLE" -> {
+                    String yearStr = attributes.getOrDefault("year", "0");
+                    String mileageStr = attributes.getOrDefault("mileage", "0.0");
+                    yield new Vehicle(name, description, startingPrice, Integer.parseInt(yearStr.trim()), Double.parseDouble(mileageStr.trim()));
+                }
+
+                //Thông báo không tìm thấy loại sản phẩm phù hợp khi tạo sản phẩm
+                default -> throw new IllegalArgumentException("Your product has not supported by our system yet!");
+            };
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number formatted!", e);
+        }
+    }
+
+    public static Item createDummyItem(int id) {
+        Item dummyItem = new Item() {
+
+            @Override
+            public void insertSubData(Connection connect, int itemId) throws SQLException {
+                throw new UnsupportedOperationException("This is a dummy item. Cannot insert sub data.");
+            }
+
+            @Override
+            public void updateSubData(Connection connect) throws SQLException {
+                throw new UnsupportedOperationException("This is a dummy item. Cannot update sub data.");
+            }
+
+            // Bổ sung hàm bị thiếu ở đây
+            @Override
+            public String getCategoryDetails() {
+                // Ném lỗi hoặc trả về một giá trị mặc định để báo hiệu đây chỉ là đối tượng ảo
+                throw new UnsupportedOperationException("This is a dummy item. No category details available.");
+            }
+        };
+
+        // Gán ID cho đối tượng giả này
+        dummyItem.setId(id);
+        return dummyItem;
+    }
+
+}

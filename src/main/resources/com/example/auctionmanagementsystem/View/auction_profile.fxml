@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane
+        prefWidth="1060.0"
+        prefHeight="760.0"
+        styleClass="rootPane"
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.example.auctionmanagementsystem.controller.ProfileController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="68.0"
+              style="-fx-background-color: #080A0F;
+                     -fx-border-color: transparent transparent rgba(212,168,58,0.28) transparent;
+                     -fx-border-width: 0 0 1px 0;
+                     -fx-padding: 0 32px;">
+            <Label text="Profile"
+                   style="-fx-text-fill: #F0C060; -fx-font-family: Georgia;
+                          -fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <MFXButton fx:id="closeButton" styleClass="closeButton"
+                       onMouseClicked="#onCloseButtonClick"
+                       prefHeight="34.0" prefWidth="34.0">
+                <graphic>
+                    <ImageView fitHeight="16.0" fitWidth="16.0"
+                               pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@../images/Icons/cross-circle.png"/></image>
+                    </ImageView>
+                </graphic>
+            </MFXButton>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox style="-fx-background-color: #0D1018;">
+
+            <VBox alignment="TOP_CENTER" spacing="0"
+                  prefWidth="320.0" minWidth="280.0"
+                  style="-fx-background-color: linear-gradient(to bottom, #131720, #0D1018);
+                         -fx-border-color: transparent rgba(255,255,255,0.06) transparent transparent;
+                         -fx-border-width: 0 1px 0 0;">
+                <padding><Insets top="56" right="36" bottom="48" left="36"/></padding>
+
+                <StackPane prefWidth="96.0" prefHeight="96.0" alignment="CENTER"
+                           style="-fx-background-color: linear-gradient(to bottom right, #1A1F2E, #252B3B);
+                                  -fx-background-radius: 999px;
+                                  -fx-border-color: rgba(212,168,58,0.32);
+                                  -fx-border-radius: 999px;
+                                  -fx-border-width: 2px;">
+                    <ImageView fitHeight="48.0" fitWidth="48.0"
+                               pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@../images/Icons/avatar.png"/></image>
+                    </ImageView>
+                </StackPane>
+
+                <Region prefHeight="20.0"/>
+                <Label fx:id="name" text="---" wrapText="true" textAlignment="CENTER"
+                       style="-fx-text-fill: #F2F0EC; -fx-font-family: Georgia;
+                              -fx-font-size: 22px; -fx-font-weight: bold;"/>
+                <Region prefHeight="6.0"/>
+                <Label text="Member"
+                       style="-fx-text-fill: rgba(168,164,156,0.45); -fx-font-size: 12px;"/>
+                <Region prefHeight="36.0"/>
+
+                <VBox spacing="10" maxWidth="Infinity"
+                      style="-fx-background-color: rgba(212,168,58,0.07);
+                             -fx-background-radius: 12px;
+                             -fx-border-color: rgba(212,168,58,0.18);
+                             -fx-border-radius: 12px;
+                             -fx-border-width: 1px;
+                             -fx-padding: 20px 22px;">
+                    <Label text="WALLET BALANCE"
+                           style="-fx-text-fill: rgba(168,164,156,0.45);
+                                  -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                    <Label fx:id="balanceLabel" text="0.00 USD"
+                           style="-fx-text-fill: #F0C060; -fx-font-family: Georgia;
+                                  -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                </VBox>
+
+                <Region prefHeight="16.0"/>
+                <MFXButton fx:id="editButton" styleClass="outlineButton"
+                           text="Edit Profile"
+                           prefHeight="40.0" maxWidth="Infinity"/>
+            </VBox>
+
+            <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS"
+                        style="-fx-background-color: #0D1018;
+                               -fx-background: #0D1018;
+                               -fx-border-color: transparent;">
+                <VBox spacing="0" style="-fx-background-color: #0D1018;">
+                    <padding><Insets top="56" right="72" bottom="56" left="60"/></padding>
+
+                    <Label text="PERSONAL INFORMATION"
+                           style="-fx-text-fill: rgba(168,164,156,0.38);
+                                  -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                    <Region prefHeight="20.0"/>
+
+                    <HBox spacing="20">
+                        <VBox spacing="7" HBox.hgrow="ALWAYS">
+                            <Label text="FULL NAME"
+                                   style="-fx-text-fill: rgba(168,164,156,0.80);
+                                          -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                            <MFXTextField fx:id="nameField" allowEdit="false"
+                                          styleClass="fields" promptText="Full name"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+                        </VBox>
+                        <VBox spacing="7" HBox.hgrow="ALWAYS">
+                            <Label text="USERNAME"
+                                   style="-fx-text-fill: rgba(168,164,156,0.80);
+                                          -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                            <MFXTextField fx:id="usernameField" allowEdit="false"
+                                          styleClass="fields" promptText="Username"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+
+                    <Region prefHeight="22.0"/>
+
+                    <HBox spacing="20">
+                        <VBox spacing="7" HBox.hgrow="ALWAYS">
+                            <Label text="EMAIL ADDRESS"
+                                   style="-fx-text-fill: rgba(168,164,156,0.80);
+                                          -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                            <MFXTextField fx:id="emailField" allowEdit="false"
+                                          styleClass="fields" promptText="Email"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+                        </VBox>
+                        <VBox spacing="7" HBox.hgrow="ALWAYS">
+                            <Label text="PHONE NUMBER"
+                                   style="-fx-text-fill: rgba(168,164,156,0.80);
+                                          -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                            <MFXTextField fx:id="phoneField" allowEdit="false"
+                                          styleClass="fields" promptText="Phone"
+                                          prefHeight="52.0" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+
+                    <Region prefHeight="36.0"/>
+
+                    <HBox alignment="CENTER" spacing="14">
+                        <Separator HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: rgba(255,255,255,0.06);"/>
+                        <Label text="ACTIVITY"
+                               style="-fx-text-fill: rgba(168,164,156,0.35);
+                                      -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                        <Separator HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color: rgba(255,255,255,0.06);"/>
+                    </HBox>
+
+                    <Region prefHeight="28.0"/>
+
+                    <HBox spacing="16">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: rgba(255,255,255,0.025);
+                                     -fx-background-radius: 10px;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 10px;
+                                     -fx-border-width: 1px;
+                                     -fx-padding: 18px 20px;">
+                            <Label text="ACTIVE BIDS"
+                                   style="-fx-text-fill: rgba(168,164,156,0.45);
+                                          -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                            <Label text="---"
+                                   style="-fx-text-fill: #F2F0EC; -fx-font-family: Georgia;
+                                          -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: rgba(255,255,255,0.025);
+                                     -fx-background-radius: 10px;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 10px;
+                                     -fx-border-width: 1px;
+                                     -fx-padding: 18px 20px;">
+                            <Label text="YOUR LISTINGS"
+                                   style="-fx-text-fill: rgba(168,164,156,0.45);
+                                          -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                            <Label text="---"
+                                   style="-fx-text-fill: #F2F0EC; -fx-font-family: Georgia;
+                                          -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox spacing="5" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: rgba(255,255,255,0.025);
+                                     -fx-background-radius: 10px;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 10px;
+                                     -fx-border-width: 1px;
+                                     -fx-padding: 18px 20px;">
+                            <Label text="WATCHLIST"
+                                   style="-fx-text-fill: rgba(168,164,156,0.45);
+                                          -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                            <Label text="---"
+                                   style="-fx-text-fill: #F2F0EC; -fx-font-family: Georgia;
+                                          -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+
+        </HBox>
+    </center>
+
+</BorderPane>

@@ -1,0 +1,181 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUCTION HOUSE — ADD LISTING FORM
+   addlistingstyles.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ROOT ──────────────────────────────────────────────────── */
+.rootPane, AnchorPane {
+    -fx-background-color: #0D1018;
+    -fx-font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+/* ── FORM CARD ─────────────────────────────────────────────── */
+.formCard {
+    -fx-background-color: #131720;
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 20, 0, 0, 6);
+    -fx-padding: 32px;
+}
+
+/* ── FORM TITLE ────────────────────────────────────────────── */
+.formTitle {
+    -fx-text-fill: #F0C060;
+    -fx-font-family: 'Georgia', 'Palatino Linotype', serif;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.formSubtitle {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+}
+
+/* ── SECTION LABEL ─────────────────────────────────────────── */
+.fieldLabel {
+    -fx-text-fill: rgba(168,164,156,0.80);
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ── FIELDS ────────────────────────────────────────────────── */
+.fields {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-padding: 0 14px;
+}
+
+.fields:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-background-color: rgba(212,168,58,0.05);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.18), 8, 0, 0, 0);
+}
+
+.fields .floating-text {
+    -fx-text-fill: rgba(168,164,156,0.55);
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── TEXT AREA ─────────────────────────────────────────────── */
+.TextArea {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+    -fx-control-inner-background: rgba(255,255,255,0.04);
+}
+
+.TextArea:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.16), 8, 0, 0, 0);
+}
+
+/* ── COMBO BOX / CHOICE BOX ────────────────────────────────── */
+.ComboBox, .ChoiceBox {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 14px;
+}
+
+.ComboBox:focused, .ChoiceBox:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+}
+
+.ComboBox .list-cell, .ChoiceBox .list-cell {
+    -fx-background-color: #1A1F2E;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* ── BUTTONS ───────────────────────────────────────────────── */
+.myButtons {
+    -fx-background-color: linear-gradient(to bottom, #F0C060, #D4A83A);
+    -fx-text-fill: #080A0F;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.35), 10, 0, 0, 2);
+    -fx-padding: 0 20px;
+}
+
+.myButtons:hover {
+    -fx-background-color: linear-gradient(to bottom, #F8D070, #ECC050);
+    -fx-effect: dropshadow(gaussian, rgba(212,168,58,0.55), 14, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.myButtons:pressed {
+    -fx-background-color: linear-gradient(to bottom, #C89830, #A07828);
+    -fx-scale-x: 0.97;
+    -fx-scale-y: 0.97;
+    -fx-effect: none;
+}
+
+/* ── IMAGE UPLOAD AREA ─────────────────────────────────────── */
+.imageUploadArea {
+    -fx-background-color: rgba(212,168,58,0.04);
+    -fx-background-radius: 10px;
+    -fx-border-color: rgba(212,168,58,0.18);
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-border-style: dashed;
+    -fx-cursor: hand;
+}
+
+.imageUploadArea:hover {
+    -fx-background-color: rgba(212,168,58,0.08);
+    -fx-border-color: rgba(212,168,58,0.40);
+}
+
+/* ── ERROR LABEL ───────────────────────────────────────────── */
+.errorLabel {
+    -fx-text-fill: #E05454;
+    -fx-font-family: 'Segoe UI', sans-serif;
+    -fx-font-size: 11px;
+}
+
+/* ── DATE PICKER ───────────────────────────────────────────── */
+.DatePicker {
+    -fx-background-color: rgba(255,255,255,0.04);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #F2F0EC;
+    -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+.DatePicker:focused {
+    -fx-border-color: rgba(212,168,58,0.60);
+}
+
+.DatePicker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.DatePicker .arrow-button .arrow {
+    -fx-background-color: rgba(168,164,156,0.60);
+}
