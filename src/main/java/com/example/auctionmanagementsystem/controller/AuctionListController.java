@@ -3,10 +3,8 @@ package com.example.auctionmanagementsystem.controller;
 import com.example.auctionmanagementsystem.client.ApiClient;
 import com.example.auctionmanagementsystem.model.Auction;
 import com.example.auctionmanagementsystem.service.ImageStorageService;
-// ── THÊM IMPORT OBSERVER ──────────────────────────────────────────────────
 import com.example.auctionmanagementsystem.observer.Observer;
 import com.example.auctionmanagementsystem.observer.AuctionNotifier;
-// ──────────────────────────────────────────────────────────────────────────
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,17 +36,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-// ── BẮT BUỘC PHẢI IMPLEMENTS OBSERVER Ở ĐÂY ────────────────────────────────
+// IMPLEMENTS OBSERVER 
 public class AuctionListController implements Observer {
 
-  // ── FXML fields — Top bar ─────────────────────────────────────────────────
+  // FXML fields — Top bar
   @FXML private Label usernameLabel;
   @FXML private MFXButton logoutButton;
   @FXML private MFXButton themeButton;
   @FXML private MFXButton notificationButton;
   @FXML private Label notificationBadge;
 
-  // ── FXML fields — Sidebar ─────────────────────────────────────────────────
+  // FXML fields — Sidebar 
   @FXML private HBox homeButton;
   @FXML private HBox activeListingButton;
   @FXML private HBox yourListingButton;
@@ -56,13 +54,13 @@ public class AuctionListController implements Observer {
   @FXML private MFXButton sellButton;
   @FXML private MFXButton adminButton;
 
-  // ── FXML fields — Category filter ────────────────────────────────────────
+  // FXML fields — Category filter 
   @FXML private Label allCat;
   @FXML private Label electronicsCat;
   @FXML private Label artCat;
   @FXML private Label vehicleCat;
 
-  // ── FXML fields — Content ────────────────────────────────────────────────
+  // FXML fields — Content 
   @FXML private MFXTextField searchNameField;
   @FXML private MFXButton searchNameButton;
   @FXML private MFXButton sortButton;
@@ -71,7 +69,7 @@ public class AuctionListController implements Observer {
   // ── FXML fields — Notification (Bạn có thể thêm nó vào file FXML của mình)
   @FXML private ListView<String> notificationList;
 
-  // ── State ─────────────────────────────────────────────────────────────────
+  // State 
   private String currentCategory = "ALL";
   private String currentSort = "NEWEST";
   private String currentSearchName = "";
@@ -79,7 +77,7 @@ public class AuctionListController implements Observer {
   // Track auction IDs đã thông báo trong session này, tránh hiện lại mỗi lần reload
   private static final Set<Integer> notifiedWins = new HashSet<>();
 
-  // ── Model ─────────────────────────────────────────────────────────────────
+  // Model 
   public static class AuctionItem {
     public int id;
     public int itemId;
@@ -134,18 +132,18 @@ public class AuctionListController implements Observer {
   public void initialize() {
     usernameLabel.setText(SessionManager.getInstance().getUsername());
 
-    // ── Wire sidebar ──────────────────────────────────────────────────────
+    // Wire sidebar 
     homeButton.setOnMouseClicked(e -> { currentCategory = "ALL";    loadListings(); });
     activeListingButton.setOnMouseClicked(e -> { currentCategory = "ACTIVE"; loadListings(); });
     yourListingButton.setOnMouseClicked(e -> { currentCategory = "MINE";   loadListings(); });
     profileButton.setOnMouseClicked(e -> openProfile());
 
-    // ── Wire buttons ──────────────────────────────────────────────────────
+    // Wire buttons 
     sellButton.setOnAction(e -> onSellButtonClick());
     sortButton.setOnAction(e -> onSortByButtonClick());
     logoutButton.setOnAction(e -> onLogOutButtonClick());
 
-    // ── Notification bell + badge ─────────────────────────────────────────
+    // Notification bell + badge 
     NotificationStore store = NotificationStore.getInstance();
     if (notificationButton != null) {
       notificationButton.setOnAction(e -> onNotificationButtonClick());
@@ -157,7 +155,7 @@ public class AuctionListController implements Observer {
       notificationBadge.managedProperty().bind(notificationBadge.visibleProperty());
     }
 
-    // ── Theme toggle ──────────────────────────────────────────────────────
+    // Theme toggle 
     if (themeButton != null) {
       updateThemeButtonText();
       themeButton.setOnAction(e -> {
@@ -166,14 +164,14 @@ public class AuctionListController implements Observer {
       });
     }
 
-    // ── Sell button — chỉ hiện với Seller ────────────────────────────────
+    // Sell button — chỉ hiện với Seller 
     if (sellButton != null) {
       boolean isSeller = SessionManager.getInstance().isSeller();
       sellButton.setVisible(isSeller);
       sellButton.setManaged(isSeller);
     }
 
-    // ── Admin button — chỉ hiện với Admin ────────────────────────────────
+    // Admin button — chỉ hiện với Admin 
     if (adminButton != null) {
       boolean isAdmin = SessionManager.getInstance().isAdmin();
       adminButton.setVisible(isAdmin);
@@ -181,7 +179,7 @@ public class AuctionListController implements Observer {
       adminButton.setOnAction(e -> onAdminButtonClick());
     }
 
-    // ── Category labels ───────────────────────────────────────────────────
+    // Category labels 
     Label[] cats     = {allCat, electronicsCat, artCat, vehicleCat};
     String[] filters = {"ALL", "Electronics", "Art", "Vehicle"};
     for (int i = 0; i < cats.length; i++) {
@@ -191,7 +189,7 @@ public class AuctionListController implements Observer {
         c.setOnMouseClicked(e -> { selectCategory(cats, c); currentCategory = f; loadListings(); });
     }
 
-    // ── ĐĂNG KÝ VÀO HỆ THỐNG TRUYỀN TIN RAM (OBSERVER) ───────────────────────
+    // ĐĂNG KÝ VÀO HỆ THỐNG TRUYỀN TIN RAM (OBSERVER) 
     AuctionNotifier.getInstance().registerObserver(this);
 
     // Đảm bảo hủy đăng ký lắng nghe khi tắt cửa sổ chính để giải phóng bộ nhớ
@@ -208,13 +206,12 @@ public class AuctionListController implements Observer {
         }
       });
     }
-    // ───────────────────────────────────────────────────────────────────────
 
     loadListings();
     if (SessionManager.getInstance().isBidder()) checkWinnerNotifications();
   }
 
-  // ── TRIỂN KHAI PHƯƠNG THỨC UPDATE ĐỂ NHẬN TIN NHẮN REALTIME (KẾT QUẢ ĐẤU GIÁ)
+  // TRIỂN KHAI PHƯƠNG THỨC UPDATE ĐỂ NHẬN TIN NHẮN REALTIME (KẾT QUẢ ĐẤU GIÁ)
   @Override
   public void update(String message) {
     if (message == null) return;
@@ -281,7 +278,7 @@ public class AuctionListController implements Observer {
     return (raw == null || raw.isBlank() || "null".equalsIgnoreCase(raw))
             ? ("Auction #" + auctionId) : raw;
   }
-  // ─────────────────────────────────────────────────────────────────────────
+
 
   private void checkWinnerNotifications() {
     int userId = SessionManager.getInstance().getUserId();
@@ -329,7 +326,7 @@ public class AuctionListController implements Observer {
     themeButton.setText(ThemeManager.getInstance().isDarkMode() ? "Light" : "Dark");
   }
 
-  // ── Action handlers ───────────────────────────────────────────────────────
+  // Action handlers 
 
   @FXML
   private void onLogOutButtonClick() {
@@ -388,7 +385,7 @@ public class AuctionListController implements Observer {
             (AuctionDetailController ctrl) -> ctrl.loadAuction(auctionId));
   }
 
-  // ── Data — load từ DB ─────────────────────────────────────────────────────
+  // Data — load từ DB 
 
   /**
    * JOIN auction + items + bid_transaction + electronics_items (để lấy brand làm category).

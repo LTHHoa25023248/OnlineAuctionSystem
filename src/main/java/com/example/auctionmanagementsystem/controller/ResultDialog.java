@@ -56,7 +56,7 @@ public final class ResultDialog {
 
     private enum Type { WIN, LOSE, SELLER }
 
-    // ── API công khai ─────────────────────────────────────────────────────────
+    // API công khai 
 
     /** Bidder thắng phiên. balance = số dư còn lại sau thanh toán (truyền giá trị < 0 để ẩn). */
     public static void showWin(Window owner, String itemName, double finalPrice, double balance) {
@@ -197,7 +197,7 @@ public final class ResultDialog {
         stage.showAndWait();
     }
 
-    // ── Phần dựng giao diện ───────────────────────────────────────────────────
+    // Phần dựng giao diện
 
     private static void show(Window owner, Type type, String title, String subtitle,
                              String itemName, double finalPrice,
@@ -212,7 +212,7 @@ public final class ResultDialog {
         }
         stage.setTitle(title);
 
-        // ── Huy hiệu icon tròn ở đầu ─────────────────────────────────────────
+        // Huy hiệu icon tròn ở đầu
         Label icon = new Label(glyph);
         icon.setStyle("-fx-font-size: 30px;");
         StackPane badge = new StackPane(icon);
@@ -225,7 +225,7 @@ public final class ResultDialog {
                         "-fx-border-width: 1.5;" +
                         "-fx-border-radius: 999;");
 
-        // ── Tiêu đề + phụ đề ──────────────────────────────────────────────────
+        // Tiêu đề + phụ đề
         Label titleLbl = new Label(title);
         titleLbl.setStyle(
                 "-fx-font-family: " + FONT_SERIF + ";" +
@@ -243,7 +243,7 @@ public final class ResultDialog {
         VBox head = new VBox(4, titleLbl, subLbl);
         head.setAlignment(Pos.CENTER);
 
-        // ── Khối chi tiết (tên SP, giá, số dư) ────────────────────────────────
+        // Khối chi tiết (tên SP, giá, số dư) ────────────────────────────────
         VBox detail = new VBox(10);
         detail.setPadding(new Insets(16, 18, 16, 18));
         detail.setStyle(
@@ -260,7 +260,7 @@ public final class ResultDialog {
             detail.getChildren().add(row(balanceLabel, String.format("%,.2f USD", balance), GREEN, false));
         }
 
-        // ── Footer text ───────────────────────────────────────────────────────
+        // Footer text 
         Label footerLbl = new Label(footer);
         footerLbl.setWrapText(true);
         footerLbl.setStyle(
@@ -268,7 +268,7 @@ public final class ResultDialog {
                         "-fx-font-size: 11.5px;" +
                         "-fx-text-fill: " + TEXT_MUTED + ";");
 
-        // ── Nút OK ──────────────────────────────────────────────────────────
+        // Nút OK 
         Button ok = new Button("OK");
         ok.setDefaultButton(true);
         String okIdle, okHover;
@@ -293,7 +293,7 @@ public final class ResultDialog {
         HBox actions = new HBox(ok);
         actions.setAlignment(Pos.CENTER_RIGHT);
 
-        // ── Vạch màu accent trên đỉnh card ────────────────────────────────────
+        // Vạch màu accent trên đỉnh card 
         Region topBar = new Region();
         topBar.setMinHeight(4);
         topBar.setMaxHeight(4);
@@ -301,7 +301,7 @@ public final class ResultDialog {
                 "-fx-background-color: linear-gradient(to right, " + accent + ", " + GOLD_BRIGHT + ");" +
                         "-fx-background-radius: 14 14 0 0;");
 
-        // ── Thân card ─────────────────────────────────────────────────────────
+        // Thân card 
         VBox body = new VBox(16, badge, head, detail, footerLbl, actions);
         body.setAlignment(Pos.CENTER);
         body.setPadding(new Insets(22, 26, 22, 26));
@@ -331,7 +331,7 @@ public final class ResultDialog {
 
         stage.setScene(scene);
 
-        // ── Animation xuất hiện (fade + scale) ───────────────────────────────
+        // Animation xuất hiện (fade + scale)
         card.setOpacity(0);
         card.setScaleX(0.92);
         card.setScaleY(0.92);

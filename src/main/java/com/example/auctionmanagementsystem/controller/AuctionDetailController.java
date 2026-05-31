@@ -6,11 +6,9 @@ import com.example.auctionmanagementsystem.model.AuctionStatus;
 import com.example.auctionmanagementsystem.model.BidTransaction;
 import com.example.auctionmanagementsystem.model.Item;
 import com.example.auctionmanagementsystem.service.ImageStorageService;
-
-// ── THÊM IMPORT OBSERVER ──────────────────────────────────────────────────
 import com.example.auctionmanagementsystem.observer.Observer;
 import com.example.auctionmanagementsystem.observer.AuctionNotifier;
-// ──────────────────────────────────────────────────────────────────────────
+
 
 import com.google.gson.JsonObject;
 import java.util.HashMap;
@@ -44,7 +42,7 @@ import java.util.Optional;
 
 public class AuctionDetailController implements Observer {
 
-  // ── FXML fields — auction info ────────────────────────────────────────────
+  // FXML fields — auction info ─
   @FXML private ImageView image;
   @FXML private Label titleLabel;
   @FXML private Label priceLabel;
@@ -60,19 +58,19 @@ public class AuctionDetailController implements Observer {
   @FXML private Label paymentInfoLabel;
   @FXML private Label bidValidationLabel;
 
-  // ── FXML fields — bid history ─────────────────────────────────────────────
+  // FXML fields — bid history 
   @FXML private ListView<String> bidHistoryList;
   @FXML private LineChart<String, Number> bidChart;
 
-  // ── FXML fields — seller actions ─────────────────────────────────────────
+  // FXML fields — seller actions 
   @FXML private HBox sellerActionsDetailBox;
 
-  // ── FXML fields — bid section ─────────────────────────────────────────────
+  // FXML fields — bid section 
   @FXML private MFXTextField bidField;
   @FXML private MFXButton placeBidButton;
   @FXML private MFXButton endnowButton;
 
-  // ── FXML fields — auto bid section ───────────────────────────────────────
+  // FXML fields — auto bid section 
   @FXML private VBox autoBidSection;
   @FXML private MFXTextField maxBidField;
   @FXML private MFXTextField incrementField;
@@ -103,7 +101,7 @@ public class AuctionDetailController implements Observer {
     if (autoBidButton != null) autoBidButton.setOnAction(e -> handleRegisterAutoBid());
     closeButton.setOnMouseClicked(this::handleClose);
 
-    // ── ĐĂNG KÝ VÀO HỆ THỐNG TRUYỀN TIN RAM ───────────────────────────────────
+    // ĐĂNG KÝ VÀO HỆ THỐNG TRUYỀN TIN RAM 
     AuctionNotifier.getInstance().registerObserver(this);
 
     // Cơ chế an toàn: Tự hủy đăng ký lắng nghe nếu người dùng tắt popup bằng nút [X] của hệ điều hành
@@ -120,7 +118,7 @@ public class AuctionDetailController implements Observer {
     });
   }
 
-  // ── TRIỂN KHAI PHƯƠNG THỨC UPDATE ĐỂ ĐỔI GIAO DIỆN REALTIME ────────────────
+  // TRIỂN KHAI PHƯƠNG THỨC UPDATE ĐỂ ĐỔI GIAO DIỆN REALTIME
   @Override
   public void update(String message) {
     if (message == null || currentAuction == null) return;
@@ -286,7 +284,6 @@ public class AuctionDetailController implements Observer {
       }
     }
   }
-  // ──────────────────────────────────────────────────────────────────────────
 
   public void loadAuction(int auctionId) {
     bidValidationLabel.setText("Loading...");
@@ -800,7 +797,7 @@ public class AuctionDetailController implements Observer {
   @FXML
   private void handleClose(MouseEvent e) {
     if (countdown != null) countdown.stop();
-    // ── HỦY ĐĂNG KÝ QUAN SÁT VIÊN TRÁNH RÒ RỈ RAM CHẠY NGẦM ───────────────────
+    // HỦY ĐĂNG KÝ QUAN SÁT VIÊN TRÁNH RÒ RỈ RAM CHẠY NGẦM 
     AuctionNotifier.getInstance().removeObserver(this);
     ((Stage) closeButton.getScene().getWindow()).close();
   }

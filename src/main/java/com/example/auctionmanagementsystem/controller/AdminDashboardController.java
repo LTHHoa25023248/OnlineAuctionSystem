@@ -19,16 +19,16 @@ import java.util.Map;
 
 public class AdminDashboardController {
 
-  // ── FXML fields — Top bar ─────────────────────────────────────────────────
+  // FXML fields — Top bar 
   @FXML private Label usernameLabel;
 
-  // ── FXML fields — Stat cards ──────────────────────────────────────────────
+  // FXML fields — Stat cards ─
   @FXML private Label totalListingsLabel;
   @FXML private Label activeAuctionsLabel;
   @FXML private Label totalUsersLabel;
   @FXML private Label revenueLabel;
 
-  // ── FXML fields — Listings table ─────────────────────────────────────────
+  // FXML fields — Listings table
   @FXML private TableView<AuctionRow> listingsTable;
   @FXML private TableColumn<AuctionRow, String> colItem;
   @FXML private TableColumn<AuctionRow, String> colCategory;
@@ -37,14 +37,14 @@ public class AdminDashboardController {
   @FXML private TableColumn<AuctionRow, String> colStatus;
   @FXML private TableColumn<AuctionRow, String> colActions;
 
-  // ── FXML fields — Sidebar nav items ──────────────────────────────────────
+  // FXML fields — Sidebar nav items 
   @FXML private HBox navListings;
   @FXML private HBox navUsers;
 
-  // ── FXML fields — Listings card ───────────────────────────────────────────
+  // FXML fields — Listings card 
   @FXML private VBox listingsCard;
 
-  // ── FXML fields — Users table ─────────────────────────────────────────────
+  // FXML fields — Users table ─
   @FXML private VBox usersCard;
   @FXML private TableView<UserRow> usersTable;
   @FXML private TableColumn<UserRow, String> colUserId;
@@ -55,7 +55,7 @@ public class AdminDashboardController {
   @FXML private TableColumn<UserRow, String> colJoinDate;
   @FXML private TableColumn<UserRow, String> colUserActions;
 
-  // ── Inner classes: Row models ─────────────────────────────────────────────
+  // Inner classes: Row models 
 
   public static class AuctionRow {
     private final int auctionId;
@@ -108,7 +108,7 @@ public class AdminDashboardController {
     public String  getJoinDate()  { return joinDate.get(); }
   }
 
-  // ── Initialize ────────────────────────────────────────────────────────────
+  // Initialize 
 
   @FXML
   public void initialize() {
@@ -119,7 +119,7 @@ public class AdminDashboardController {
     showListings();
   }
 
-  // ── Sidebar handlers ──────────────────────────────────────────────────────
+  // Sidebar handlers ─
 
   @FXML private void handleHome()      { NavigationUtil.goTo(usernameLabel, NavigationUtil.AUCTION_LIST); }
   @FXML private void handleAnalytics() { }
@@ -161,20 +161,20 @@ public class AdminDashboardController {
     NavigationUtil.goTo(usernameLabel, NavigationUtil.LOGIN);
   }
 
-  // ── Auction filter buttons ────────────────────────────────────────────────
+  // Auction filter buttons
   @FXML private void filterAll()        { loadTable("ALL"); }
   @FXML private void filterPending()    { loadTable("PENDING"); }
   @FXML private void filterElectronics(){ loadTable("ELECTRONICS"); }
   @FXML private void filterArt()        { loadTable("ART"); }
   @FXML private void filterVehicle()    { loadTable("VEHICLE"); }
 
-  // ── Users filter buttons ──────────────────────────────────────────────────
+  // Users filter buttons 
   @FXML private void filterUsersAll()    { loadUsersTable("ALL"); }
   @FXML private void filterUsersActive() { loadUsersTable("Active"); }
   @FXML private void filterUsersBanned() { loadUsersTable("Banned"); }
   @FXML private void filterUsersAdmin()  { loadUsersTable("Admin"); }
 
-  // ── Setup column mappings ─────────────────────────────────────────────────
+  // Setup column mappings 
 
   private void setupTable() {
     if (colItem     != null) colItem.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getItem()));
@@ -263,7 +263,7 @@ public class AdminDashboardController {
     }
   }
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
+  // Stats 
 
   private void loadStats() {
     Task<JsonObject> task = new Task<>() {
@@ -286,7 +286,7 @@ public class AdminDashboardController {
     new Thread(task).start();
   }
 
-  // ── Listings data ─────────────────────────────────────────────────────────
+  // Listings data 
 
   private void loadTable(String filter) {
     Task<ObservableList<AuctionRow>> task = new Task<>() {
@@ -338,7 +338,7 @@ public class AdminDashboardController {
     new Thread(task).start();
   }
 
-  // ── Approve / Reject actions ──────────────────────────────────────────────
+  // Approve / Reject actions 
 
   private void approveAuction(int auctionId) {
     Task<Void> task = new Task<>() {
@@ -374,7 +374,7 @@ public class AdminDashboardController {
     });
   }
 
-  // ── Users data ────────────────────────────────────────────────────────────
+  // Users data 
 
   private void loadUsersTable(String filter) {
     Task<ObservableList<UserRow>> task = new Task<>() {

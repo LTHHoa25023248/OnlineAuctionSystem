@@ -29,7 +29,7 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
  */
 public class ForgotPassController {
 
-  // ── FXML fields ───────────────────────────────────────────────────────────
+  // FXML fields 
   @FXML
   private MFXTextField emailField;
   @FXML
@@ -54,7 +54,7 @@ public class ForgotPassController {
   /** Email đã được xác nhận tồn tại trong DB — lưu để dùng ở bước 3 */
   private String verifiedEmail = null;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  // Lifecycle 
 
   @FXML
   public void initialize() {
@@ -171,7 +171,7 @@ public class ForgotPassController {
         String pass    = passwordField        != null ? passwordField.getText()        : "";
         String confirm = confirmPasswordField != null ? confirmPasswordField.getText() : "";
 
-        // ── Validate client-side ──────────────────────────────────────────────
+        // Validate client-side ─
         if (verifiedEmail == null) {
             showError(unValidLabel, "Please send a verification code first.");
             return;
@@ -242,7 +242,7 @@ public class ForgotPassController {
         new Thread(task).start();
     }
 
-  // ── Đóng popup ────────────────────────────────────────────────────────────
+  // Đóng popup
 
   @FXML
   private void handleClose() {
@@ -256,7 +256,7 @@ public class ForgotPassController {
     }
   }
 
-  // ── Countdown chống spam gửi email ───────────────────────────────────────
+  // Countdown chống spam gửi email 
 
   /**
    * Disable nút Send Code trong 60 giây, đếm ngược hiển thị trên button.
@@ -276,13 +276,13 @@ public class ForgotPassController {
     }).start();
   }
 
-  // ── Validation Helpers ────────────────────────────────────────────────────
+  // Validation Helpers 
 
   private boolean isValidEmail(String email) {
     return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
   }
 
-  // ── UI Helpers ────────────────────────────────────────────────────────────
+  // UI Helpers 
 
   private void showError(Label lbl, String msg) {
     if (lbl == null)
@@ -345,7 +345,7 @@ public class ForgotPassController {
     });
   }
 
-  // ── Inner enums ───────────────────────────────────────────────────────────
+  // Inner enums 
 
   private enum SendCodeResult {
     SUCCESS, EMAIL_NOT_FOUND, DB_ERROR, EMAIL_SEND_FAIL

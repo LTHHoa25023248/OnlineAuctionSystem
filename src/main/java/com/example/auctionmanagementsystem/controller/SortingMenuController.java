@@ -19,7 +19,7 @@ import io.github.palexdev.materialfx.controls.MFXRadioButton;
  */
 public class SortingMenuController {
 
-  // ── FXML fields ───────────────────────────────────────────────────────────
+  // FXML fields 
   @FXML
   private MFXRadioButton radio1; // Price (High to Low)
   @FXML

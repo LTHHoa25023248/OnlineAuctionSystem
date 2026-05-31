@@ -19,7 +19,7 @@ import java.net.URL;
  */
 public class ThemeManager {
 
-  // ── Singleton ─────────────────────────────────────────────────────────────
+  // Singleton 
   private static ThemeManager instance;
 
   private ThemeManager() {}
@@ -30,7 +30,7 @@ public class ThemeManager {
     return instance;
   }
 
-  // ── State ─────────────────────────────────────────────────────────────────
+  // State 
   /** true = dark mode (mặc định khi khởi động) */
   private boolean darkMode = true;
 
@@ -46,7 +46,7 @@ public class ThemeManager {
     PROFILE // profilepagestyles.css — auction_profile
   }
 
-  // ── CSS resolver ──────────────────────────────────────────────────────────
+  // CSS resolver 
 
   /**
    * Tìm file CSS trong classpath bằng 3 chiến lược. Giống resolveUrl() trong NavigationUtil.
@@ -87,11 +87,9 @@ public class ThemeManager {
         };
     }
 
-  // ── API công khai ─────────────────────────────────────────────────────────
+  // API công khai 
 
   /**
-   * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
-   *
    * Toggle Dark/Light mode, áp dụng lên Scene với CssType.MAIN. Gọi từ themeButton trong
    * AuctionListController.
    */
@@ -102,8 +100,6 @@ public class ThemeManager {
   }
 
   /**
-   * [HOẠT ĐỘNG ĐẦY ĐỦ ✅]
-   *
    * Áp dụng theme lên Scene với CssType chỉ định.
    *
    * Dark mode → CSS riêng theo từng màn hình Light mode → lightstyles.css cho mọi màn hình
@@ -131,7 +127,7 @@ public class ThemeManager {
   }
 
   /**
-   * Overload không cần CssType — mặc định dùng MAIN. Dùng khi không biết loại màn hình.
+   * Overload không cần CssType — mặc định dùng MAIN. Dùng khi không biết loại màn hình
    */
   public void applyTheme(javafx.scene.Scene scene) {
     applyTheme(scene, CssType.MAIN);

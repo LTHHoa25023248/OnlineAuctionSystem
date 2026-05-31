@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class AddListingController {
 
-  // ── FXML fields ───────────────────────────────────────────────────────────
+  // FXML fields 
    @FXML
   private MFXTextField name;
   @FXML
