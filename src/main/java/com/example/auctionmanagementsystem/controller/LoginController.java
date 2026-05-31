@@ -93,8 +93,7 @@ public class LoginController {
 
     setLoginButtonState(false, "Logging in...");
 
-    Task<User> loginTask = new Task<>() {
-      @Override
+    Task<JsonObject> loginTask = new Task<>() {
       @Override
       protected JsonObject call() throws Exception {
         return ApiClient.post("/auth/login",
