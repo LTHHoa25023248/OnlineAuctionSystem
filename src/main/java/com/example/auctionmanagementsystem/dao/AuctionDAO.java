@@ -123,9 +123,9 @@ public class AuctionDAO implements DAOInterface<Auction> {
  
   public List<Auction> selectOpenAuctions(Connection connect) {
     List<Auction> list = new ArrayList<>();
-    String sql = "SELECT * FROM auction WHERE status='RUNNING' AND end_time > ?";
+    String sql = "SELECT * FROM auction WHERE status IN ('OPEN', 'RUNNING')";
     try (PreparedStatement ps = connect.prepareStatement(sql)) {
-      ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+      // ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
       try (ResultSet rs = ps.executeQuery()) {
         while (rs.next()) {
           list.add(AuctionMapper.mapRow(rs));
