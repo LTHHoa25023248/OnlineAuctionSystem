@@ -214,21 +214,10 @@ public class AddListingController {
 
       int auctionId = resp.get("auctionId").getAsInt();
 
-      // ── Bước 5: Cập nhật lastAddedItem để AuctionListController hiển thị ngay ──
       // Dung id thuc tu DB thay vi id tam thoi ngau nhien nhu truoc
-      lastAddedItem = new AuctionListController.AuctionItem(
-          auctionId,
-          name.getText().trim(),
-          category.getValue(),
-          price,
-          0,             // 0 bids vì mới tạo
-          (int) daysLeft,
-          displayImagePath);
+      lastAddedItem = new AuctionListController.AuctionItem( auctionId, name.getText().trim(),category.getValue(), price, 0, (int) daysLeft, displayImagePath);
       lastAddedItem.setAttributes(attributes); // full path de JavaFX hien thi duoc
-
-      System.out.println("[AddListing] Saved to API: " + lastAddedItem.name
-          + " | auctionId=" + auctionId
-          + " | image=" + (savedFileName != null ? savedFileName : "none"));
+      System.out.println("[AddListing] Saved to API: " + lastAddedItem.name+ " | auctionId=" + auctionId + " | image=" + (savedFileName != null ? savedFileName : "none"));
 
     } catch (Exception ex) {
       ex.printStackTrace();
