@@ -17,8 +17,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Connection;
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,18 +67,36 @@ public class PaymentServiceTest {
         testAuction.setHighestBidder(testBidder);
         testAuction.setSeller(testSeller);
 
-        // Bidder có 500, Seller có 100
-        mockedUserDao.when(() -> UserDAO.getBalance(1, mockConnection)).thenReturn(500.0);
-        mockedUserDao.when(() -> UserDAO.getBalance(2, mockConnection)).thenReturn(100.0);
+        PreparedStatement mockPs = mock(PreparedStatement.class);
+        ResultSet mockRs = mock(ResultSet.class);
+
+        // Dạy Mockito: Khi hàm prepareStatement được gọi, trả về mockPs
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPs);
+        // Khi gọi executeQuery, trả về mockRs
+        when(mockPs.executeQuery()).thenReturn(mockRs);
+        // Giả lập câu lệnh SQL tìm thấy dữ liệu (rs.next() = true)
+        when(mockRs.next()).thenReturn(true);
+        // Giả lập ID của Admin trả về là 99
+        when(mockRs.getInt(1)).thenReturn(99); 
+
+        mockedUserDao.when(() -> UserDAO.getBalance(1, mockConnection)).thenReturn(500.0); // Bidder
+        mockedUserDao.when(() -> UserDAO.getBalance(2, mockConnection)).thenReturn(100.0); // Seller
+        mockedUserDao.when(() -> UserDAO.getBalance(99, mockConnection)).thenReturn(1000.0); // Admin
 
         paymentService.processPayment(mockConnection, testAuction);
 
-        // Sau khi thanh toán, trạng thái đổi thành PAID
         assertEquals(AuctionStatus.PAID, testAuction.getStatus());
         
-        // Trừ tiền, cộng tiền và lưu DB được gọi
-        mockedUserDao.verify(() -> UserDAO.updateBalance(1, 350.0, mockConnection)); // 500 - 150 = 350
-        mockedUserDao.verify(() -> UserDAO.updateBalance(2, 250.0, mockConnection)); // 100 + 150 = 250
+        // Bidder phải trả đủ 150 -> Còn: 500 - 150 = 350
+        mockedUserDao.verify(() -> UserDAO.updateBalance(1, 350.0, mockConnection)); 
+        
+        // Seller nhận 90% (135) -> Thành: 100 + 135 = 235
+        mockedUserDao.verify(() -> UserDAO.updateBalance(2, 235.0, mockConnection)); 
+        
+        // Admin nhận 10% (15) -> Thành: 1000 + 15 = 1015
+        mockedUserDao.verify(() -> UserDAO.updateBalance(99, 1015.0, mockConnection)); 
+
+        // Kiểm chứng commit và đóng connection
         verify(auctionDAO).update(testAuction, mockConnection);
         verify(mockConnection).commit();
         verify(mockConnection).setAutoCommit(true);
