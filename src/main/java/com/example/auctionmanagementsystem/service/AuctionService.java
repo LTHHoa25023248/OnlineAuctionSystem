@@ -44,7 +44,7 @@ public class AuctionService {
                 throw new IllegalStateException("Auction must be PENDING to start");
             }
             //set trang thai, time, update data
-            auction.setStatus(AuctionStatus.OPEN);
+            auction.setStatus(AuctionStatus.RUNNING);
             auction.setStartTime(LocalDateTime.now());
             auctionDao.update(auction, connect);
 
