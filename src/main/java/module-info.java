@@ -4,6 +4,8 @@ module com.example.auctionmanagementsystem {
     requires java.sql;
     requires MaterialFX;
     requires jakarta.mail;
+    requires jdk.httpserver;
+    requires java.net.http;
 
 
     opens com.example.auctionmanagementsystem to javafx.fxml;
