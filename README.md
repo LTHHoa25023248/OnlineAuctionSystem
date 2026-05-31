@@ -6,7 +6,7 @@
 
 ## 1. Mô tả bài toán và phạm vi hệ thống
 
-Hệ thống Đấu giá Trực tuyến là một nền tảng đa người dùng cho phép tổ chức và tham gia các phiên đấu giá tài sản theo thời gian thực qua mạng. Hệ thống được xây dựng theo mô hình **Client–Server** với 3 vai trò người dùng được phân quyền rõ ràng:
+Hệ thống đấu giá trực tuyến là một nền tảng đa người dùng cho phép tổ chức và tham gia các phiên đấu giá tài sản theo thời gian thực qua mạng. Hệ thống được xây dựng theo mô hình **Client–Server** với 3 vai trò người dùng được phân quyền rõ ràng:
 
 - **Bidder (Người đặt giá)**: xem danh sách phiên đấu giá đang mở, đặt giá thủ công hoặc đăng ký đấu giá tự động, theo dõi lịch sử trúng thưởng. Số dư khởi tạo 50.000 USD.
 - **Seller (Người bán)**: đăng tải sản phẩm lên hệ thống, thiết lập giá khởi điểm và thời lượng, nhận tiền khi phiên kết thúc thành công.
@@ -147,12 +147,12 @@ Nếu muốn chạy cả unit test trong quá trình build:
 mvn clean install
 ```
 
-### Bước 3 — Khởi động Server (PHẢI chạy trước Client)
+### Bước 3 — Khởi động Server (chạy trước Client)
 
 Mở **một cửa sổ terminal riêng** và chạy:
 
 ```bash
-mvn exec:java -Dexec.mainClass="com.auctionmanagementsystem.server.AuctionServer"
+mvn clean test-compile exec:java "-Dexec.mainClass=com.example.auctionmanagementsystem.Main"
 ```
 
 Server sẽ lắng nghe ở `http://localhost:8080`. Khi thấy log `Server started on port 8080` là đã sẵn sàng. **Giữ cửa sổ này luôn mở** trong suốt thời gian sử dụng hệ thống.
@@ -166,19 +166,6 @@ mvn javafx:run
 ```
 
 Cửa sổ JavaFX sẽ hiện ra, hiển thị màn hình đăng nhập. Có thể mở nhiều Client cùng lúc để mô phỏng đấu giá đa người dùng.
-
-### Lệnh thay thế (chạy từ file JAR đã đóng gói)
-
-Sau khi `mvn clean package` tạo ra file JAR trong thư mục `target/`, có thể chạy trực tiếp:
-
-```bash
-# Server
-java -cp target/auctionmanagementsystem-1.0.jar com.auctionmanagementsystem.server.AuctionServer
-
-# Client (cần truyền thêm JavaFX modules)
-java --module-path /path/to/javafx-sdk/lib --add-modules javafx.controls,javafx.fxml \
-     -jar target/auctionmanagementsystem-client.jar
-```
 
 ### Chạy unit test
 
@@ -230,8 +217,7 @@ mvn test
 
 ## 6. Tài liệu và demo
 
-- **Báo cáo dự án (PDF)**: _[để trống — link sẽ được cập nhật]_
-- **Video demo**: _[để trống — link sẽ được cập nhật]_
+- **Link báo cáo dự án và video demo**: https://drive.google.com/drive/folders/1gu3TQLSAoypNHSKvWXpkQLgy7YAxwj9s?usp=sharing
 
 ---
 
