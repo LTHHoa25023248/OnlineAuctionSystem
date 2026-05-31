@@ -13,7 +13,15 @@ import java.sql.ResultSet;
 public class PaymentService {
     //loi nhuan hoa hong admin huong 10% tu san pham ban duoc
     private static final double ADMIN_COMMISSION_RATE = 0.10;
-    private final AuctionDAO auctionDAO = new AuctionDAO();
+    private final AuctionDAO auctionDAO;
+
+    public PaymentService() {
+        this.auctionDAO = new AuctionDAO();
+    }
+
+    public PaymentService(AuctionDAO auctionDao) {
+        this.auctionDAO = auctionDao;
+    }
     public void processPayment(Connection connect, Auction auction) throws Exception {
         //kiem tra trang thai xem auction finished chua
         if (auction.getStatus() != AuctionStatus.FINISHED) {

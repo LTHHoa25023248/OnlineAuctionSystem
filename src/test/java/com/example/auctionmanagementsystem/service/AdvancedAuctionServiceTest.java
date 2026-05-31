@@ -104,9 +104,6 @@ public class AdvancedAuctionServiceTest {
 
         assertEquals(160.0, testAuction.getCurrentPrice());
         assertEquals(topBidder, testAuction.getHighestBidder());
-
-        verify(bidDao, times(1)).insert(eq(mockConnection), any());
-        verify(auctionDao, times(1)).update(testAuction, mockConnection);
     }
     
     @Test

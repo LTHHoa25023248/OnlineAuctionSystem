@@ -16,9 +16,23 @@ import java.time.LocalDateTime;
 
 
 public class BiddingService {
-    private final AuctionDAO auctionDao=new AuctionDAO();
-    private final BidTransactionDAO bidDao=new BidTransactionDAO();
-    private final AdvancedAuctionService advancedService=new AdvancedAuctionService();
+    private final AuctionDAO auctionDao;
+    private final BidTransactionDAO bidDao;
+    private final AdvancedAuctionService advancedService;
+
+    // Default constructor cho hệ thống chạy thực tế
+    public BiddingService() {
+        this.auctionDao = new AuctionDAO();
+        this.bidDao = new BidTransactionDAO();
+        this.advancedService = new AdvancedAuctionService();
+    }
+
+    // Constructor dùng để truyền Mock Object vào khi chạy Unit Test
+    public BiddingService(AuctionDAO auctionDao, BidTransactionDAO bidDao, AdvancedAuctionService advancedService) {
+        this.auctionDao = auctionDao;
+        this.bidDao = bidDao;
+        this.advancedService = advancedService;
+    }
     //logic dau gia
     public void placeBid(Auction auction,Bidder bidder,double amount){
         //lock de trang nhieu nguoi bid cung luc, goi tu auction

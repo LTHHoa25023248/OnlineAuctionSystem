@@ -15,13 +15,25 @@ import java.util.concurrent.TimeUnit;
 public class AuctionScheduler {
      //singleton chi tao 1 instance duy nhat trong toan app
     private static AuctionScheduler instance;
-    private final AuctionDAO auctionDao = new AuctionDAO();
-    private final AuctionService auctionService = new AuctionService();
+    private final AuctionDAO auctionDao;
+    private final AuctionService auctionService;
+    private final PaymentService paymentService;
+
+    private AuctionScheduler() {
+        this.auctionDao = new AuctionDAO();
+        this.auctionService = new AuctionService();
+        this.paymentService = new PaymentService();
+    }
+
+    AuctionScheduler(AuctionDAO auctionDao, AuctionService auctionService, PaymentService paymentService) {
+        this.auctionDao = auctionDao;
+        this.auctionService = auctionService;
+        this.paymentService = paymentService;
+    }
 
     // ScheduledExecutorService-> thread chay ngam thuc hien theo lich trinh
     private ScheduledExecutorService scheduler;
    // Constructor private ngan tao moi ben ngoai
-    private AuctionScheduler() {}
     public static synchronized AuctionScheduler getInstance() {
         if (instance == null) {
             instance = new AuctionScheduler();
@@ -50,7 +62,7 @@ public class AuctionScheduler {
         }
     }
     //tim va dong tat ca cac auction da qua thoi gian ket thuc endTime, goi tu dong 30s 1 lan
-    private void closeExpiredAuctions() {
+    void closeExpiredAuctions() {
         Connection connect = null;
         try {
             connect = DatabaseConnection.getConnection();

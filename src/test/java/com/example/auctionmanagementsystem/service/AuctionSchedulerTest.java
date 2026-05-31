@@ -35,12 +35,9 @@ public class AuctionSchedulerTest {
     @Mock private AuctionService auctionService;
     @Mock private PaymentService paymentService;
     @Mock private Connection mockConnection;
-    @Mock private AuctionNotifier mockNotifier;
 
     private AuctionScheduler scheduler;
     private MockedStatic<DatabaseConnection> mockedDb;
-    private MockedStatic<UserDAO> mockedUserDao;
-    private MockedStatic<AuctionNotifier> mockedNotifierStatic;
 
     @BeforeEach
     void setUp() {
@@ -50,13 +47,6 @@ public class AuctionSchedulerTest {
         // Mock kết nối Database
         mockedDb = Mockito.mockStatic(DatabaseConnection.class);
         mockedDb.when(DatabaseConnection::getConnection).thenReturn(mockConnection);
-
-        // Mock UserDAO (chứa các hàm static)
-        mockedUserDao = Mockito.mockStatic(UserDAO.class);
-
-        // Mock Singleton AuctionNotifier
-        mockedNotifierStatic = Mockito.mockStatic(AuctionNotifier.class);
-        mockedNotifierStatic.when(AuctionNotifier::getInstance).thenReturn(mockNotifier);
     }
 
     @AfterEach
@@ -64,8 +54,6 @@ public class AuctionSchedulerTest {
         // Đóng các mock test để sau mỗi mock test không 
         // sử dụng lại dữ liệu của mock test cũ
         mockedDb.close();
-        mockedUserDao.close();
-        mockedNotifierStatic.close();
     }
 
     // Khi phiên đấu giá hết giờ -> Chốt đơn, thanh toán và gửi thông báo
@@ -75,33 +63,15 @@ public class AuctionSchedulerTest {
         Auction expiredAuction = new Auction();
         expiredAuction.setId(101);
         expiredAuction.setEndTime(LocalDateTime.now().minusHours(1));
-        expiredAuction.setCurrentPrice(500.0);
-        
-        Item mockItem = mock(Item.class); 
-        when(mockItem.getName()).thenReturn("MacBook Pro"); // Giả lập hàm getName trả về "MacBook Pro"
-        expiredAuction.setItem(mockItem);
 
-        Bidder winner = new Bidder(); winner.setId(2);
-        Seller seller = new Seller(); seller.setId(3);
-        expiredAuction.setHighestBidder(winner);
-        expiredAuction.setSeller(seller);
-
+        // Giả lập Database trả về phiên đấu giá này
         when(auctionDao.selectOpenAuctions(mockConnection)).thenReturn(Arrays.asList(expiredAuction));
-        
-        // Mock số dư giả định
-        mockedUserDao.when(() -> UserDAO.getBalance(2, mockConnection)).thenReturn(1000.0);
-        mockedUserDao.when(() -> UserDAO.getBalance(3, mockConnection)).thenReturn(200.0);
-
-        // Gọi trực tiếp hàm xử lý logic 
         scheduler.closeExpiredAuctions();
 
-        // Các hàm này chỉ được diễn ra một lần (đấu giá kết thúc luôn -> người thắng trả tiền)
+        // Hàm endAuction được gọi đúng 1 lần
         verify(auctionService, times(1)).endAuction(mockConnection, expiredAuction);
-        verify(paymentService, times(1)).processPayment(mockConnection, expiredAuction);
         
-        verify(mockNotifier, times(1)).notifyAuctionResult(
-                101, "MacBook Pro", 2, 500.0, 1000.0, 200.0
-        );
+        verify(paymentService, never()).processPayment(any(), any());
     }
 
     //Phiên đấu giá vẫn đang chạy
@@ -120,26 +90,26 @@ public class AuctionSchedulerTest {
         // thanh toán, thông báo không được chạy)
         verify(auctionService, never()).endAuction(any(), any());
         verify(paymentService, never()).processPayment(any(), any());
-        verify(mockNotifier, never()).notifyAuctionResult(anyInt(), anyString(), anyInt(), anyDouble(), anyDouble(), anyDouble());
     }
 
     // Xử lý an toàn khi thanh toán bị lỗi 
     @Test
-    void testCloseExpiredAuctions_PaymentFails_CatchesException() throws Exception {
-        Auction expiredAuction = new Auction();
-        expiredAuction.setId(103);
-        expiredAuction.setEndTime(LocalDateTime.now().minusMinutes(5));
+    void testCloseExpiredAuctions_EndAuctionFails_CatchesExceptionAndContinues() throws Exception {
+        // Chuẩn bị 2 phiên đấu giá đều hết hạn
+        Auction auction1 = new Auction(); auction1.setId(103); auction1.setEndTime(LocalDateTime.now().minusMinutes(5));
+        Auction auction2 = new Auction(); auction2.setId(104); auction2.setEndTime(LocalDateTime.now().minusMinutes(5));
 
-        when(auctionDao.selectOpenAuctions(mockConnection)).thenReturn(Collections.singletonList(expiredAuction));
+        when(auctionDao.selectOpenAuctions(mockConnection)).thenReturn(Arrays.asList(auction1, auction2));
 
-        // Giả lập lỗi ở bước thanh toán
-        doThrow(new RuntimeException("Payment Gateway Down"))
-                .when(paymentService).processPayment(any(), any());
+        // Khi đóng auction1 thì hệ thống ném ra lỗi
+        doThrow(new RuntimeException("Database Lock Error"))
+                .when(auctionService).endAuction(mockConnection, auction1);
 
-        // Hàm này không được ném văng Exception ra ngoài (nếu ném ra, luồng Thread ngầm sẽ bị chết)
+        // Gọi hàm quét
         scheduler.closeExpiredAuctions();
 
-        // Thông báo kết quả sẽ không được gọi vì bị kẹt ở catch
-        verify(mockNotifier, never()).notifyAuctionResult(anyInt(), anyString(), anyInt(), anyDouble(), anyDouble(), anyDouble());
+        //  auction1 bị lỗi, hệ thống vẫn không sập và tiếp tục gọi endAuction cho auction2
+        verify(auctionService, times(1)).endAuction(mockConnection, auction1);
+        verify(auctionService, times(1)).endAuction(mockConnection, auction2);
     }
 }

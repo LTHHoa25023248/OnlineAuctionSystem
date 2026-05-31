@@ -14,9 +14,21 @@ import java.util.Comparator;
 import java.util.List;
 
 public class AdvancedAuctionService {
-    private final AutoBidDAO autoBidDao=new AutoBidDAO();
-    private final AuctionDAO auctionDao=new AuctionDAO();
-    private final BidTransactionDAO bidDao=new BidTransactionDAO();
+    private final AutoBidDAO autoBidDao;
+    private final AuctionDAO auctionDao;
+    private final BidTransactionDAO bidDao;
+
+    public AdvancedAuctionService() {
+        this.autoBidDao = new AutoBidDAO();
+        this.auctionDao = new AuctionDAO();
+        this.bidDao = new BidTransactionDAO();
+    }
+
+    public AdvancedAuctionService(AutoBidDAO autoBidDao, AuctionDAO auctionDao, BidTransactionDAO bidDao) {
+        this.autoBidDao = autoBidDao;
+        this.auctionDao = auctionDao;
+        this.bidDao = bidDao;
+    }
     //dang ky dau gia tu dong
     public void registerAutoBid(Connection connect, Auction auction, Bidder bidder, double maxBid, double increment ){
         // tao cac doi tuong dau gia tu dong

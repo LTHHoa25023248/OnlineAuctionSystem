@@ -9,7 +9,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class AuctionService {
-    private final AuctionDAO auctionDao=new AuctionDAO();
+    private final AuctionDAO auctionDao;
+
+    public AuctionService() {
+        this.auctionDao = new AuctionDAO();
+    }
+
+    public AuctionService(AuctionDAO auctionDao) {
+        this.auctionDao = auctionDao;
+    }
     //tao phien dau gia
     public void createAuction(Connection connect, Auction auction){
         try{
