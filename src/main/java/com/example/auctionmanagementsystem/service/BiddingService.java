@@ -26,8 +26,6 @@ public class BiddingService {
         this.bidDao = new BidTransactionDAO();
         this.advancedService = new AdvancedAuctionService();
     }
-
-    // Constructor dùng để truyền Mock Object vào khi chạy Unit Test
     public BiddingService(AuctionDAO auctionDao, BidTransactionDAO bidDao, AdvancedAuctionService advancedService) {
         this.auctionDao = auctionDao;
         this.bidDao = bidDao;
